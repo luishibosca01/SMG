@@ -1,10 +1,10 @@
 const CACHE_NAME = 'smg-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/Servicios.html',
-  '/Horarios.html',
-  '/manifest.json'
+  './',
+  './index.html',
+  './Servicios.html',
+  './Horarios.html',
+  './manifest.json'
 ];
 
 // Instalación del Service Worker - OFFLINE FIRST
