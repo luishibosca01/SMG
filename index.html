@@ -160,44 +160,76 @@
         /* Botón de instalación PWA */
         #install-button {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, var(--c-blue), var(--c-purple));
+            bottom: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            border-radius: 16px;
+            width: 64px;
+            height: 64px;
             display: none;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(83, 130, 230, 0.4);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
             z-index: 1000;
+            animation: slideInAndPulse 0.5s ease-out;
+        }
+
+        @keyframes slideInAndPulse {
+            0% {
+                transform: translateY(100px) scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: translateY(0) scale(1.1);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        #install-button::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            border-radius: 18px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
             animation: pulse 2s infinite;
         }
 
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.1);
+            }
+        }
+
         #install-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(83, 130, 230, 0.6);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(14, 165, 233, 0.6), 0 6px 12px rgba(0, 0, 0, 0.4);
         }
 
         #install-button:active {
-            transform: scale(0.95);
+            transform: translateY(-2px) scale(1);
         }
 
         #install-button.show {
             display: flex;
         }
 
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 4px 12px rgba(83, 130, 230, 0.4);
-            }
-            50% {
-                box-shadow: 0 4px 20px rgba(83, 130, 230, 0.7);
-            }
+        #install-button svg {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
         /* Modal de instalación */
@@ -300,10 +332,15 @@
             }
 
             #install-button {
-                width: 56px;
-                height: 56px;
-                bottom: 16px;
-                right: 16px;
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            #install-button svg {
+                width: 32px;
+                height: 32px;
             }
         }
     </style>
@@ -359,7 +396,7 @@
 
     <!-- Botón flotante de instalación -->
     <button id="install-button" aria-label="Instalar aplicación">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -384,12 +421,14 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then(registration => {
-                        console.log('Service Worker registrado:', registration);
+                        console.log('✅ Service Worker registrado correctamente:', registration.scope);
                     })
                     .catch(error => {
-                        console.log('Error al registrar Service Worker:', error);
+                        console.error('❌ Error al registrar Service Worker:', error);
                     });
             });
+        } else {
+            console.warn('⚠️ Service Workers no soportados en este navegador');
         }
 
         // Variables para la instalación
@@ -403,19 +442,23 @@
         function isPWAInstalled() {
             // Verifica si está en modo standalone (instalada)
             if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('✅ PWA detectada como instalada (display-mode: standalone)');
                 return true;
             }
             
             // Verifica si está en modo standalone de iOS
             if (window.navigator.standalone === true) {
+                console.log('✅ PWA detectada como instalada (iOS standalone)');
                 return true;
             }
 
             // Verifica localStorage para apps previamente instaladas
             if (localStorage.getItem('pwa-installed') === 'true') {
+                console.log('✅ PWA detectada como instalada (localStorage)');
                 return true;
             }
 
+            console.log('ℹ️ PWA no instalada');
             return false;
         }
 
@@ -427,12 +470,34 @@
             // Guardar el evento para usarlo después
             deferredPrompt = e;
             
+            console.log('✅ beforeinstallprompt detectado');
+            
             // Verificar si ya está instalada
             if (!isPWAInstalled()) {
                 // Mostrar el botón de instalación
                 installButton.classList.add('show');
+                console.log('✅ Botón de instalación mostrado');
+            } else {
+                console.log('ℹ️ PWA ya instalada, botón oculto');
             }
         });
+
+        // FUNCIÓN DE PRUEBA - Descomenta para testing
+        // Muestra el botón de instalación manualmente para pruebas
+        // O accede con ?test=true en la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('test') === 'true') {
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    console.log('🧪 MODO PRUEBA: Mostrando botón de instalación');
+                    installButton.classList.add('show');
+                    // Simular que hay un prompt disponible
+                    if (!deferredPrompt) {
+                        console.log('⚠️ No hay beforeinstallprompt real, esto es solo visual');
+                    }
+                }, 1000);
+            });
+        }
 
         // Manejar click en el botón flotante
         installButton.addEventListener('click', () => {
@@ -481,7 +546,7 @@
 
         // Detectar cuando la app se instala
         window.addEventListener('appinstalled', () => {
-            console.log('PWA instalada exitosamente');
+            console.log('🎉 PWA instalada exitosamente');
             localStorage.setItem('pwa-installed', 'true');
             installButton.classList.remove('show');
             installModal.classList.remove('show');
@@ -490,9 +555,11 @@
 
         // Verificar al cargar la página si ya está instalada
         window.addEventListener('load', () => {
-            if (isPWAInstalled()) {
+            const isInstalled = isPWAInstalled();
+            console.log('📱 Estado de instalación:', isInstalled ? 'Instalada' : 'No instalada');
+            
+            if (isInstalled) {
                 installButton.classList.remove('show');
-                console.log('PWA ya está instalada');
             }
         });
     </script>
