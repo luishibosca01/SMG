@@ -268,12 +268,13 @@
             font-size: 1.5rem;
             padding: 0;
             background: var(--c-blue);
-            color: var(--text-inv);
+            color: var(--text-main);
             position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 80;
+            bottom: 2rem;
+            right: 2rem;
+            box-shadow: 0 0 15px 12px rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--text-main);
+            z-index: 80
         }
 
         #btn-filter,
@@ -510,6 +511,12 @@
             display: flex;
             gap: 0.5rem;
             margin-top: 1.5rem;
+        }
+
+        .form-actions2 {
+            display: flex;
+            margin-top: 0.5rem;
+
         }
 
         /* --- Facturas --- */
@@ -856,7 +863,7 @@
         .menu-agregar {
             position: fixed;
             bottom: 100px;
-            right: 1.5rem;
+            right: 2rem;
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
@@ -1692,7 +1699,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Version 0.42</div> <!-- DeltaF -->
+            <div class="menu-version">Version 0.43</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -1782,7 +1789,7 @@
                             </div>
                             <div id="calculador-resultados" class="calculador-resultados">
                                 <div class="calculador-resultado-item">
-                                    <span class="calculador-resultado-label">Total de registros</span>
+                                    <span class="calculador-resultado-label">Registros</span>
                                     <span class="calculador-resultado-valor" id="calculador-total-registros">0</span>
                                 </div>
                                 <div class="calculador-resultado-item">
@@ -1887,20 +1894,17 @@
         </div>
     </div>
 
-    <!-- Modal Agregar/Editar Servicio -->
-    <div class="modal" id="modal-servicio">
+    <!-- Modal Agregar Servicio -->
+    <div class="modal" id="modal-agregar-servicio">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-servicio-titulo">Nuevo Servicio</h3>
+                <h3>Nuevo Servicio</h3>
             </div>
             <form id="form-servicio">
                 <div class="form-group">
                     <label for="servicio-nombre">Nombre del servicio</label>
                     <input type="text" id="servicio-nombre" required placeholder="Ej: Internet, Luz, Agua"
                         maxlength="30">
-                </div>
-                <div class="form-actions">
-                    <button type="button" id="btn-eliminar-servicio" style="display: none;">Eliminar</button>
                 </div>
                 <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr;">
                     <button type="submit">
@@ -1909,6 +1913,38 @@
                         </svg>Guardar
                     </button>
                     <button type="button" class="button" id="modal-servicio-close">
+                        <svg class="icon">
+                            <use href="#icon-cancel" />
+                        </svg> Cerrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Servicio -->
+    <div class="modal" id="modal-editar-servicio">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Servicio</h3>
+            </div>
+            <form id="form-editar-servicio">
+                <div class="form-group">
+                    <label for="editar-servicio-nombre">Nombre del servicio</label>
+                    <input type="text" id="editar-servicio-nombre" required placeholder="Ej: Internet, Luz, Agua"
+                        maxlength="30">
+                </div>
+                <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr;">
+                    <button type="submit">
+                        <svg class="icon">
+                            <use href="#icon-save" />
+                        </svg>Guardar
+                    </button>
+                    <button type="button" id="btn-eliminar-servicio">Eliminar
+                    </button>
+                </div>
+                <div class="form-actions2">
+                    <button type="button" class="button" id="modal-editar-servicio-close">
                         <svg class="icon">
                             <use href="#icon-cancel" />
                         </svg> Cerrar
@@ -1940,16 +1976,16 @@
         </div>
     </div>
 
-    <!-- Modal Agregar/Editar Factura -->
-    <div class="modal" id="modal-factura">
+    <!-- Modal Agregar Factura -->
+    <div class="modal" id="modal-agregar-factura">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-factura-titulo">Nueva Factura</h3>
+                <h3>Nueva Factura</h3>
             </div>
             <form id="form-factura">
                 <div class="form-group">
                     <label for="factura-monto">Monto</label>
-                    <input type="number" id="factura-monto" required placeholder="0.00 (negativo = saldo a favor)"
+                    <input type="number" id="factura-monto" required placeholder="$ (negativo = saldo a favor)"
                         step="0.01">
                 </div>
                 <div class="form-group">
@@ -1990,24 +2026,81 @@
                         </button>
                     </div>
                 </div>
-                <div class="form-actions" id="form-actions-principales"
-                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div class="form-actions">
                     <button type="submit"><svg class="icon">
                             <use href="#icon-save" />
                         </svg> Guardar</button>
-                    <button type="button" id="btn-eliminar-factura-modal" style="display: none;"><svg class="icon">
-                            <use href="#icon-broom" />
-                        </svg> Eliminar</button>
-                    <button type="button" class="btn-secondary" id="modal-factura-close-en-grid"
-                        style="display: none;"><svg class="icon">
+                    <button type="button" class="btn-secondary" id="modal-factura-close" style="width: 100%;"><svg
+                            class="icon">
                             <use href="#icon-undo" />
                         </svg>
                         Volver
                     </button>
                 </div>
-                <div class="form-actions" id="form-actions-volver" style="margin-top: 0.5rem;">
-                    <button type="button" class="btn-secondary" id="modal-factura-close" style="width: 100%;"><svg
-                            class="icon">
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Factura -->
+    <div class="modal" id="modal-editar-factura">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Factura</h3>
+            </div>
+            <form id="form-editar-factura">
+                <div class="form-group">
+                    <label for="editar-factura-monto">Monto</label>
+                    <input type="number" id="editar-factura-monto" required placeholder="$ (negativo = saldo a favor)"
+                        step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="editar-factura-tipo">Tipo de factura</label>
+                    <select id="editar-factura-tipo" required>
+                        <option value="mensual">Mensual</option>
+                        <option value="bimestral">Bimestral</option>
+                        <option value="semestral">Semestral</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editar-factura-servicio">Servicio</label>
+                    <select id="editar-factura-servicio" required>
+                        <!-- Los servicios se cargarán dinámicamente -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editar-factura-fecha">Fecha de vencimiento</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="date" id="editar-factura-fecha" required style="flex: 1;">
+                        <button type="button" class="icon-btn" id="btn-editar-fecha-hoy" title="Fecha de hoy / Limpiar">
+                            <svg class="icon">
+                                <use href="#icon-calendar" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editar-factura-fecha-pago">Fecha de pago</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="date" id="editar-factura-fecha-pago" disabled style="flex: 1;">
+                        <button type="button" id="btn-editar-toggle-pagada" class="icon-btn"
+                            onclick="app.toggleEstadoPagoEditar()" title="Marcar como pagada/no pagada">
+                            <svg class="icon">
+                                <use href="#icon-card" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <button type="submit"><svg class="icon">
+                            <use href="#icon-save" />
+                        </svg> Guardar</button>
+                    <button type="button" id="btn-eliminar-factura-modal"><svg class="icon">
+                            <use href="#icon-broom" />
+                        </svg> Eliminar</button>
+                </div>
+                <div class="form-actions2">
+                    <button type="button" class="btn-secondary" id="modal-factura-close-en-grid"><svg class="icon">
                             <use href="#icon-undo" />
                         </svg>
                         Volver
@@ -2069,16 +2162,16 @@
         </div>
     </div>
 
-    <!-- Modal Agregar/Editar Ingreso -->
-    <div class="modal" id="modal-ingreso">
+    <!-- Modal Agregar Ingreso -->
+    <div class="modal" id="modal-agregar-ingreso">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-ingreso-titulo">Nuevo Ingreso</h3>
+                <h3>Nuevo Ingreso</h3>
             </div>
             <form id="form-ingreso">
                 <div class="form-group">
                     <label for="ingreso-monto">Monto</label>
-                    <input type="number" id="ingreso-monto" required placeholder="0.00" step="0.01" min="0">
+                    <input type="number" id="ingreso-monto" required placeholder="$" step="0.01" min="0">
                 </div>
                 <div class="form-group">
                     <label for="ingreso-tipo">Tipo</label>
@@ -2098,23 +2191,65 @@
                         </button>
                     </div>
                 </div>
+                <div class="form-actions">
+                    <button type="submit"><svg class="icon">
+                            <use href="#icon-save" />
+                        </svg> Guardar
+                    </button>
+                    <button type="button" class="btn-secondary" id="modal-ingreso-close" style="width: 100%;"><svg
+                            class="icon">
+                            <use href="#icon-undo" />
+                        </svg> Volver
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Ingreso -->
+    <div class="modal" id="modal-editar-ingreso">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Ingreso</h3>
+            </div>
+            <form id="form-editar-ingreso">
+                <div class="form-group">
+                    <label for="editar-ingreso-monto">Monto</label>
+                    <input type="number" id="editar-ingreso-monto" required placeholder="$" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="editar-ingreso-tipo">Tipo</label>
+                    <select id="editar-ingreso-tipo" required>
+                        <option value="regular">Regular</option>
+                        <option value="complementario">Complementario</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editar-ingreso-fecha">Fecha de cobro</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="date" id="editar-ingreso-fecha" required style="flex: 1;">
+                        <button type="button" class="icon-btn" id="btn-editar-ingreso-fecha-hoy" title="Fecha de hoy">
+                            <svg class="icon">
+                                <use href="#icon-calendar" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                     <button type="submit"><svg class="icon">
                             <use href="#icon-save" />
                         </svg> Guardar</button>
-                    <button type="button" id="btn-eliminar-ingreso" style="display: none;"><svg class="icon">
+                    <button type="button" id="btn-eliminar-ingreso"><svg class="icon">
                             <use href="#icon-broom" />
-                        </svg> Eliminar</button>
-                    <button type="button" class="btn-secondary" id="modal-ingreso-close" style="display: none;"><svg
-                            class="icon">
-                            <use href="#icon-undo" />
-                        </svg> Volver</button>
+                        </svg> Eliminar
+                    </button>
                 </div>
-                <div class="form-actions" style="margin-top: 0.5rem;">
-                    <button type="button" class="btn-secondary" id="modal-ingreso-volver" style="width: 100%;"><svg
-                            class="icon">
+                <div class="form-actions2">
+                    <button type="button" class="btn-secondary" id="modal-ingreso-volver">
+                        <svg class="icon">
                             <use href="#icon-undo" />
-                        </svg> Volver</button>
+                        </svg> Volver
+                    </button>
                 </div>
             </form>
         </div>
@@ -2326,9 +2461,10 @@
                 });
 
                 // Modales
-                document.getElementById('modal-servicio-close').addEventListener('click', () => this.cerrarModal('modal-servicio'));
+                document.getElementById('modal-servicio-close').addEventListener('click', () => this.cerrarModal('modal-agregar-servicio'));
+                document.getElementById('modal-editar-servicio-close').addEventListener('click', () => this.cerrarModal('modal-editar-servicio'));
                 document.getElementById('modal-factura-close').addEventListener('click', () => {
-                    this.cerrarModal('modal-factura');
+                    this.cerrarModal('modal-agregar-factura');
                     // Solo reabrir el modal de servicio si vino desde ahí
                     if (this.origenModalFactura === 'servicio') {
                         this.abrirModalFacturasServicio(this.servicioActual);
@@ -2337,7 +2473,7 @@
 
                 // Event listener para el botón volver del grid (modo agregar)
                 document.getElementById('modal-factura-close-en-grid').addEventListener('click', () => {
-                    this.cerrarModal('modal-factura');
+                    this.cerrarModal('modal-editar-factura');
                     // Solo reabrir el modal de servicio si vino desde ahí
                     if (this.origenModalFactura === 'servicio') {
                         this.abrirModalFacturasServicio(this.servicioActual);
@@ -2355,26 +2491,33 @@
 
                 // Formularios
                 document.getElementById('form-servicio').addEventListener('submit', (e) => this.guardarServicio(e));
+                document.getElementById('form-editar-servicio').addEventListener('submit', (e) => this.guardarServicio(e));
                 document.getElementById('form-factura').addEventListener('submit', (e) => this.guardarFactura(e));
+                document.getElementById('form-editar-factura').addEventListener('submit', (e) => this.guardarFactura(e));
                 document.getElementById('btn-eliminar-servicio').addEventListener('click', () => this.eliminarServicio());
                 document.getElementById('btn-fecha-hoy').addEventListener('click', () => this.establecerFechaHoy());
+                document.getElementById('btn-editar-fecha-hoy').addEventListener('click', () => this.establecerFechaHoy('editar'));
                 document.getElementById('btn-eliminar-factura-modal').addEventListener('click', () => this.eliminarFacturaDesdeModal());
 
                 // Formulario de ingresos
                 document.getElementById('form-ingreso').addEventListener('submit', (e) => this.guardarIngreso(e));
+                document.getElementById('form-editar-ingreso').addEventListener('submit', (e) => this.guardarIngreso(e));
                 document.getElementById('btn-eliminar-ingreso').addEventListener('click', () => this.eliminarIngreso());
                 document.getElementById('btn-ingreso-fecha-hoy').addEventListener('click', () => {
                     document.getElementById('ingreso-fecha').value = this.obtenerFechaLocal();
                 });
+                document.getElementById('btn-editar-ingreso-fecha-hoy').addEventListener('click', () => {
+                    document.getElementById('editar-ingreso-fecha').value = this.obtenerFechaLocal();
+                });
 
                 document.getElementById('modal-ingreso-close').addEventListener('click', () => {
-                    this.cerrarModal('modal-ingreso');
+                    this.cerrarModal('modal-agregar-ingreso');
                     if (!this.ingresoDesdeMenu) {
                         this.abrirModalIngresosLista(this.SERVICIO_INGRESOS_ID);
                     }
                 });
                 document.getElementById('modal-ingreso-volver').addEventListener('click', () => {
-                    this.cerrarModal('modal-ingreso');
+                    this.cerrarModal('modal-editar-ingreso');
                     if (!this.ingresoDesdeMenu) {
                         this.abrirModalIngresosLista(this.SERVICIO_INGRESOS_ID);
                     }
@@ -3279,8 +3422,8 @@
                  `;
                 }).join('');
 
-                // Agregar servicio de ingresos si está habilitado
-                if (this.ingresosHabilitado()) {
+                // Agregar servicio de ingresos si está habilitado Y (no hay búsqueda O coincide con la búsqueda)
+                if (this.ingresosHabilitado() && (!this.terminoBusqueda || 'ingresos'.includes(this.terminoBusqueda))) {
                     // Línea separadora
                     if (serviciosOrdenados.length > 0) {
                         html += `<div style="border-top: 1px solid var(--text-muted); opacity: 0.3; margin: 1rem 0;"></div>`;
@@ -3387,6 +3530,7 @@
                 }
 
                 return servicios.filter(servicio =>
+                    servicio.id !== this.SERVICIO_INGRESOS_ID &&
                     servicio.nombre.toLowerCase().includes(this.terminoBusqueda)
                 );
             }
@@ -3563,26 +3707,19 @@
 
             abrirModalServicio(servicioId = null) {
                 this.servicioActual = servicioId;
-                const modal = document.getElementById('modal-servicio');
-                const titulo = document.getElementById('modal-servicio-titulo');
-                const form = document.getElementById('form-servicio');
-                const btnEliminar = document.getElementById('btn-eliminar-servicio');
-
-                form.reset();
 
                 if (servicioId) {
+                    // Modo editar - usar modal separado
                     const servicio = this.servicios.find(s => s.id === servicioId);
                     if (servicio) {
-                        titulo.textContent = 'Editar Servicio';
-                        document.getElementById('servicio-nombre').value = servicio.nombre;
-                        btnEliminar.style.display = 'block';
+                        document.getElementById('editar-servicio-nombre').value = servicio.nombre;
                     }
+                    this.abrirModal('modal-editar-servicio');
                 } else {
-                    titulo.textContent = 'Nuevo Servicio';
-                    btnEliminar.style.display = 'none';
+                    // Modo nuevo
+                    document.getElementById('form-servicio').reset();
+                    this.abrirModal('modal-agregar-servicio');
                 }
-
-                this.abrirModal('modal-servicio');
             }
 
             generarHTMLFactura(factura, onclick = null) {
@@ -3647,7 +3784,12 @@
             guardarServicio(e) {
                 e.preventDefault();
 
-                const nombre = document.getElementById('servicio-nombre').value.trim();
+                // Detectar si estamos en modo agregar o editar
+                const esEditar = document.getElementById('modal-editar-servicio').classList.contains('active');
+                const nombre = esEditar
+                    ? document.getElementById('editar-servicio-nombre').value.trim()
+                    : document.getElementById('servicio-nombre').value.trim();
+
                 if (!nombre) {
                     this.mostrarToast('El nombre del servicio es obligatorio', 'error');
                     return;
@@ -3671,7 +3813,7 @@
                         // Verificar si hubo cambios
                         if (servicio.nombre === nombre) {
                             this.mostrarToast('Sin cambios', 'info');
-                            this.cerrarModal('modal-servicio');
+                            this.cerrarModal('modal-editar-servicio');
                             return;
                         }
                         servicio.nombre = nombre;
@@ -3692,7 +3834,7 @@
                 this.guardarEstado();
                 this.enModoBusqueda = false;
                 this.renderServicios();
-                this.cerrarModal('modal-servicio');
+                this.cerrarModal(esEditar ? 'modal-editar-servicio' : 'modal-agregar-servicio');
             }
 
             editarServicio(servicioId) {
@@ -3710,7 +3852,7 @@
                     this.enModoBusqueda = false;
                     this.renderServicios();
                     this.actualizarResumenMes();
-                    this.cerrarModal('modal-servicio');
+                    this.cerrarModal('modal-editar-servicio');
                     this.mostrarToast('Servicio eliminado', 'success');
                 }
             }
@@ -3725,14 +3867,12 @@
                 this.facturaActual = facturaId;
                 this.origenModalFactura = origen; // Guardar el origen
 
-                const modal = document.getElementById('modal-factura');
-                const titulo = document.getElementById('modal-factura-titulo');
-                const form = document.getElementById('form-factura');
-                const btnEliminar = document.getElementById('btn-eliminar-factura-modal');
-                const selectServicio = document.getElementById('factura-servicio');
-                const btnVolver = document.getElementById('modal-factura-close');
-                const btnTogglePagada = document.getElementById('btn-toggle-pagada');
-                const inputFechaPago = document.getElementById('factura-fecha-pago');
+                const esEditar = facturaId !== null;
+                const modalId = esEditar ? 'modal-editar-factura' : 'modal-agregar-factura';
+                const form = document.getElementById(esEditar ? 'form-editar-factura' : 'form-factura');
+                const selectServicio = document.getElementById(esEditar ? 'editar-factura-servicio' : 'factura-servicio');
+                const btnTogglePagada = document.getElementById(esEditar ? 'btn-editar-toggle-pagada' : 'btn-toggle-pagada');
+                const inputFechaPago = document.getElementById(esEditar ? 'editar-factura-fecha-pago' : 'factura-fecha-pago');
 
                 form.reset();
                 inputFechaPago.disabled = true;
@@ -3743,40 +3883,26 @@
                     iconUse.setAttribute('href', '#icon-card');
                 }
 
-                // Obtener botones (declarar PRIMERO)
-                const btnVolverEnGrid = document.getElementById('modal-factura-close-en-grid');
-                const btnVolverAbajo = document.getElementById('modal-factura-close');
-                const containerVolverAbajo = document.getElementById('form-actions-volver');
-
-                // Cambiar texto del botón según el origen
-                if (origen === 'menu') {
-                    btnVolver.innerHTML = `<svg class="icon"><use href="#icon-cancel" /></svg> Cerrar`;
-                    btnVolverEnGrid.innerHTML = `<svg class="icon"><use href="#icon-cancel" /></svg> Cerrar`;
-                } else {
-                    btnVolver.innerHTML = `<svg class="icon"><use href="#icon-undo" /></svg> Volver`;
-                    btnVolverEnGrid.innerHTML = `<svg class="icon"><use href="#icon-undo" /></svg> Volver`;
-                }
-
-                // Llenar el select de servicios (ordenados alfabéticamente)
-                const serviciosOrdenados = [...this.servicios].sort((a, b) =>
-                    a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' })
-                );
+                const serviciosOrdenados = [...this.servicios]
+                    .filter(s => s.id !== this.SERVICIO_INGRESOS_ID)
+                    .sort((a, b) =>
+                        a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' })
+                    );
 
                 selectServicio.innerHTML = serviciosOrdenados.map(servicio => {
                     const selected = servicio.id === servicioId ? 'selected' : '';
                     return `<option value="${this.escaparAtributoHTML(servicio.id)}" ${selected}>${this.escaparHTML(servicio.nombre)}</option>`;
                 }).join('');
 
-                if (facturaId) {
+                if (esEditar) {
                     // MODO EDITAR
                     const servicio = this.servicios.find(s => s.id === servicioId);
                     if (servicio) {
                         const factura = servicio.facturas.find(f => f.id === facturaId);
                         if (factura) {
-                            titulo.textContent = 'Editar Factura';
-                            document.getElementById('factura-monto').value = factura.monto;
-                            document.getElementById('factura-tipo').value = factura.tipo || 'mensual';
-                            document.getElementById('factura-fecha').value = factura.fecha;
+                            document.getElementById('editar-factura-monto').value = factura.monto;
+                            document.getElementById('editar-factura-tipo').value = factura.tipo || 'mensual';
+                            document.getElementById('editar-factura-fecha').value = factura.fecha;
                             selectServicio.value = servicioId;
 
                             if (factura.pagada) {
@@ -3792,28 +3918,11 @@
                                     inputFechaPago.value = this.obtenerFechaLocal();
                                 }
                             }
-
-                            btnEliminar.style.display = 'block';
                         }
                     }
-
-                    // Layout para editar: Guardar y Eliminar arriba (50/50), Volver abajo solo
-                    btnVolverEnGrid.style.display = 'none';
-                    btnVolverAbajo.style.display = 'block';
-                    containerVolverAbajo.style.display = 'block';
-
-                } else {
-                    // MODO AGREGAR
-                    titulo.textContent = 'Nueva Factura';
-                    btnEliminar.style.display = 'none';
-
-                    // Layout para agregar: Guardar y Volver juntos (50/50)
-                    btnVolverEnGrid.style.display = 'block';
-                    btnVolverAbajo.style.display = 'none';
-                    containerVolverAbajo.style.display = 'none';
                 }
 
-                this.abrirModal('modal-factura');
+                this.abrirModal(modalId);
             }
 
             toggleEstadoPago() {
@@ -3838,16 +3947,41 @@
                 }
             }
 
+            toggleEstadoPagoEditar() {
+                const btnTogglePagada = document.getElementById('btn-editar-toggle-pagada');
+                const inputFechaPago = document.getElementById('editar-factura-fecha-pago');
+                const iconUse = btnTogglePagada.querySelector('use');
+
+                const estaPagada = btnTogglePagada.classList.contains('pagada');
+
+                if (estaPagada) {
+                    // Cambiar a NO pagada
+                    btnTogglePagada.classList.remove('pagada');
+                    inputFechaPago.disabled = true;
+                    inputFechaPago.value = '';
+                    iconUse.setAttribute('href', '#icon-card');
+                } else {
+                    // Cambiar a pagada
+                    btnTogglePagada.classList.add('pagada');
+                    inputFechaPago.disabled = false;
+                    inputFechaPago.value = this.obtenerFechaLocal();
+                    iconUse.setAttribute('href', '#icon-cancel');
+                }
+            }
+
             guardarFactura(e) {
                 e.preventDefault();
 
-                const monto = parseFloat(document.getElementById('factura-monto').value);
-                const tipo = document.getElementById('factura-tipo').value;
-                const fecha = document.getElementById('factura-fecha').value;
-                const btnTogglePagada = document.getElementById('btn-toggle-pagada');
+                // Detectar si estamos en modo agregar o editar
+                const esEditar = document.getElementById('modal-editar-factura').classList.contains('active');
+
+                const monto = parseFloat(document.getElementById(esEditar ? 'editar-factura-monto' : 'factura-monto').value);
+                const tipo = document.getElementById(esEditar ? 'editar-factura-tipo' : 'factura-tipo').value;
+                const fecha = document.getElementById(esEditar ? 'editar-factura-fecha' : 'factura-fecha').value;
+                const btnTogglePagada = document.getElementById(esEditar ? 'btn-editar-toggle-pagada' : 'btn-toggle-pagada');
                 const estaPagada = btnTogglePagada.classList.contains('pagada');
-                const fechaPago = estaPagada ? document.getElementById('factura-fecha-pago').value : null;
-                const servicioSeleccionadoId = document.getElementById('factura-servicio').value;
+                const fechaPago = estaPagada ? document.getElementById(esEditar ? 'editar-factura-fecha-pago' : 'factura-fecha-pago').value : null;
+                const servicioSeleccionadoId = document.getElementById(esEditar ? 'editar-factura-servicio' : 'factura-servicio').value;
 
                 // Validar monto (permitir negativos para saldos a favor)
                 if (!this.validarMonto(monto, true)) {
@@ -3908,7 +4042,7 @@
                                     factura.pagada === estaPagada &&
                                     factura.fechaPago === fechaPago) {
                                     this.mostrarToast('Sin cambios', 'info');
-                                    this.cerrarModal('modal-factura');
+                                    this.cerrarModal('modal-editar-factura');
                                     this.abrirModalFacturasServicio(servicioAnteriorId);
                                     return;
                                 }
@@ -3940,7 +4074,7 @@
                 this.guardarDatos();
                 this.guardarEstado();
                 this.enModoBusqueda = false;
-                this.cerrarModal('modal-factura');
+                this.cerrarModal(esEditar ? 'modal-editar-factura' : 'modal-agregar-factura');
 
                 // Re-renderizar todos los servicios para aplicar el ordenamiento
                 this.renderServicios();
@@ -4022,8 +4156,9 @@
                 this.abrirModalFactura(servicio.id, facturaId);
             }
 
-            establecerFechaHoy() {
-                const inputFecha = document.getElementById('factura-fecha');
+            establecerFechaHoy(modo = 'agregar') {
+                const campoId = modo === 'editar' ? 'editar-factura-fecha' : 'factura-fecha';
+                const inputFecha = document.getElementById(campoId);
                 if (inputFecha.value) {
                     // Si hay valor, limpiar
                     inputFecha.value = '';
@@ -4046,7 +4181,7 @@
                 this.renderServicios();
                 this.enModoBusqueda = false;
                 this.actualizarResumenMes();
-                this.cerrarModal('modal-factura');
+                this.cerrarModal('modal-editar-factura');
                 this.mostrarToast('Factura eliminada', 'success');
             }
 
@@ -4717,52 +4852,34 @@
                 this.ingresoActual = ingresoId;
                 this.ingresoDesdeMenu = desdeMenu;
 
-                const modal = document.getElementById('modal-ingreso');
-                const titulo = document.getElementById('modal-ingreso-titulo');
-                const form = document.getElementById('form-ingreso');
-                const btnEliminar = document.getElementById('btn-eliminar-ingreso');
-                const btnVolverGrid = document.getElementById('modal-ingreso-close');
-                const btnVolverFull = document.getElementById('modal-ingreso-volver');
-
-                form.reset();
-
-                // Cambiar texto del botón según origen
-                const textoBoton = desdeMenu ? 'Cerrar' : 'Volver';
-                btnVolverGrid.innerHTML = `<svg class="icon"><use href="#icon-${desdeMenu ? 'cancel' : 'undo'}" /></svg> ${textoBoton}`;
-                btnVolverFull.innerHTML = `<svg class="icon"><use href="#icon-${desdeMenu ? 'cancel' : 'undo'}" /></svg> ${textoBoton}`;
-
                 if (ingresoId) {
-                    // Modo editar
+                    // Modo editar - usar modal separado
                     const servicio = this.servicios.find(s => s.id === this.SERVICIO_INGRESOS_ID);
                     if (servicio) {
                         const ingreso = servicio.facturas.find(f => f.id === ingresoId);
                         if (ingreso) {
-                            titulo.textContent = 'Editar Ingreso';
-                            document.getElementById('ingreso-monto').value = ingreso.monto;
-                            document.getElementById('ingreso-tipo').value = ingreso.tipo || 'regular';
-                            document.getElementById('ingreso-fecha').value = ingreso.fecha;
-                            btnEliminar.style.display = 'block';
-                            btnVolverGrid.style.display = 'none';
-                            btnVolverFull.style.display = 'block';
+                            document.getElementById('editar-ingreso-monto').value = ingreso.monto;
+                            document.getElementById('editar-ingreso-tipo').value = ingreso.tipo || 'regular';
+                            document.getElementById('editar-ingreso-fecha').value = ingreso.fecha;
                         }
                     }
+                    this.abrirModal('modal-editar-ingreso');
                 } else {
                     // Modo nuevo
-                    titulo.textContent = 'Nuevo Ingreso';
-                    btnEliminar.style.display = 'none';
-                    btnVolverGrid.style.display = 'block';
-                    btnVolverFull.style.display = 'none';
+                    document.getElementById('form-ingreso').reset();
+                    this.abrirModal('modal-agregar-ingreso');
                 }
-
-                this.abrirModal('modal-ingreso');
             }
 
             guardarIngreso(e) {
                 e.preventDefault();
 
-                const monto = parseFloat(document.getElementById('ingreso-monto').value);
-                const tipo = document.getElementById('ingreso-tipo').value;
-                const fecha = document.getElementById('ingreso-fecha').value;
+                // Detectar si estamos en modo agregar o editar
+                const esEditar = document.getElementById('modal-editar-ingreso').classList.contains('active');
+
+                const monto = parseFloat(document.getElementById(esEditar ? 'editar-ingreso-monto' : 'ingreso-monto').value);
+                const tipo = document.getElementById(esEditar ? 'editar-ingreso-tipo' : 'ingreso-tipo').value;
+                const fecha = document.getElementById(esEditar ? 'editar-ingreso-fecha' : 'ingreso-fecha').value;
 
                 // Validar monto (no permitir negativos en ingresos)
                 if (!this.validarMonto(monto, false)) {
@@ -4788,7 +4905,7 @@
                         // Verificar si hubo cambios
                         if (ingreso.monto === monto && ingreso.tipo === tipo && ingreso.fecha === fecha) {
                             this.mostrarToast('Sin cambios', 'info');
-                            this.cerrarModal('modal-ingreso');
+                            this.cerrarModal('modal-editar-ingreso');
                             this.abrirModalIngresosLista(this.SERVICIO_INGRESOS_ID);
                             return;
                         }
@@ -4811,7 +4928,7 @@
                 this.guardarDatos();
                 this.guardarEstado();
                 this.renderServicios();
-                this.cerrarModal('modal-ingreso');
+                this.cerrarModal(esEditar ? 'modal-editar-ingreso' : 'modal-agregar-ingreso');
                 if (!this.ingresoDesdeMenu) {
                     this.abrirModalIngresosLista(this.SERVICIO_INGRESOS_ID);
                 }
@@ -4826,7 +4943,7 @@
                     this.guardarDatos();
                     this.guardarEstado();
                     this.renderServicios();
-                    this.cerrarModal('modal-ingreso');
+                    this.cerrarModal('modal-editar-ingreso');
                     if (!this.ingresoDesdeMenu) {
                         this.abrirModalIngresosLista(this.SERVICIO_INGRESOS_ID);
                     }
@@ -4870,15 +4987,14 @@
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 0.42
+    //                 NOTAS SISTEMA DeltaF VERSION 0.43
     // ====================================================================
     
-     - CAMBIOS:
+     - CAMBIOS
      1)
 
 
-     - BUGS:
+     - BUGS CONOCIDOS:
      1) 
-
 
     -->
