@@ -1053,16 +1053,14 @@
         .estadisticas-lista {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
             transition: all 0.3s ease;
+            gap: 1rem;
         }
 
         .estadistica-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border);
             transition: all 0.3s ease;
         }
 
@@ -1101,40 +1099,17 @@
             flex-direction: column;
             gap: 0.5rem;
             margin-top: 0.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
         }
 
         .calculador-resultado-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
+            padding: 0.5rem;
         }
-
-
 
         .calculador-resultado-valor {
-            font-size: 1rem;
-            font-weight: 600;
             color: var(--text-main);
-        }
-
-        .calculador-resultado-destacado {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 0.5rem;
-        }
-
-        .calculador-resultado-destacado .calculador-resultado-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .calculador-resultado-destacado .calculador-resultado-valor {
-            font-size: 1.5rem;
         }
 
         /* Estado de factura */
@@ -1442,6 +1417,38 @@
             opacity: 0;
         }
 
+        /* Estilos para modal de información */
+        .info-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-section h4 {
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .info-item {
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .info-item strong {
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .info-content em {
+            color: var(--c-blue);
+            font-style: normal;
+        }
+
         /* --- codigo css --- */
     </style>
     <script>
@@ -1511,6 +1518,11 @@
         <symbol id="icon-moon" viewBox="0 0 24 24">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" class="icon-line" stroke-width="2"
                 stroke="currentColor" fill="none"></path>
+        </symbol>
+        <symbol id="icon-info" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+            <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <circle cx="12" cy="8" r="1" fill="currentColor" />
         </symbol>
         <symbol id="icon-dollar" viewBox="0 0 24 24">
             <line x1="12" y1="1" x2="12" y2="23" class="icon-line" stroke="currentColor"></line>
@@ -1690,6 +1702,13 @@
                 </svg>
                 <span>Borrar todo</span>
             </div>
+
+            <div class="menu-item" id="menu-informacion">
+                <svg class="icon">
+                    <use href="#icon-info" />
+                </svg>
+                <span>Información</span>
+            </div>
         </div>
 
         <div class="menu-footer">
@@ -1699,7 +1718,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Version 0.43</div> <!-- DeltaF -->
+            <div class="menu-version">Version 0.46</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -1721,7 +1740,7 @@
                                     d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
                                 <path d="M7 12h2v5H7zm4-3h2v8h-2zm4-3h2v11h-2z" />
                             </svg>
-                            Estadísticas
+                            Estadística Mensual
                         </span>
                         <svg class="icon chevron-icon" id="estadisticas-chevron" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1744,7 +1763,7 @@
                                 <circle cx="15" cy="18" r="1.5" fill="currentColor" />
                                 <circle cx="11" cy="18" r="1.5" fill="currentColor" />
                             </svg>
-                            Calculador
+                            Estadística Individual
                         </span>
                         <svg class="icon chevron-icon" id="calculador-chevron" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1795,6 +1814,14 @@
                                 <div class="calculador-resultado-item">
                                     <span class="calculador-resultado-label">Monto Total</span>
                                     <span class="calculador-resultado-valor" id="calculador-monto-total">$0,00</span>
+                                </div>
+                                <div class="calculador-resultado-item">
+                                    <span class="calculador-resultado-label">Monto Promedio</span>
+                                    <span class="calculador-resultado-valor" id="calculador-monto-promedio">$0,00</span>
+                                </div>
+                                <div class="calculador-resultado-item">
+                                    <span class="calculador-resultado-label">Variación del Período</span>
+                                    <span class="calculador-resultado-valor" id="calculador-variacion">0%</span>
                                 </div>
                             </div>
                         </div>
@@ -2255,6 +2282,143 @@
         </div>
     </div>
 
+    <!-- Modal Información Calculador -->
+    <div class="modal" id="modal-informacion">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>📊 Estadística individual</h3>
+            </div>
+            <div class="info-content">
+                <p style="margin-bottom: 1rem; color: var(--text-muted);">
+                    Analiza tus facturas o ingresos en un rango de tiempo específico.
+                </p>
+
+                <div class="info-section">
+                    <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.2rem;">📌</span> Métricas Disponibles
+                    </h4>
+
+                    <div class="info-item">
+                        <strong>• Registros</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Cantidad total de facturas en el período seleccionado
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <strong>• Monto Total</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Suma de todos los montos (positivos y negativos)
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <strong>• Monto Promedio</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Monto total dividido por la cantidad de registros
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <strong>• Variación (%)</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Indica si tus gastos/ingresos aumentaron o disminuyeron en el período
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.2rem;">📈</span> ¿Cómo se calcula la Variación?
+                    </h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;">
+                        El sistema usa un método adaptativo según la cantidad de datos:
+                    </p>
+
+                    <div class="info-item">
+                        <strong>▸ Con 2-3 registros:</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Compara el primer registro contra el último<br>
+                            <em>Ejemplo: Feb $5.000 → Dic $6.000 = +20%</em>
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <strong>▸ Con 4-8 registros:</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Compara el promedio de la primera mitad vs segunda mitad<br>
+                            <em>Ejemplo: Promedio(Ene-Feb) vs Promedio(Nov-Dic)</em>
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <strong>▸ Con 9+ registros:</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Usa el 30% de cada extremo (mín 3, máx 6 registros)<br>
+                            <em>Ejemplo: Promedio(6 primeras) vs Promedio(6 últimas)</em>
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <strong>▸ Con 1 registro:</strong><br>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                            Muestra "N/A" (no hay comparación posible)
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.2rem;">💡</span> Caso Especial: Ingresos
+                    </h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        Cuando seleccionas el servicio "Ingresos", la variación excluye automáticamente
+                        los registros complementarios (bonos, aguinaldos, extras) para calcular solo la
+                        tendencia de tus ingresos regulares.
+                    </p>
+                    <div
+                        style="background: var(--bg-body); padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);">
+                        <strong>Ejemplo:</strong><br>
+                        • Total incluye todo: $550.000 (5 registros)<br>
+                        • Variación usa solo regulares: $500.000 (4 registros)<br>
+                        • Excluye: $50.000 (aguinaldo)
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.2rem;">🎯</span> Interpretación
+                    </h4>
+                    <div
+                        style="background: var(--bg-body); padding: 0.75rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">
+                        +15.5% = Aumentó 15.5% en el período<br>
+                        -8.3% = Disminuyó 8.3% en el período<br>
+                        0% = Se mantuvo estable<br>
+                        N/A = No hay suficientes datos<br>
+                        Solo extras = Todos los ingresos son complementarios
+                    </div>
+                </div>
+
+                <div class="info-section"
+                    style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+                    <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">
+                        📍 Este método sigue las prácticas estándar de análisis financiero recomendadas
+                        por las NIIF (Normas Internacionales de Información Financiera).
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="button" id="modal-informacion-close">
+                    <svg class="icon">
+                        <use href="#icon-cancel" />
+                    </svg>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast de notificaciones -->
     <div class="toast" id="toast"></div>
     <script src="./sw-register.js"></script>
@@ -2556,6 +2720,17 @@
                             this.rehacer();
                         }
                     }
+                });
+
+                // Menu informacion
+                document.getElementById('menu-informacion').addEventListener('click', () => {
+                    this.cerrarMenuAjustes();
+                    this.abrirModal('modal-informacion');
+                });
+
+                // Cerrar modal informacion
+                document.getElementById('modal-informacion-close').addEventListener('click', () => {
+                    this.cerrarModal('modal-informacion');
                 });
 
                 // Inicializar calculador
@@ -2956,10 +3131,12 @@
             <span class="estadistica-label">Vencidas</span>
             <span class="estadistica-valor">${cantidadVencidas}</span>
         </div>
+        ${this.ingresosHabilitado() ? `
         <div class="estadistica-item" style="color: var(--c-green);">
             <span class="estadistica-label">Ingresos</span>
             <span class="estadistica-valor">${this.formatearMoneda(totalIngresos)}</span>
         </div>
+        ` : ''}
 `;
 
                     const lista = document.querySelector('#estadisticas-mes .estadisticas-lista');
@@ -3100,25 +3277,53 @@
                 const select = document.getElementById('calculador-servicio');
                 if (!select) return;
 
-                // Crear opciones de servicios
-                let options = '<option value="">Seleccionar servicio...</option>';
+                const valorActual = select.value;
 
-                // Ordenar servicios alfabéticamente por nombre
-                const serviciosOrdenados = [...this.servicios].sort((a, b) => {
-                    return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+                // Obtener servicios activos ordenados alfabéticamente
+                const serviciosActivos = this.servicios
+                    .filter(s => s.id !== this.SERVICIO_INGRESOS_ID)
+                    .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+
+                // Construir opciones
+                let html = '<option value="">Seleccionar servicio...</option>';
+
+                // Agregar servicios normales
+                serviciosActivos.forEach(servicio => {
+                    const selected = servicio.id === valorActual ? 'selected' : '';
+                    html += `<option value="${this.escaparAtributoHTML(servicio.id)}" ${selected}>${this.escaparHTML(servicio.nombre)}</option>`;
                 });
 
-                serviciosOrdenados.forEach(servicio => {
-                    options += `<option value="${servicio.id}">${servicio.nombre}</option>`;
-                });
+                // Agregar servicio de ingresos si está habilitado
+                if (this.ingresosHabilitado()) {
+                    const servicioIngresos = this.servicios.find(s => s.id === this.SERVICIO_INGRESOS_ID);
+                    if (servicioIngresos) {
+                        const selected = this.SERVICIO_INGRESOS_ID === valorActual ? 'selected' : '';
+                        html += `<option value="${this.SERVICIO_INGRESOS_ID}" ${selected}>Ingresos</option>`;
+                    }
+                }
 
-                select.innerHTML = options;
+                select.innerHTML = html;
+
+                // Si el servicio seleccionado ya no existe, limpiar la selección y recalcular
+                if (valorActual && !this.servicios.find(s => s.id === valorActual)) {
+                    select.value = '';
+                    this.calcularPeriodo();
+                } else if (valorActual) {
+                    // Si hay un servicio seleccionado válido, recalcular
+                    this.calcularPeriodo();
+                }
             }
 
             calcularPeriodo() {
                 const selectServicio = document.getElementById('calculador-servicio');
                 const inputDesde = document.getElementById('calculador-desde');
                 const inputHasta = document.getElementById('calculador-hasta');
+                const resultadosContainer = document.getElementById('calculador-resultados');
+
+                // Validar que todos los elementos existan antes de continuar
+                if (!selectServicio || !inputDesde || !inputHasta || !resultadosContainer) {
+                    return; // Salir silenciosamente si los elementos no existen
+                }
 
                 const servicioId = selectServicio.value;
                 const desde = inputDesde.value;
@@ -3126,18 +3331,55 @@
 
                 // Si no hay servicio seleccionado, mostrar 0
                 if (!servicioId) {
-                    document.getElementById('calculador-total-registros').textContent = '0';
-                    document.getElementById('calculador-monto-total').textContent = '$0,00';
+                    const resultadosHTML = `
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Registros</span>
+                <span class="calculador-resultado-valor">0</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Monto Total</span>
+                <span class="calculador-resultado-valor">$0,00</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Monto Promedio</span>
+                <span class="calculador-resultado-valor">$0,00</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Variación</span>
+                <span class="calculador-resultado-valor">0%</span>
+            </div>
+        `;
+                    resultadosContainer.innerHTML = resultadosHTML;
                     return;
                 }
 
                 // Encontrar el servicio
                 const servicio = this.servicios.find(s => s.id === servicioId);
                 if (!servicio) {
-                    document.getElementById('calculador-total-registros').textContent = '0';
-                    document.getElementById('calculador-monto-total').textContent = '$0,00';
+                    const resultadosHTML = `
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Registros</span>
+                <span class="calculador-resultado-valor">0</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Monto Total</span>
+                <span class="calculador-resultado-valor">$0,00</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Monto Promedio</span>
+                <span class="calculador-resultado-valor">$0,00</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Variación</span>
+                <span class="calculador-resultado-valor">0%</span>
+            </div>
+        `;
+                    resultadosContainer.innerHTML = resultadosHTML;
                     return;
                 }
+
+                // Verificar si es el servicio de ingresos
+                const esServicioIngresos = servicioId === this.SERVICIO_INGRESOS_ID;
 
                 // Filtrar facturas por rango de fechas
                 let facturasFiltradas = servicio.facturas;
@@ -3158,13 +3400,110 @@
                     });
                 }
 
-                // Calcular total
+                // Ordenar por fecha (más antiguas primero)
+                facturasFiltradas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+                // Calcular totales básicos (incluye complementarios)
                 const totalRegistros = facturasFiltradas.length;
                 const montoTotal = facturasFiltradas.reduce((sum, f) => sum + f.monto, 0);
+                const montoPromedio = totalRegistros > 0 ? montoTotal / totalRegistros : 0;
 
-                // Mostrar resultados
-                document.getElementById('calculador-total-registros').textContent = totalRegistros;
-                document.getElementById('calculador-monto-total').textContent = this.formatearMoneda(montoTotal);
+                // Para cálculo de variación: excluir complementarios si es servicio de ingresos
+                let facturasParaVariacion = facturasFiltradas;
+                if (esServicioIngresos) {
+                    facturasParaVariacion = facturasFiltradas.filter(f => f.tipo !== 'complementario');
+                }
+
+                // Calcular variación de forma adaptativa
+                let variacion = 0;
+                let variacionTexto = '0%';
+                const totalParaVariacion = facturasParaVariacion.length;
+
+                if (totalParaVariacion >= 2) {
+                    let promedioPrimeros, promedioUltimos;
+
+                    if (totalParaVariacion <= 3) {
+                        // Con 2-3 registros: comparar primero vs último
+                        promedioPrimeros = facturasParaVariacion[0].monto;
+                        promedioUltimos = facturasParaVariacion[totalParaVariacion - 1].monto;
+                    } else if (totalParaVariacion <= 8) {
+                        // Con 4-8 registros: comparar primera mitad vs segunda mitad
+                        const mitad = Math.floor(totalParaVariacion / 2);
+                        const primerasMitad = facturasParaVariacion.slice(0, mitad);
+                        const ultimasMitad = facturasParaVariacion.slice(-mitad);
+
+                        promedioPrimeros = primerasMitad.reduce((sum, f) => sum + f.monto, 0) / mitad;
+                        promedioUltimos = ultimasMitad.reduce((sum, f) => sum + f.monto, 0) / mitad;
+                    } else {
+                        // Con 9+ registros: usar 30% de cada extremo (min 3, max 6)
+                        const cantidadGrupo = Math.min(6, Math.max(3, Math.floor(totalParaVariacion * 0.3)));
+
+                        const primerosRegistros = facturasParaVariacion.slice(0, cantidadGrupo);
+                        const ultimosRegistros = facturasParaVariacion.slice(-cantidadGrupo);
+
+                        promedioPrimeros = primerosRegistros.reduce((sum, f) => sum + f.monto, 0) / cantidadGrupo;
+                        promedioUltimos = ultimosRegistros.reduce((sum, f) => sum + f.monto, 0) / cantidadGrupo;
+                    }
+
+                    // Calcular porcentaje de variación
+                    if (promedioPrimeros !== 0) {
+                        variacion = ((promedioUltimos - promedioPrimeros) / Math.abs(promedioPrimeros)) * 100;
+                        const signo = variacion > 0 ? '+' : '';
+                        variacionTexto = `${signo}${variacion.toFixed(1)}%`;
+                    } else {
+                        // Si el promedio inicial es 0, mostrar variación absoluta
+                        variacionTexto = promedioUltimos > 0 ? '+∞' : '0%';
+                    }
+                } else if (totalParaVariacion === 1) {
+                    variacionTexto = 'N/A';
+                } else if (totalParaVariacion === 0 && esServicioIngresos && totalRegistros > 0) {
+                    // Todos los registros son complementarios
+                    variacionTexto = 'Solo extras';
+                }
+
+                // Mostrar resultados (con animación igual que estadísticas)
+                const renderizarResultados = () => {
+                    const resultadosHTML = `
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Registros</span>
+                <span class="calculador-resultado-valor">${totalRegistros}</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Monto Total</span>
+                <span class="calculador-resultado-valor">${this.formatearMoneda(montoTotal)}</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Monto Promedio</span>
+                <span class="calculador-resultado-valor">${this.formatearMoneda(montoPromedio)}</span>
+            </div>
+            <div class="calculador-resultado-item">
+                <span class="calculador-resultado-label">Variación</span>
+                <span class="calculador-resultado-valor">${variacionTexto}</span>
+            </div>
+        `;
+
+                    if (resultadosContainer) {
+                        resultadosContainer.innerHTML = resultadosHTML;
+                        // Trigger animación de entrada
+                        resultadosContainer.style.opacity = '0';
+                        setTimeout(() => {
+                            resultadosContainer.style.animation = 'slideDownFade 0.2s ease-out';
+                            resultadosContainer.style.opacity = '1';
+                        }, 10);
+                    }
+                };
+
+                if (resultadosContainer) {
+                    // Animación de salida
+                    resultadosContainer.style.animation = 'slideUpFade 0.2s ease-out forwards';
+
+                    // Después de la animación de salida, cambiar contenido y animar entrada
+                    setTimeout(() => {
+                        renderizarResultados();
+                    }, 190);
+                } else {
+                    renderizarResultados();
+                }
             }
 
             toggleServicios() {
@@ -3362,7 +3701,7 @@
                 } else {
                     // Cuando obtenerUltimaFactura retorna null
                     if (servicio.facturas && servicio.facturas.length > 0) {
-                        estado = 'Sin facturas este mes';
+                        estado = 'Sin facturas de este mes';
                         claseEstado = 'sin-facturas-mes';
                     } else {
                         estado = 'Sin facturas';
@@ -3504,13 +3843,12 @@
                     window.scrollTo(0, scrollPos);
                 });
 
-                // Solo actualizar resumen si no estamos filtrando por búsqueda
+                // Solo actualizar resumen y calculador si no estamos filtrando por búsqueda
                 if (!this.enModoBusqueda) {
                     this.actualizarResumenMes();
+                    this.actualizarSelectServicios();
+                    this.calcularPeriodo();
                 }
-
-                // Actualizar select del calculador
-                this.actualizarSelectServicios();
             }
 
             crearServicioIngresos() {
@@ -4675,6 +5013,16 @@
 
                 this.mostrarToast(`Registro de ingresos ${nuevoEstado ? 'habilitado' : 'deshabilitado'}`, 'success');
                 this.cerrarMenuAjustes();
+
+                // Actualizar calculador
+                this.actualizarSelectServicios();
+
+                // Si el servicio de ingresos estaba seleccionado y se deshabilitó, limpiar
+                const selectServicio = document.getElementById('calculador-servicio');
+                if (!nuevoEstado && selectServicio && selectServicio.value === this.SERVICIO_INGRESOS_ID) {
+                    selectServicio.value = '';
+                    this.calcularPeriodo();
+                }
             }
 
             ingresosHabilitado() {
@@ -4980,14 +5328,12 @@
         // Inicializar aplicación
         const app = new GestionServicios();
     </script>
-
-
 </body>
 
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 0.43
+    //                 NOTAS SISTEMA DeltaF VERSION 0.46
     // ====================================================================
     
      - CAMBIOS
