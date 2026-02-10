@@ -773,7 +773,6 @@
         }
 
         /* --- Toast Notifications --- */
-
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -851,6 +850,7 @@
 
         .menu-agregar-overlay.active {
             display: block;
+
         }
 
         .resumen-valor {
@@ -1125,7 +1125,6 @@
         .collapsible-content.collapsed {
             max-height: 0;
             opacity: 0;
-
         }
 
         /* Estados de la tarjeta de servicios (3 estados) */
@@ -1422,10 +1421,6 @@
                 right: -75vw;
                 width: 60vw;
                 max-width: 280px;
-            }
-
-            .menu-ajustes.active {
-                right: 0;
             }
 
             .menu-agregar {
@@ -1745,7 +1740,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Version 0.54</div> <!-- DeltaF -->
+            <div class="menu-version">Version 0.55</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -1930,15 +1925,8 @@
 
     <!-- Overlay del menú agregar -->
     <div class="menu-agregar-overlay" id="menu-agregar-overlay"></div>
-
     <!-- Menú Emergente Agregar -->
     <div class="menu-agregar" id="menu-agregar">
-        <div class="menu-item" id="menu-agregar-calcular">
-            <svg class="icon">
-                <use href="#icon-stats" />
-            </svg>
-            <span>Calcular</span>
-        </div>
         <div class="menu-item" id="menu-agregar-servicio">
             <svg class="icon">
                 <use href="#icon-briefcase" />
@@ -1956,6 +1944,12 @@
                 <use href="#icon-dollar" />
             </svg>
             <span>Nuevo ingreso</span>
+        </div>
+        <div class="menu-item" id="menu-agregar-calcular">
+            <svg class="icon">
+                <use href="#icon-stats" />
+            </svg>
+            <span>Calcular</span>
         </div>
     </div>
 
@@ -2645,6 +2639,10 @@
                 });
 
                 // Inicializar indicador de ingresos
+                // Si es la primera vez (no existe en localStorage), establecer como false
+                if (localStorage.getItem(this.INGRESOS_KEY) === null) {
+                    localStorage.setItem(this.INGRESOS_KEY, 'false');
+                }
                 const ingresosHabilitado = this.ingresosHabilitado();
                 const indicator = document.getElementById('ingresos-indicator');
                 if (indicator) {
@@ -4568,26 +4566,75 @@
                             return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
 
                         case 'vencimiento':
-                            // Por fecha de vencimiento más próxima
+                            // Por fecha de vencimiento más próxima con sub-ordenamiento mejorado
                             const facturaA = this.obtenerUltimaFactura(a.id);
                             const facturaB = this.obtenerUltimaFactura(b.id);
 
-                            // Si no tienen facturas, van al final
-                            if (!facturaA && !facturaB) return 0;
-                            if (!facturaA) return 1;
-                            if (!facturaB) return -1;
+                            // Determinar si tienen facturas en general
+                            const tieneFacturasA = a.facturas && a.facturas.length > 0;
+                            const tieneFacturasB = b.facturas && b.facturas.length > 0;
 
-                            // Las pagadas van al final
-                            if (facturaA.pagada && !facturaB.pagada) return 1;
-                            if (!facturaA.pagada && facturaB.pagada) return -1;
-                            if (facturaA.pagada && facturaB.pagada) {
-                                // Ambas pagadas, ordenar por nombre
+                            // PRIORIDAD 1: Servicios SIN FACTURAS NUNCA van al final absoluto
+                            if (!tieneFacturasA && !tieneFacturasB) {
+                                // Ambos sin facturas nunca → orden alfabético
                                 return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
                             }
+                            if (!tieneFacturasA) return 1;  // A sin facturas nunca → va al final
+                            if (!tieneFacturasB) return -1; // B sin facturas nunca → va al final
 
-                            // Ambas pendientes, ordenar por vencimiento
+                            // PRIORIDAD 2: Servicios SIN FACTURAS ESTE MES (pero tienen facturas en otros meses)
+                            // En este punto sabemos que ambos tienen facturas en algún momento
+                            if (!facturaA && !facturaB) {
+                                // Ambos sin facturas este mes → ordenar por fecha de última factura disponible
+                                const ultimaFacturaGeneralA = [...a.facturas].sort((x, y) =>
+                                    new Date(y.fecha) - new Date(x.fecha)
+                                )[0];
+                                const ultimaFacturaGeneralB = [...b.facturas].sort((x, y) =>
+                                    new Date(y.fecha) - new Date(x.fecha)
+                                )[0];
+
+                                const fechaUltimaA = new Date(ultimaFacturaGeneralA.fecha + 'T00:00:00');
+                                const fechaUltimaB = new Date(ultimaFacturaGeneralB.fecha + 'T00:00:00');
+
+                                // Ordenar por fecha de última factura (más reciente primero)
+                                return fechaUltimaB - fechaUltimaA;
+                            }
+                            if (!facturaA) return 1;  // A sin facturas este mes → va después de las que sí tienen
+                            if (!facturaB) return -1; // B sin facturas este mes → va después de las que sí tienen
+
+                            // En este punto, ambos tienen facturas del mes actual
+                            // Calcular fechas de vencimiento
                             const fechaA = new Date(facturaA.fecha + 'T00:00:00');
+                            fechaA.setHours(0, 0, 0, 0);
                             const fechaB = new Date(facturaB.fecha + 'T00:00:00');
+                            fechaB.setHours(0, 0, 0, 0);
+
+                            // Calcular si están vencidas
+                            const vencidaA = !facturaA.pagada && fechaA < hoy;
+                            const vencidaB = !facturaB.pagada && fechaB < hoy;
+
+                            // PRIORIDAD 3: VENCIDAS (pendientes con fecha pasada)
+                            if (vencidaA && !vencidaB) return -1; // A vencida → va primero
+                            if (!vencidaA && vencidaB) return 1;  // B vencida → va primero
+                            if (vencidaA && vencidaB) {
+                                // Ambas vencidas → más antigua primero
+                                return fechaA - fechaB;
+                            }
+
+                            // PRIORIDAD 4: PENDIENTES (no pagadas, no vencidas)
+                            const pendienteA = !facturaA.pagada && !vencidaA;
+                            const pendienteB = !facturaB.pagada && !vencidaB;
+
+                            if (pendienteA && !pendienteB) return -1; // A pendiente → va primero
+                            if (!pendienteA && pendienteB) return 1;  // B pendiente → va primero
+                            if (pendienteA && pendienteB) {
+                                // Ambas pendientes → ordenar por fecha de vencimiento
+                                return fechaA - fechaB;
+                            }
+
+                            // PRIORIDAD 5: PAGADAS
+                            // En este punto, ambas están pagadas del mes actual
+                            // Ordenar por fecha de VENCIMIENTO (mantiene consistencia con el criterio)
                             return fechaA - fechaB;
 
                         case 'monto-desc':
@@ -5813,7 +5860,9 @@
             }
 
             ingresosHabilitado() {
-                return localStorage.getItem(this.INGRESOS_KEY) !== 'false'; // Por defecto true
+                const valor = localStorage.getItem(this.INGRESOS_KEY);
+                // Si es null (primera vez), retornar false; si es 'true' retornar true; si es 'false' retornar false
+                return valor === 'true';
             }
 
             // ========================================
@@ -5845,11 +5894,11 @@
                 menu.classList.toggle('active');
                 overlay.classList.toggle('active');
 
-                // Bloquear scroll del body cuando el menú está abierto
+                // Bloquear/desbloquear scroll
                 if (menu.classList.contains('active')) {
-                    document.body.style.overflow = 'hidden';
+                    document.body.classList.add('modal-open');
                 } else {
-                    document.body.style.overflow = '';
+                    document.body.classList.remove('modal-open');
                 }
             }
 
@@ -5864,7 +5913,7 @@
                 if (opciones) opciones.style.display = 'none';
 
                 // Restaurar scroll del body
-                document.body.style.overflow = '';
+                document.body.classList.remove('modal-open');
             }
 
             toggleMenuAgregar() {
@@ -5872,6 +5921,12 @@
                 const overlay = document.getElementById('menu-agregar-overlay');
                 menu.classList.toggle('active');
                 overlay.classList.toggle('active');
+                // Bloquear/desbloquear scroll
+                if (menu.classList.contains('active')) {
+                    document.body.classList.add('modal-open');
+                } else {
+                    document.body.classList.remove('modal-open'); // Desbloquear scroll
+                }
             }
 
             cerrarMenuAgregar() {
@@ -5879,6 +5934,7 @@
                 const overlay = document.getElementById('menu-agregar-overlay');
                 menu.classList.remove('active');
                 overlay.classList.remove('active');
+                document.body.classList.remove('modal-open'); // Desbloquear scroll
             }
 
             actualizarMenuAgregar() {
@@ -6120,7 +6176,7 @@
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 0.54
+    //                 NOTAS SISTEMA DeltaF VERSION 0.55
     // ====================================================================
     
      - CAMBIOS
