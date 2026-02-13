@@ -22,7 +22,7 @@
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="referrer" content="no-referrer">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="./icons/icon-192.png">
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2Z
     yB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyI
     j4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZEgiIHgxPSIwJSIgeTE9IjAlI
@@ -64,7 +64,7 @@
             /* --- Variables de Color (Tema Oscuro) --- */
             --bg-body: #000000;
             --bg-card: #0f141b;
-            --bg-header: rgba(17, 24, 39, 0.800);
+            --bg-header: rgba(0, 0, 0, 0.5);
             --text-main: #f9fafb;
             --text-muted: #d1d5db;
             --border: #1f2836;
@@ -83,6 +83,7 @@
             padding: 0;
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html {
@@ -1599,7 +1600,7 @@
                     </svg>
                     Ajustes
                 </span>
-                <span class="version-text">LUSHIBOSCA-7.32</span>
+                <span class="version-text">LUSHIBOSCA-7.33</span>
             </h3>
             <div class="form-group">
                 <label>Horas Diarias</label>
@@ -8572,14 +8573,11 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.32
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.33
     // ====================================================================
     
      - CAMBIOS:
-    1) Se agrega deteccion si los dias laborables estan registrados com registros 
-    especiales
-    2) Modificacion en los mensajes de eliminación
-    3) Se cambia el tema oscuro, ahora es mas oscuro que nunca
+    1) Se cambia el icono de la app //ACTUALIZAR SW Y MANIFEST// 
 
 
      - BUGS MENORES CONOCIDOS:
