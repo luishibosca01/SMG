@@ -90,7 +90,7 @@
 
         /* --- Layout & Contenedores --- */
         .container {
-            max-width: 1000px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 1rem;
         }
@@ -267,7 +267,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            max-height: 800px;
+            max-height: 850px;
             opacity: 1;
             overflow-y: auto;
             overflow-x: hidden;
@@ -1107,7 +1107,7 @@
         }
 
         .collapsible-content {
-            max-height: 1000px;
+            max-height: 1500px;
             transition: all 0.3s;
             opacity: 0;
             visibility: hidden;
@@ -1744,7 +1744,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Version 0.57</div> <!-- DeltaF -->
+            <div class="menu-version">Version 0.58</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -3081,6 +3081,53 @@
                 return true;
             }
 
+            validarFecha(fecha) {
+                // Validar que la fecha no esté vacía
+                if (!fecha) {
+                    this.mostrarToast('La fecha es requerida', 'error');
+                    return false;
+                }
+
+                // Convertir la fecha ingresada y la fecha actual a objetos Date
+                const fechaIngresada = new Date(fecha);
+                const fechaActual = new Date();
+
+                // Calcular la diferencia en años
+                const diferenciaAnios = (fechaIngresada - fechaActual) / (1000 * 60 * 60 * 24 * 365.25);
+
+                // Validar que no sea mayor a 2 años en el futuro
+                if (diferenciaAnios > 2) {
+                    this.mostrarToast('La fecha no puede ser mayor a 2 años en el futuro', 'error');
+                    return false;
+                }
+
+                return true;
+            }
+
+            validarFechaPago(fechaPago) {
+                // Si no hay fecha de pago, es requerida
+                if (!fechaPago) {
+                    this.mostrarToast('La fecha de pago es requerida cuando se marca como pagada', 'error');
+                    return false;
+                }
+
+                // Convertir a fecha local (agregar 'T00:00:00' fuerza interpretación local)
+                const fechaPagoDate = new Date(fechaPago + 'T00:00:00');
+                const fechaActual = new Date();
+
+                // Resetear horas para comparar solo las fechas
+                fechaPagoDate.setHours(0, 0, 0, 0);
+                fechaActual.setHours(0, 0, 0, 0);
+
+                // Validar que no sea una fecha futura
+                if (fechaPagoDate > fechaActual) {
+                    this.mostrarToast('La fecha de pago no puede ser en el futuro', 'error');
+                    return false;
+                }
+
+                return true;
+            }
+
             setupEventListeners() {
                 // Botones principales
                 document.getElementById('btn-agregar-servicio').addEventListener('click', () => {
@@ -3489,7 +3536,7 @@
                 // DETERMINAR QUÉ MOSTRAR: "Al día" o el monto
                 const estaAlDia = this.datosResumen.pendiente === 0;
                 const valorMostrar = estaAlDia
-                    ? '<span style=>Al día</span>'
+                    ? '<span style="font-size: 2rem;">😎 Al día</span>'
                     : this.formatearMoneda(this.datosResumen.pendiente);
 
                 const resumenHTML = `
@@ -4999,8 +5046,13 @@
                     return;
                 }
 
-                if (!fecha) {
-                    this.mostrarToast('La fecha es requerida', 'error');
+                // Validar fecha
+                if (!this.validarFecha(fecha)) {
+                    return;
+                }
+
+                // Validar fecha de pago si la factura está marcada como pagada
+                if (estaPagada && !this.validarFechaPago(fechaPago)) {
                     return;
                 }
 
@@ -5949,8 +6001,8 @@
                     return;
                 }
 
-                if (!fecha) {
-                    this.mostrarToast('La fecha es requerida', 'error');
+                // Validar fecha
+                if (!this.validarFecha(fecha)) {
                     return;
                 }
 
@@ -6048,7 +6100,7 @@
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 0.57
+    //                 NOTAS SISTEMA DeltaF VERSION 0.58
     // ====================================================================
     
      - CAMBIOS
