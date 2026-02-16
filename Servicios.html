@@ -4,26 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#ffffff">
     <meta name="description" content="Gestión de servicios y facturas">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
+                 script-src 'self' 'unsafe-inline'; 
+                 style-src 'self' 'unsafe-inline'; 
+                 img-src 'self' data: https:; 
+                 font-src 'self' data:; 
+                 connect-src 'self'; 
+                 object-src 'none'; 
+                 base-uri 'self'; 
+                 form-action 'self'; 
+                 frame-ancestors 'none'; 
+                 upgrade-insecure-requests;">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <title>Gestión de Servicios</title>
     <link rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d
-        3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48ZGVm
-        cz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRTIiB4MT0iMCUiIHkxPSIwJSIgeDI9
-        IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2
-        xvcjojMGVhNWU5O3N0b3Atb3BhY2l0eToxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdH
-        lsZT0ic3RvcC1jb2xvcjojM2I4MmY2O3N0b3Atb3BhY2l0eToxIi8+PC9saW5lYXJHcmF
-        kaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMDAiI
-        GZpbGw9InVybCgjZ3JhZFMpIi8+PHBhdGggZD0iTTI1NiA4MCBMNDYwIDQzMCBMNTIgNDMw
-        IFoiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMSIvPjxwYXRoIGQ9Ik0zMzAgMTYw
-        IEMgMzMwIDEzMCwgMjkwIDEzMCwgMjU2IDEzMCBDIDE4MCAxMzAsIDE2MCAxODAsIDE2MCAy
-        MTAgQyAxNjAgMjkwLCAzNTAgMjgwLCAzNTAgMzUwIEMgMzUwIDQxMCwgMzAwIDQxMCwgMjU2I
-        DQxMCBDIDE4MCA0MTAsIDE1MCAzNjAsIDE1MCAzNDAiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS
-        13aWR0aD0iNTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==">
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
     <style>
         :root {
             /* --- Variables de Color (Tema Claro) --- */
@@ -311,9 +312,9 @@
         }
 
         .servicio-nombre {
-            font-weight: 600;
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
         .servicio-info {
@@ -325,13 +326,12 @@
         }
 
         .servicio-monto {
-            font-weight: 600;
             color: var(--text-main);
             font-size: 1rem;
         }
 
         .servicio-fecha {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
         .servicio-estado {
@@ -339,15 +339,12 @@
             padding: 0.25rem 0.5rem;
             border-radius: var(--radius);
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 550;
             margin-top: 0.5rem;
             color: var(--c-white);
         }
 
-        .estado-vencido {
-            background: var(--c-red);
-        }
-
+        .estado-vencido,
         .estado-urgente {
             background: var(--c-red);
         }
@@ -1516,13 +1513,16 @@
         (function () {
             try {
                 var tema = localStorage.getItem('gestion_servicios_theme');
-                if (tema === 'dark') {
+                if (tema === 'dark' || tema === null) {
+                    // Si es dark O primera vez (null), activar modo oscuro
                     document.body.classList.add('dark-mode');
                 } else if (tema === 'light') {
                     document.body.classList.remove('dark-mode');
                 }
-                // Si tema es null (primera vez), modo claro por defecto
-            } catch (e) { }
+            } catch (e) {
+                // En caso de error, modo oscuro por defecto
+                document.body.classList.add('dark-mode');
+            }
         })();
     </script>
 
@@ -1727,7 +1727,7 @@
                     <use href="#icon-dollar" />
                 </svg>
                 <span>Ingresos</span>
-                <span id="ingresos-indicator" style="margin-left: auto; font-weight: 600;">✓</span>
+                <span id="ingresos-indicator" style="margin-left: auto"></span>
             </div>
             <div class="menu-item" id="menu-informacion">
                 <svg class="icon">
@@ -1744,7 +1744,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Version 0.58</div> <!-- DeltaF -->
+            <div class="menu-version">Version 1.00</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -2518,7 +2518,6 @@
 
     <!-- Toast de notificaciones -->
     <div class="toast" id="toast"></div>
-    <script src="./sw-register.js"></script>
     <script>
         // ============================================
         // APLICACIÓN DE GESTIÓN DE SERVICIOS
@@ -2637,7 +2636,7 @@
                 const ingresosHabilitado = this.ingresosHabilitado();
                 const indicator = document.getElementById('ingresos-indicator');
                 if (indicator) {
-                    indicator.textContent = ingresosHabilitado ? '✓' : '✗';
+                    indicator.textContent = ingresosHabilitado ? 'SI' : 'NO';
                 }
 
                 // Buscador
@@ -5743,8 +5742,13 @@
 
             cargarTema() {
                 const tema = localStorage.getItem(this.THEME_KEY);
-                if (tema === 'dark') {
+                if (tema === 'dark' || tema === null) {
+                    // Si es dark O primera vez (null), activar modo oscuro
                     document.body.classList.add('dark-mode');
+                    // Guardar preferencia si es la primera vez
+                    if (tema === null) {
+                        localStorage.setItem(this.THEME_KEY, 'dark');
+                    }
                 }
             }
 
@@ -5764,7 +5768,7 @@
 
                 // Actualizar indicador visual
                 const indicator = document.getElementById('ingresos-indicator');
-                indicator.textContent = nuevoEstado ? '✓' : '✗';
+                indicator.textContent = nuevoEstado ? 'SI' : 'NO';
 
                 // Re-renderizar servicios
                 this.renderServicios();
@@ -6091,20 +6095,61 @@
                 }, 150);
             }
         }
+        // Inicializar aplicación (global para Service Worker)
+        window.app = new GestionServicios();
+    </script>
+    <script>
+        // Registro del Service Worker Optimizado
+        if ('serviceWorker' in navigator) {
+            let newWorker;
 
-        // Inicializar aplicación
-        const app = new GestionServicios();
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('✅ SW registrado:', registration.scope);
+
+                        // Detectar si hay una actualización esperando
+                        registration.addEventListener('updatefound', () => {
+                            newWorker = registration.installing;
+
+                            newWorker.addEventListener('statechange', () => {
+                                // Cuando el nuevo SW está instalado
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🚀 Nueva versión disponible. Actualizando...');
+                                    // Notificar al usuario (opcional) o forzar la actualización
+                                    if (window.app && typeof window.app.mostrarToast === 'function') {
+                                        window.app.mostrarToast('Actualizando aplicación...', 'info');
+                                    }
+                                    // No necesitamos enviar mensaje SKIP_WAITING porque el SW nuevo 
+                                    // ya tiene self.skipWaiting() en la fase de install.
+                                }
+                            });
+                        });
+                    })
+                    .catch(err => console.error('❌ Error registro SW:', err));
+            });
+
+            // Escuchar cuando el controlador cambia (cuando el nuevo SW toma el control)
+            // Esto sucede después de que el nuevo SW se activa
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                console.log('🔄 Controlador cambiado, recargando página...');
+                window.location.reload();
+            });
+        }
     </script>
 </body>
 
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 0.58
+    //                 NOTAS SISTEMA DeltaF VERSION 1.00
     // ====================================================================
     
      - CAMBIOS
-     1) 
+     1) Se agrega el script del sw en la pagina
 
 
      - BUGS CONOCIDOS:
