@@ -7,41 +7,8 @@
     <meta name="theme-color" content="#0ea5e9">
     <meta name="description" content="Sistema de gestión de servicios y horarios">
     <title>SMG</title>
-    
-    <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json">
-    
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="icon-192.png">
-    
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
-        MjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJH
-        cmFkaWVudCBpZD0iZ3JhZFNNRyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAw
-        JSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxYTFhMWE7
-        c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0
-        b3AtY29sb3I6IzJkMmQyZDtzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGll
-        bnQ+CiAgPC9kZWZzPgogIAogIDxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0i
-        MTAwIiBmaWxsPSJ1cmwoI2dyYWRTTUcpIiAvPgogIAogIDxwYXRoIGQ9Ik0yNTYgODAgTDQ2M
-        CA0MzAgTDUyIDQzMCBaIiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjA1IiAvPgogIA
-        ogIDwhLS0gTGV0cmFzIFNNRyBlbiBlc3RpbG8gbW9kZXJubyAtLT4KICA8ZyBmaWxsPSJub25
-        lIiBzdHJva2U9IiNmOWZhZmIiIHN0cm9rZS13aWR0aD0iMjUiIHN0cm9rZS1saW5lY2FwPSJy
-        b3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8IS0tIFMgLS0+CiAgICA8cGF0a
-        CBkPSJNIDkwIDE4MCBRIDkwIDE2MCwgMTEwIDE2MCBMIDE0MCAxNjAgUSAxNjAgMTYwLCAxNjA
-        gMTgwIFEgMTYwIDIwMCwgMTQwIDIwMCBMIDExMCAyMDAgUSA5MCAyMDAsIDkwIDIyMCBRIDkw
-        IDI0MCwgMTEwIDI0MCBMIDE0MCAyNDAgUSAxNjAgMjQwLCAxNjAgMjIwIi8+CiAgICAKICAgI
-        DwhLS0gTSAtLT4KICAgIDxwYXRoIGQ9Ik0gMjAwIDI0MCBMIDIwMCAxNjAgTCAyNTYgMjEwIEw
-        gMzEyIDE2MCBMIDMxMiAyNDAiLz4KICAgIAogICAgPCEtLSBHIC0tPgogICAgPHBhdGggZD0iT
-        SA0MjIgMTgwIFEgNDIyIDE2MCwgNDAyIDE2MCBMIDM3MiAxNjAgUSAzNTIgMTYwLCAzNTIgMT
-        gwIEwgMzUyIDIyMCBRIDM1MiAyNDAsIDM3MiAyNDAgTCA0MDIgMjQwIFEgNDIyIDI0MCwgNDIy
-        IDIyMCBMIDQyMiAyMDAgTCAzODcgMjAwIi8+CiAgPC9nPgogIAogIDwhLS0gRWxlbWVudG9zI
-        GRlY29yYXRpdm9zIC0gY3VhZHLDrWN1bGEgZGUgZ2VzdGnDs24gLS0+CiAgPGcgc3Ryb2tlPS
-        IjZjlmYWZiIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuMiI+CiA
-        gICA8cmVjdCB4PSIxMDAiIHk9IjMwMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iOCIv
-        PgogICAgPHJlY3QgeD0iMTgwIiB5PSIzMDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcng9I
-        jgiLz4KICAgIDxyZWN0IHg9IjI2MCIgeT0iMzAwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIH
-        J4PSI4Ii8+CiAgICA8cmVjdCB4PSIzNDAiIHk9IjMwMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjY
-        wIiByeD0iOCIvPgogIDwvZz4KPC9zdmc+Cg==">
+    <link rel="icon" type="image/png" href="./icon-192.png">
     <style>
         :root {
             --bg-body: #000000;
@@ -183,9 +150,11 @@
                 transform: translateY(100px) scale(0);
                 opacity: 0;
             }
+
             60% {
                 transform: translateY(0) scale(1.1);
             }
+
             100% {
                 transform: translateY(0) scale(1);
                 opacity: 1;
@@ -205,10 +174,13 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 0;
                 transform: scale(1);
             }
+
             50% {
                 opacity: 0.3;
                 transform: scale(1.1);
@@ -396,7 +368,8 @@
 
     <!-- Botón flotante de instalación -->
     <button id="install-button" aria-label="Instalar aplicación">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -445,7 +418,7 @@
                 console.log('✅ PWA detectada como instalada (display-mode: standalone)');
                 return true;
             }
-            
+
             // Verifica si está en modo standalone de iOS
             if (window.navigator.standalone === true) {
                 console.log('✅ PWA detectada como instalada (iOS standalone)');
@@ -466,12 +439,12 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             // Prevenir que Chrome muestre su prompt automáticamente
             e.preventDefault();
-            
+
             // Guardar el evento para usarlo después
             deferredPrompt = e;
-            
+
             console.log('✅ beforeinstallprompt detectado');
-            
+
             // Verificar si ya está instalada
             if (!isPWAInstalled()) {
                 // Mostrar el botón de instalación
@@ -512,10 +485,10 @@
 
             // Mostrar el prompt de instalación
             deferredPrompt.prompt();
-            
+
             // Esperar la respuesta del usuario
             const { outcome } = await deferredPrompt.userChoice;
-            
+
             if (outcome === 'accepted') {
                 console.log('Usuario aceptó la instalación');
                 // Marcar como instalada
@@ -526,7 +499,7 @@
             } else {
                 console.log('Usuario rechazó la instalación');
             }
-            
+
             // Limpiar el prompt
             deferredPrompt = null;
             installModal.classList.remove('show');
@@ -557,7 +530,7 @@
         window.addEventListener('load', () => {
             const isInstalled = isPWAInstalled();
             console.log('📱 Estado de instalación:', isInstalled ? 'Instalada' : 'No instalada');
-            
+
             if (isInstalled) {
                 installButton.classList.remove('show');
             }
