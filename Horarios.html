@@ -15,62 +15,48 @@
                  object-src 'none'; 
                  base-uri 'self'; 
                  form-action 'self'; 
-                 frame-ancestors 'none'; 
                  upgrade-insecure-requests;">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="referrer" content="no-referrer">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="./icon.svg">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2Z
-    yB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyI
-    j4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZEgiIHgxPSIwJSIgeTE9IjAlI
-    iB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3Rvc
-    C1jb2xvcjojMDAwMDAwO3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwM
-    CUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDAwMDA7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICA8L2xpbm
-    VhckdyYWRpZW50PgogIDwvZGVmcz4KICAKICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI
-    gcng9IjEwMCIgZmlsbD0idXJsKCNncmFkSCkiIC8+CiAgCiAgPHBhdGggZD0iTTI1NiA4MCBMNDYw
-    IDQzMCBMNTIgNDMwIFoiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuMSIgLz4KICAKICA8c
-    GF0aCBkPSJNIDE4MCAxNTAgTCAxODAgMzYyIE0gMzMyIDE1MCBMIDMzMiAzNjIgTSAxODAgMjU2IE
-    wgMzMyIDI1NiIgCiAgICAgICAgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI1MCIgc3Ryb2t
-    lLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIiAvPgo8
-    L3N2Zz4K">
     <title>Horarios</title>
     <style>
         :root {
             /* --- Variables de Color (Tema Claro) --- */
-            --bg-body: #f9fafb;
-            --bg-card: #ffffff;
-            --bg-header: rgba(255, 255, 255, 0.800);
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --text-inv: #ffffff;
-            --border: #e5e7eb;
-            --input-bg: #ffffff;
-            --input-focus: #272450;
-            --c-blue: #5382e6;
-            --c-green: #60ac94;
-            --c-red: #c05d76;
-            --c-purple: #8b5cf6;
-            --c-gold: #d6af66;
-            --c-gray-btn: #e7e7e7;
+            --bg-body: #ffffff;
+            --bg-card: #f0f4f9;
+            --bg-header: #ffffff;
+            --text-main: #1f1f1f;
+            --text-muted: #444746 --text-inv: #ffffff;
+            --border: #dde3ea;
+            --input-bg: #dde3ea;
+            --input-focus: #dde3ea;
+            --c-blue: rgba(76, 114, 172, 0.8);
+            --c-green: rgba(76, 172, 140, 0.8);
+            --c-red: rgba(172, 90, 76, 0.8);
+            --c-purple: rgba(129, 76, 172, 0.8);
+            --c-gold: rgba(172, 155, 76, 0.8);
+            --c-gray-btn: #dde3ea;
             --c-white: #ffffff;
+            --hover: #989ca0;
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --radius: 10px;
+            --radius: 20px;
         }
 
         body.dark-mode {
             /* --- Variables de Color (Tema Oscuro) --- */
-            --bg-body: #000000;
-            --bg-card: #0f141b;
-            --bg-header: rgba(0, 0, 0, 0.5);
-            --text-main: #f9fafb;
-            --text-muted: #d1d5db;
-            --border: #1f2836;
-            --input-bg: #1f2836;
-            --input-focus: #1f2836;
-            --c-gray-btn: #1f2836;
+            --bg-body: #131314;
+            --bg-card: #1e1f20;
+            --bg-header: #131314f6;
+            --text-main: #e3e3e3;
+            --text-muted: #b4b4b4;
+            --border: #313333;
+            --input-bg: #313333;
+            --input-focus: #313333;
+            --c-gray-btn: #313333;
+            --hover: #696e6d;
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
@@ -103,7 +89,7 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 0.5rem;
         }
 
         .header {
@@ -134,7 +120,7 @@
         .modal-content {
             background: var(--bg-card);
             border-radius: var(--radius);
-            padding: 1.5rem 1rem;
+            padding: 1.5rem 0.5rem;
             margin-bottom: 1rem;
             box-shadow: var(--shadow);
             color: var(--text-main);
@@ -158,54 +144,31 @@
             margin-bottom: 0;
         }
 
-        @media (min-width: 1024px) {
-            .container {
-                display: grid;
-                grid-template-columns: minmax(350px, 1fr) minmax(400px, 1fr);
-                gap: 1rem;
-                align-items: start;
-            }
-
-            .left-column {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .right-column {
-                position: sticky;
-                top: 4.5rem;
-            }
-
-            #lista-registros {
-                max-height: 1100px;
-                overflow-y: auto;
-                padding: 0.5rem;
-                scrollbar-gutter: stable;
-
-            }
-        }
-
         /* --- Scrollbar Reutilizable (Clase Utilitaria) --- */
         .custom-scroll {
             overflow-y: auto;
             overflow-x: hidden;
         }
 
-        .custom-scroll::-webkit-scrollbar {
+        .custom-scroll::-webkit-scrollbar,
+        .perfil-list-container::-webkit-scrollbar {
             width: 8px;
         }
 
-        .custom-scroll::-webkit-scrollbar-track {
+        .custom-scroll::-webkit-scrollbar-track,
+        .perfil-list-container::-webkit-scrollbar-track {
             background: var(--bg-body);
             border-radius: var(--radius);
         }
 
-        .custom-scroll::-webkit-scrollbar-thumb {
+        .custom-scroll::-webkit-scrollbar-thumb,
+        .perfil-list-container::-webkit-scrollbar-thumb {
             background: var(--border);
             border-radius: var(--radius);
         }
 
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
+        .custom-scroll::-webkit-scrollbar-thumb:hover,
+        .perfil-list-container::-webkit-scrollbar-thumb:hover {
             background: var(--text-muted);
         }
 
@@ -227,6 +190,7 @@
         /* --- Formularios --- */
         .form-group {
             margin-bottom: 1rem;
+
         }
 
         label {
@@ -234,7 +198,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 0.25rem;
+            margin: 0 0 0.25rem 0.5rem;
             transition: opacity 0.3s ease, transform 0.3s ease, color 0.3s ease;
             min-height: 1.2em;
             line-height: 1.2;
@@ -340,7 +304,7 @@
         /* Variantes de botones */
 
         .btn-register {
-            width: 70%;
+            width: auto;
             padding: 17px;
             margin: -17px;
             background: transparent;
@@ -392,26 +356,8 @@
             gap: 0.75rem;
         }
 
-        /* --- Hovers de botones --- */
-
-        @media (hover: hover) and (pointer: fine) {
-
-            .icon-btn:hover:not(:disabled),
-            .time-btn:hover:not(:disabled),
-            .btn-increment:hover:not(:disabled),
-            .filter-btn:hover:not(:disabled),
-            .btn-delete:hover:not(:disabled),
-            .btn-cancel:hover:not(:disabled),
-            .btn-export:hover:not(:disabled),
-            .btn-backup:hover:not(:disabled),
-            .btn-edit:hover:not(:disabled),
-            .registro-item:hover,
-            .header-profile-btn:hover,
-            .btn-perfil-select:hover,
-            .day-checkbox:hover span,
-            .btn-perfil-edit:hover {
-                border: 1px solid var(--text-main);
-            }
+        .config-actions>label {
+            margin-bottom: -0.5rem;
         }
 
         /* --- Stats & Progreso --- */
@@ -500,7 +446,6 @@
         }
 
         /* --- Lista de Registros --- */
-
         .registro-item {
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -629,6 +574,7 @@
             gap: 0.75rem;
             white-space: pre-line;
             pointer-events: none;
+            backdrop-filter: blur(3px);
         }
 
         .toast.show {
@@ -780,12 +726,6 @@
             margin-top: 1rem;
         }
 
-        @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         /* --- Colapso de formulario --- */
         .form-collapsible {
             max-height: 0;
@@ -911,12 +851,7 @@
             max-width: 160px;
         }
 
-        @media (min-width: 500px) {
 
-            .header-profile-btn {
-                max-width: 300px;
-            }
-        }
 
         .header-profile-btn span {
             white-space: nowrap;
@@ -934,25 +869,6 @@
             overflow-y: auto;
             overflow-x: hidden;
             padding: 5px;
-        }
-
-        /* estilos personalizados de scrollbar en selector perfil */
-        .perfil-list-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .perfil-list-container::-webkit-scrollbar-track {
-            background: var(--bg-body);
-            border-radius: var(--radius);
-        }
-
-        .perfil-list-container::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: var(--radius);
-        }
-
-        .perfil-list-container::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
         }
 
         .btn-perfil-select {
@@ -1045,13 +961,16 @@
         .week-selector {
             display: flex;
             justify-content: space-between;
-            gap: 5px;
+            gap: 1px;
             margin-bottom: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .day-checkbox {
             position: relative;
             cursor: pointer;
+            flex: 1 1 0;
+            min-width: 0;
         }
 
         .day-checkbox input {
@@ -1066,7 +985,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 38px;
+            width: 100%;
             height: 38px;
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -1109,6 +1028,70 @@
         /* Animación de feedback en inputs de registro */
         .input-agregado-animacion {
             animation: fade-blur 0.5s ease-out forwards;
+        }
+
+        /* moviles */
+        @media (min-width: 500px) {
+            .header-profile-btn {
+                max-width: 300px;
+            }
+        }
+
+        /* --- Hovers de botones --- */
+        @media (hover: hover) and (pointer: fine) {
+
+            .icon-btn:hover:not(:disabled),
+            .time-btn:hover:not(:disabled),
+            .btn-increment:hover:not(:disabled),
+            .filter-btn:hover:not(:disabled),
+            .btn-delete:hover:not(:disabled),
+            .btn-cancel:hover:not(:disabled),
+            .btn-export:hover:not(:disabled),
+            .btn-backup:hover:not(:disabled),
+            .btn-edit:hover:not(:disabled),
+            .registro-item:hover,
+            .header-profile-btn:hover,
+            .btn-perfil-select:hover,
+            .day-checkbox:hover span,
+            .btn-perfil-edit:hover {
+                border: 1px solid var(--hover);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                display: grid;
+                grid-template-columns: minmax(350px, 1fr) minmax(400px, 1fr);
+                gap: 1.5rem;
+                align-items: start;
+                padding: 1.5rem;
+            }
+
+            .left-column {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .right-column {
+                position: sticky;
+                top: 4.5rem;
+            }
+
+            #lista-registros {
+                max-height: 1100px;
+                overflow-y: auto;
+                padding-right: 0.5rem;
+                scrollbar-gutter: stable;
+            }
+
+            .card,
+            .modal-content {
+                padding: 1.5rem 1rem 1.5rem 1rem;
+            }
+
+            .week-selector {
+                gap: 5px;
+            }
         }
     </style>
 </head>
@@ -1259,14 +1242,6 @@
             <line x1="12" y1="5" x2="12" y2="19" class="icon-line" stroke="currentColor"></line>
             <line x1="5" y1="12" x2="19" y2="12" class="icon-line" stroke="currentColor"></line>
         </symbol>
-        <symbol id="icon-coffee" viewBox="0 0 24 24">
-            <path d="M18 8h1a4 4 0 0 1 0 8h-1" class="icon-line" stroke="currentColor" fill="none"></path>
-            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" class="icon-line" stroke="currentColor" fill="none">
-            </path>
-            <line x1="6" y1="1" x2="6" y2="4" class="icon-line" stroke="currentColor"></line>
-            <line x1="10" y1="1" x2="10" y2="4" class="icon-line" stroke="currentColor"></line>
-            <line x1="14" y1="1" x2="14" y2="4" class="icon-line" stroke="currentColor"></line>
-        </symbol>
         <symbol id="icon-chevron-down" viewBox="0 0 24 24">
             <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor" stroke-width="2" fill="none">
             </polyline>
@@ -1295,7 +1270,7 @@
             <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
             <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
         </symbol>
-        <symbol id="icon-salida-puerta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        <symbol id="icon-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
@@ -1347,9 +1322,9 @@
                 <h2 class="no-margin"
                     style="display: flex; justify-content: center; align-items: center; position: relative;">
                     <button class="filter-btn timer-btn" id="btn-timer-main" onclick="UILogic.toggleTimerBreakMain()"
-                        style="padding: 0.5rem; position: absolute; left: 0px; ">
+                        style="padding: 0.5rem; position: absolute; left: 0px">
                         <svg class="icon">
-                            <use href="#icon-coffee" />
+                            <use href="#icon-exit" />
                         </svg>
                     </button>
                     <button onclick="UILogic.ejecutarAccionRegistro()" id="btn-agregar" class="btn-register">
@@ -1370,8 +1345,8 @@
                             <label>Fecha</label>
                             <div class="input-with-btn">
                                 <input type="date" id="fecha" />
-                                <button class="time-btn" onclick="UILogic.toggleModoLote()" title="Registrar lote"
-                                    style="flex-shrink: 0;">
+                                <button class="time-btn" onclick="UILogic.toggleModoLote()"
+                                    title="Ir al modo lote/especial" style="flex-shrink: 0;">
                                     <svg class="icon">
                                         <use href="#icon-calendar-simple" />
                                     </svg>
@@ -1421,7 +1396,7 @@
                                     <option value="capacitacion">📚 Capacitación (17:17)</option>
                                     <option value="normal">🕒 Normales (borrar)</option>
                                 </select>
-                                <button class="time-btn" onclick="UILogic.toggleModoLote()" title="Volver a modo normal"
+                                <button class="time-btn" onclick="UILogic.toggleModoLote()" title="Ir al modo normal"
                                     style="flex-shrink: 0;">
                                     <svg class="icon">
                                         <use href="#icon-undo" />
@@ -1475,7 +1450,7 @@
                             <label>Período</label>
                             <select id="select-mes-stats" onchange="UILogic.cambiarMesStats()"></select>
                         </div>
-                        <div class="stats-grid" style="padding-right: 0.5rem;">
+                        <div class="stats-grid">
                             <div class="stat-item">
                                 <div class="stat-label">Jornadas</div>
                                 <div class="stat-value" id="stat-dias-trabajados">0</div>
@@ -1517,6 +1492,10 @@
                                 <div class="stat-value" id="stat-compensaciones">0</div>
                             </div>
                             <div class="stat-item">
+                                <div class="stat-label">Tiempo Total</div>
+                                <div class="stat-value" id="stat-tiempo-total">0h 0m</div>
+                            </div>
+                            <div class="stat-item">
                                 <div class="stat-label">Tiempo Fuera</div>
                                 <div class="stat-value" id="stat-tiempo-fuera-total">0h 0m</div>
                             </div>
@@ -1534,7 +1513,7 @@
                             </div>
                             <div style="grid-column: 1 / -1; height: 1px; background: var(--border); margin: 0.5rem 0;">
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item" style="grid-column: 1 / -1">
                                 <div class="stat-label">Semana Pasada</div>
                                 <div class="stat-value" id="stat-semana-pasada">0h 0m</div>
                             </div>
@@ -1600,7 +1579,7 @@
                     </svg>
                     Ajustes
                 </span>
-                <span class="version-text">LUSHIBOSCA-7.33</span>
+                <span class="version-text">LUSHIBOSCA-7.35</span>
             </h3>
             <div class="form-group">
                 <label>Horas Diarias</label>
@@ -1649,6 +1628,18 @@
                 </div>
                 <div id="config-total-feedback" class="config-hint-text">(Total semanal: --hs)</div>
             </div>
+            <div class="form-group">
+                <label>Agregar Nuevo Perfil</label>
+                <div class="input-with-btn">
+                    <input type="text" id="nombre-nuevo-perfil-selector" placeholder="Nombre del perfil..."
+                        maxlength="30" />
+                    <button class="time-btn" onclick="UILogic.crearPerfilDesdeSelector()" title="Crear perfil">
+                        <svg class="icon">
+                            <use href="#icon-plus" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
             <div class="config-actions">
                 <label>Registros</label>
                 <button class="btn-backup" onclick="UILogic.mostrarImportar()">
@@ -1679,8 +1670,8 @@
 
                 <button class="btn-delete" onclick="UILogic.cerrarConfig()">
                     <svg class="icon">
-                        <use href="#icon-cancelar" />
-                    </svg> Cancelar
+                        <use href="#icon-undo" />
+                    </svg> Volver
                 </button>
             </div>
         </div>
@@ -1731,17 +1722,15 @@
                 <label>Tiempo Fuera</label>
                 <div class="input-with-btn">
                     <input type="text" id="edit-tiempo-fuera" inputmode="numeric" maxlength="5" />
-
                     <button class="time-btn" onclick="UILogic.limpiarCampo('edit-tiempo-fuera')" title="Limpiar">
                         <svg class="icon">
                             <use href="#icon-broom" />
                         </svg>
                     </button>
-
                     <button id="btn-toggle-credito" class="time-btn" onclick="UILogic.toggleCredito()"
                         style="margin-left: 5px;" title="(Compensación/Asueto)">
                         <svg class="icon">
-                            <use href="#icon-salida-puerta" />
+                            <use href="#icon-exit" />
                         </svg>
                     </button>
                 </div>
@@ -1908,18 +1897,7 @@
             </h3>
             <div id="lista-perfiles-botones" class="perfil-list-container">
             </div>
-            <div class="form-group" style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-                <label>Agregar Nuevo Perfil</label>
-                <div class="input-with-btn">
-                    <input type="text" id="nombre-nuevo-perfil-selector" placeholder="Nombre del perfil..."
-                        maxlength="30" />
-                    <button class="time-btn" onclick="UILogic.crearPerfilDesdeSelector()" title="Crear perfil">
-                        <svg class="icon">
-                            <use href="#icon-plus" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
+
             <div class="btn-group">
                 <button class="btn-edit" onclick="UILogic.mostrarconfig()" style="flex: 1;">
                     <svg class="icon">
@@ -2617,7 +2595,7 @@
                     if (currentIndex > 0) {
                         currentIndex--;
                         updateButtons();
-                        saveToLocalStorage(); // ← LÍNEA NUEVA
+                        saveToLocalStorage();
                         const estado = deepClone(history[currentIndex]);
                         return estado;
                     }
@@ -2628,7 +2606,7 @@
                     if (currentIndex < history.length - 1) {
                         currentIndex++;
                         updateButtons();
-                        saveToLocalStorage(); // ← LÍNEA NUEVA
+                        saveToLocalStorage();
                         const estado = deepClone(history[currentIndex]);
                         return estado;
                     }
@@ -2986,7 +2964,7 @@
 
                     if (diffDays > 60) {
                         UILogic.mostrarToast(
-                            `El rango contiene ${diffDays} días.\nMáximo: 60 días por operación.`,
+                            `El rango contiene ${diffDays} días.\n Máximo: 60 días por operación.`,
                             'error'
                         );
                         btnGuardar.disabled = false;
@@ -3038,7 +3016,7 @@
                             .join(', ');
 
                         UILogic.mostrarToast(
-                            `Conflicto en día(s): ${diasConflicto}\nYa existen registros en esas fechas.`,
+                            `Conflicto en día(s): ${diasConflicto}\n Ya existen registros en esas fechas.`,
                             'error'
                         );
                         btnGuardar.disabled = false;
@@ -3472,10 +3450,10 @@
                             if (timerDetenido && usaHoraActual) {
                                 // Caso: Salida con hora actual Y timer activo
                                 const tiempoFuera = registroExistente.tiempoFuera || '00:00';
-                                mensaje = `Salida registrada con hora actual\n⏱️ Descanso finalizado: +${tiempoFuera}\n(entrada: ${registroExistente.entrada})`;
+                                mensaje = `Salida registrada con hora actual \n⏱️ Descanso finalizado: +${tiempoFuera} \n(entrada: ${registroExistente.entrada})`;
                             } else if (usaHoraActual) {
                                 // Caso: Salida con hora actual SIN timer
-                                mensaje = `Salida registrada con hora actual\n(entrada: ${registroExistente.entrada})`;
+                                mensaje = `Salida registrada con hora actual \n(entrada: ${registroExistente.entrada})`;
                             } else {
                                 // Caso: Salida manual
                                 mensaje = `Salida ${s} agregada\n(entrada: ${registroExistente.entrada})`;
@@ -5227,6 +5205,7 @@
                             diasTrabajados: 0,
                             promedioDiario: '--:--',
                             tiempoFueraTotal: `--:--`,
+                            tiempoTotal: '0h 0m',
                             semanaPasada: '--:--',
                             feriados: feriados,
                             ausencias: ausencias,
@@ -5342,17 +5321,22 @@
                                 );
 
                                 const label = (cant === 1 && tipoObj) ? tipoObj.label : tipoPlural;
-                                return `${cant} ${label.toLowerCase()}`;
+                                const diasTexto = cant === 1 ? 'dia de' : 'dias de';
+                                return `${cant} ${diasTexto} ${label.toLowerCase()}`;
                             })
                             .join(', ');
                         textoSemanaPasada += ` [${detalles}]`;
                     }
+                    const hTotal = Math.floor(totalHoras);
+                    const mTotal = Math.round((totalHoras - hTotal) * 60);
+
                     return {
                         entradaPromedio: `${String(hEntrada).padStart(2, '0')}:${String(mEntrada).padStart(2, '0')}`,
                         salidaPromedio: `${String(hSalida).padStart(2, '0')}:${String(mSalida).padStart(2, '0')}`,
                         diasTrabajados: registrosValidos.length,
                         promedioDiario: `${hPromedio}h ${mPromedio}m`,
                         tiempoFueraTotal: `${hTiempoFuera}h ${mTiempoFuera}m`,
+                        tiempoTotal: `${hTotal}h ${mTotal}m`,
                         semanaPasada: textoSemanaPasada,
                         feriados: feriados,
                         ausencias: ausencias,
@@ -5398,6 +5382,7 @@
                     const elPromedio = $('stat-promedio-diario');
                     const elSemanaPasada = $('stat-semana-pasada');
                     const elTiempoFueraTotal = $('stat-tiempo-fuera-total');
+                    const elTiempoTotal = $('stat-tiempo-total');
                     const elFeriados = $('stat-feriados');
                     const elAusencias = $('stat-ausencias');
                     const elVacaciones = $('stat-vacaciones');
@@ -5414,6 +5399,7 @@
                     if (elPromedio) elPromedio.textContent = stats.promedioDiario;
                     if (elSemanaPasada) elSemanaPasada.textContent = stats.semanaPasada;
                     if (elTiempoFueraTotal) elTiempoFueraTotal.textContent = stats.tiempoFueraTotal;
+                    if (elTiempoTotal) elTiempoTotal.textContent = stats.tiempoTotal;
 
                     // Ocultar/Mostrar items según valor
                     const toggleStatItem = (element, value) => {
@@ -5510,7 +5496,7 @@
                         // Solo mostrar buffer si hay horas configuradas, hay diferencia y la semana no terminó
                         if (horasDiarias > 0 && Math.abs(bufferSemanal) > 0.01 && semanaAbierta) {
                             const esPositivo = bufferSemanal > 0;
-                            const bufferColor = esPositivo ? '#60ac94' : '#c05d76';
+                            const bufferColor = esPositivo ? 'var(--c-green)' : 'var(--c-red)';
                             const bufferTextoHoras = horasATexto(Math.abs(bufferSemanal));
                             const bufferLabel = esPositivo ? 'extras' : 'faltantes';
 
@@ -6095,7 +6081,9 @@
                 }
 
                 function cerrarConfig() {
-                    ModalManager.cerrar('modal-config');
+                    ModalManager.cerrar('modal-config', () => {
+                        UILogic.abrirSelectorPerfiles();
+                    });
                 }
 
                 function cerrarEdicion() {
@@ -6125,6 +6113,8 @@
                             btnReemplazar.disabled = true;
                             btnReemplazar.style.opacity = '0.5';
                         }
+                        // Abrir selector de archivo automáticamente al abrir el modal
+                        setTimeout(() => $('file-import').click(), 50);
                     });
                 }
 
@@ -6618,7 +6608,7 @@ Generado por Sistema Horarios
                         btn.classList.add('running');
                         btn.style.color = 'var(--c-red)';
                         btn.style.borderColor = 'var(--c-red)';
-                        icon.setAttribute('href', '#icon-coffee');
+                        icon.setAttribute('href', '#icon-exit');
 
                         if (card) {
                             card.classList.add('timer-running');
@@ -6633,7 +6623,7 @@ Generado por Sistema Horarios
                             const contexto = vistaActual === 'semana' ? 'Esta Semana' : 'Hoy';
 
                             if (titulo) {
-                                titulo.innerHTML = `${icono} ${contexto} - <svg class="icon"><use href="#icon-coffee"/></svg> Tiempo fuera`;
+                                titulo.innerHTML = `${icono} ${contexto} - <svg class="icon"><use href="#icon-exit"/></svg> Tiempo fuera`;
                             }
                         }
 
@@ -6642,7 +6632,7 @@ Generado por Sistema Horarios
                         btn.classList.remove('running');
                         btn.style.color = 'var(--text-main)';
                         btn.style.borderColor = 'var(--border)';
-                        icon.setAttribute('href', '#icon-coffee');
+                        icon.setAttribute('href', '#icon-exit');
 
                         if (card) card.classList.remove('timer-running');
                     }
@@ -6842,7 +6832,7 @@ Generado por Sistema Horarios
                     const regexSeguro = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\-_ ]+$/;
 
                     if (!regexSeguro.test(nombre)) {
-                        mostrarToast('El nombre contiene caracteres no válidos.\nSolo letras, números y espacios.', 'error');
+                        mostrarToast('El nombre contiene caracteres no válidos.\n Solo letras, números y espacios.', 'error');
                         return;
                     }
 
@@ -8573,11 +8563,13 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.33
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.35
     // ====================================================================
     
      - CAMBIOS:
-    1) Se cambia el icono de la app //ACTUALIZAR SW Y MANIFEST// 
+    1) Se agrega stat-item tiempo total
+    2) modificacion del grid de "semana pasada"
+    3) al tocar el boton importar o restaurar, abre directamente el selector de archivo
 
 
      - BUGS MENORES CONOCIDOS:
