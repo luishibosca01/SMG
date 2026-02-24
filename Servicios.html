@@ -28,37 +28,37 @@
     <style>
         :root {
             /* --- Variables de Color (Tema Claro) --- */
-            --bg-body: #f9fafb;
-            --bg-card: #ffffff;
-            --bg-header: rgba(255, 255, 255, 0.800);
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
+            --bg-body: #ffffff;
+            --bg-card: #f0f4f9;
+            --bg-header: #ffffff;
+            --text-main: #1f1f1f;
+            --text-muted: #444746;
             --text-inv: #ffffff;
-            --border: #e5e7eb;
-            --input-bg: #ffffff;
-            --input-focus: #272450;
-            --c-blue: #5382e6;
-            --c-green: #60ac94;
-            --c-red: #c05d76;
-            --c-purple: #8b5cf6;
-            --c-gold: #d6af66;
-            --c-gray-btn: #e7e7e7;
+            --border: #dde3ea;
+            --input-bg: #dde3ea;
+            --input-focus: #dde3ea;
+            --c-blue: rgba(76, 114, 172, 0.8);
+            --c-green: rgba(76, 172, 140, 0.8);
+            --c-red: rgba(172, 90, 76, 0.8);
+            --c-purple: rgba(129, 76, 172, 0.8);
+            --c-gold: rgba(172, 155, 76, 0.8);
+            --c-gray-btn: #dde3ea;
             --c-white: #ffffff;
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --radius: 10px;
+            --radius: 20px;
         }
 
         body.dark-mode {
             /* --- Variables de Color (Tema Oscuro) --- */
-            --bg-body: #000000;
-            --bg-card: #0f141b;
-            --bg-header: rgba(0, 0, 0, 0.5);
-            --text-main: #f9fafb;
-            --text-muted: #d1d5db;
-            --border: #1f2836;
-            --input-bg: #1f2836;
-            --input-focus: #1f2836;
-            --c-gray-btn: #1f2836;
+            --bg-body: #131314;
+            --bg-card: #1e1f20;
+            --bg-header: #131314f6;
+            --text-main: #e3e3e3;
+            --text-muted: #b4b4b4;
+            --border: #313333;
+            --input-bg: #313333;
+            --input-focus: #313333;
+            --c-gray-btn: #313333;
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
@@ -105,7 +105,6 @@
 
         .header {
             background: var(--bg-header);
-            backdrop-filter: blur(10px);
             padding: 0 0.6rem;
             box-shadow: var(--shadow);
             position: sticky;
@@ -143,7 +142,16 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
         }
 
         .icon-btn.transparent {
@@ -151,7 +159,8 @@
             border: none;
         }
 
-        .icon-btn:active {
+        .icon-btn:active,
+        .search-clear:active {
             transform: scale(0.95);
         }
 
@@ -235,14 +244,15 @@
             position: fixed;
             bottom: 3rem;
             right: 2rem;
-            box-shadow: 0 0 5px 2px rgba(106, 159, 252, 0.5);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
             z-index: 110;
             animation: slideUp 1s ease-in-out 1;
+            backdrop-filter: blur(3px);
         }
 
         .btn-add.modo-calculadora {
             background: var(--c-red);
-            box-shadow: 0 0 5px 2px rgba(252, 106, 106, 0.5);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 
         }
 
@@ -286,35 +296,15 @@
             position: relative;
         }
 
-        .servicio-item:active {
+        .servicio-item:active,
+        .facturas-grupo-header:active {
             transform: scale(0.99);
-        }
-
-        .servicio-item[class*="vencido"],
-        .servicio-item[class*="urgente"] {
-            border-left: 4px solid var(--c-red);
-        }
-
-        .servicio-item[class*="lejano"] {
-            border-left: 4px solid var(--c-blue);
-        }
-
-        .servicio-item[class*="proximo"] {
-            border-left: 4px solid var(--c-gold);
-        }
-
-        .servicio-item[class*="pagado"] {
-            border-left: 4px solid var(--c-green);
-        }
-
-        .servicio-item[class*="sin-facturas"] {
-            border-left: 4px solid var(--c-purple);
         }
 
         .servicio-nombre {
             font-size: 1.1rem;
-            margin-bottom: 0.5rem;
             font-weight: 600;
+            padding-bottom: 0.5rem;
         }
 
         .servicio-info {
@@ -326,7 +316,7 @@
         }
 
         .servicio-monto {
-            color: var(--text-main);
+            color: var(--text-muted);
             font-size: 1rem;
         }
 
@@ -335,13 +325,13 @@
         }
 
         .servicio-estado {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius);
             font-size: 0.75rem;
-            font-weight: 550;
-            margin-top: 0.5rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
             color: var(--c-white);
+            display: inline-block;
+            border-radius: var(--radius);
+            padding: .1rem 1rem .1rem 1rem;
         }
 
         .estado-vencido,
@@ -409,15 +399,6 @@
         .modal-header h3 {
             font-size: 1.2rem;
             color: var(--text-main);
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            width: auto;
-            padding: 0.5rem;
-            cursor: pointer;
-            color: var(--text-muted);
         }
 
         /* --- Formularios --- */
@@ -751,10 +732,6 @@
             color: var(--text-main);
         }
 
-        .btn-cerrar-menu:active {
-            transform: scale(0.98);
-        }
-
         .menu-version {
             text-align: center;
             font-size: 0.875rem;
@@ -779,7 +756,7 @@
             color: var(--c-white);
             padding: 1rem 1.5rem;
             border-radius: var(--radius);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transform: translateX(-50%) translateY(100px);
             transition: all 0.3s ease;
@@ -793,6 +770,7 @@
             max-width: 90%;
             min-width: 300px;
             text-align: center;
+            backdrop-filter: blur(3px);
         }
 
         .toast.show {
@@ -808,8 +786,7 @@
             background: var(--c-blue);
         }
 
-        .toast.error,
-        .toast.warning {
+        .toast.error {
             background: var(--c-red);
         }
 
@@ -854,12 +831,12 @@
         .resumen-valor {
             font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 0.25rem;
             color: var(--text-main);
         }
 
         .resumen-label {
             color: var(--text-muted);
+            margin-top: 1rem;
         }
 
         /* Estilos base de resumen-monto SIN borde */
@@ -867,11 +844,10 @@
             border-radius: var(--radius);
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .resumen-monto:active {
-            transform: scale(0.98);
+            transition: opacity 0.3s;
+            min-height: 13.5rem;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Barra de progreso en resumen */
@@ -950,6 +926,10 @@
             text-align: right;
         }
 
+        .resumen-footer {
+            margin-top: auto;
+        }
+
         .resumen-monto .resumen-label {
             color: var(--text-muted);
             text-align: left;
@@ -962,10 +942,6 @@
         }
 
         /* Estadísticas Unificadas */
-        .estadisticas-selector-container {
-            margin-bottom: 1rem;
-        }
-
         .estadisticas-selector {
             width: 100%;
             background: var(--input-bg);
@@ -984,16 +960,13 @@
         .estadisticas-lista {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
         }
 
         /* --- Estilos Calculador --- */
-        .calculador-container,
-        .calculador-filtros,
         .calculador-campo {
             display: flex;
             flex-direction: column;
-            padding-bottom: 1rem;
+            padding-top: 1rem;
         }
 
         .calculador-label {
@@ -1007,15 +980,13 @@
         .calculador-resultados {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
         }
 
         .calculador-resultado-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.5rem;
+            padding-top: 1rem;
         }
 
         .calculador-resultado-valor {
@@ -1036,15 +1007,15 @@
 
         /* Variaciones de color */
         .factura-estado-pagado {
-            color: var(--c-green);
+            background: var(--c-green);
         }
 
         .factura-estado-vencido {
-            color: var(--c-red);
+            background: var(--c-red);
         }
 
         .factura-estado-pendiente {
-            color: var(--c-gold);
+            background: var(--c-gold);
         }
 
         .mensaje-sin-facturas {
@@ -1224,10 +1195,6 @@
             color: var(--text-main);
         }
 
-        .search-clear:active {
-            transform: scale(0.9);
-        }
-
         .search-clear .icon {
             width: 1.1rem;
             height: 1.1rem;
@@ -1235,8 +1202,9 @@
         }
 
         .icon-btn.pagada {
-            background: var(--c-green);
-            color: var(--text-main);
+            border-color: var(--c-green);
+            background: rgba(96, 172, 148, 0.1);
+            color: var(--c-green);
         }
 
         /* --- Grupos de Facturas por Año --- */
@@ -1252,10 +1220,6 @@
             margin: 0.25rem 1rem 0.25rem;
             transition: all 0.2s;
             justify-content: space-between;
-        }
-
-        .facturas-grupo-header:active {
-            transform: scale(0.98);
         }
 
         .facturas-grupo-header-info {
@@ -1339,7 +1303,7 @@
             left: 50%;
             transform: translateX(-50%);
             background: var(--c-blue);
-            color: white;
+            color: var(--text-main);
             padding: 1rem 1.5rem;
             border-radius: 50px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -1348,6 +1312,7 @@
             gap: 1rem;
             z-index: 998;
             animation: slideUp2 0.3s ease-out;
+            backdrop-filter: blur(3px);
         }
 
         .calculadora-total {
@@ -1355,25 +1320,97 @@
             font-weight: 700;
             min-width: 120px;
             text-align: center;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
         }
 
         .calculadora-contador {
             font-size: 0.85rem;
             opacity: 0.9;
             font-weight: 500;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
         }
 
         /* Servicio seleccionado para calcular */
         .servicio-item.calculando {
-            background: rgba(41, 151, 255, 0.5);
+            background: var(--c-blue);
         }
 
-        .estadistica-item {
-            display: flex;
-            justify-content: space-between;
+        /* Tarjeta resumen: monto USD como segunda línea, mismo tamaño */
+        .resumen-valor-usd {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: left;
+        }
+
+        /* Badge de moneda en lista de facturas */
+        .moneda-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            margin-left: 0.4rem;
+            vertical-align: middle;
+        }
+
+        .moneda-badge.usd {
+            color: var(--c-green);
+        }
+
+        .moneda-badge.ars {
+            color: var(--c-red);
+        }
+
+        .moneda-badge.contado {
+            color: var(--c-blue);
+        }
+
+        .moneda-badge.credito {
+            color: var(--c-gold);
+        }
+
+        /* Botón toggle de moneda en modales */
+        .icon-btn.activo-usd {
+            color: var(--c-green) !important;
+            border-color: var(--c-green) !important;
+        }
+
+        .icon-btn:not(.activo-usd)[id*="moneda"] {
+            color: var(--c-red) !important;
+            border-color: var(--c-red) !important;
+        }
+
+        .categoria-tag {
+            display: inline-flex;
             align-items: center;
-            padding: 0.5rem 1rem;
-            /* Opcional: línea divisoria */
+            gap: 0.4rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .categoria-tag-del {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .categoria-tag-del:active {
+            color: var(--c-red);
+            transform: scale(0.9);
         }
 
         /* moviles */
@@ -1499,6 +1536,12 @@
         <symbol id="icon-dollar" viewBox="0 0 24 24">
             <line x1="12" y1="1" x2="12" y2="23" class="icon-line" stroke="currentColor"></line>
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" class="icon-line" stroke="currentColor"></path>
+        </symbol>
+        <symbol id="icon-cash" viewBox="0 0 24 24">
+            <rect x="2" y="6" width="20" height="12" rx="2" class="icon-line" stroke="currentColor"></rect>
+            <circle cx="12" cy="12" r="3" class="icon-line" stroke="currentColor"></circle>
+            <line x1="6" y1="6" x2="6" y2="18" class="icon-line" stroke="currentColor"></line>
+            <line x1="18" y1="6" x2="18" y2="18" class="icon-line" stroke="currentColor"></line>
         </symbol>
         <symbol id="icon-card" viewBox="0 0 24 24">
             <rect x="2" y="5" width="20" height="14" rx="2" class="icon-line" stroke="currentColor"></rect>
@@ -1688,6 +1731,13 @@
                 <span>Ingresos</span>
                 <span id="ingresos-indicator" style="margin-left: auto"></span>
             </div>
+            <div class="menu-item" id="menu-categorias">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 7h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 18h7v3H3zM3 3h7v3H3z" class="icon-line"
+                        stroke="currentColor" />
+                </svg>
+                <span>Categorías</span>
+            </div>
             <div class="menu-item" id="menu-informacion">
                 <svg class="icon">
                     <use href="#icon-info" />
@@ -1703,7 +1753,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Version 1.02</div> <!-- DeltaF -->
+            <div class="menu-version">Version 0.69</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -1857,6 +1907,7 @@
     <div class="calculadora-flotante" id="calculadora-flotante" style="display: none;">
         <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
             <div class="calculadora-total" id="calculadora-total">$0,00</div>
+            <div class="calculadora-total" id="calculadora-total-usd" style="display: none;"></div>
             <div class="calculadora-contador" id="calculadora-contador">0 facturas</div>
         </div>
     </div>
@@ -1903,6 +1954,20 @@
                     <input type="text" id="servicio-nombre" required placeholder="Ej: Internet, Luz, Agua"
                         maxlength="30">
                 </div>
+                <div class="form-group">
+                    <label for="servicio-categoria">Categoría</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <select id="servicio-categoria" style="flex: 1;">
+                            <option value="">Sin categoría</option>
+                        </select>
+                        <button type="button" class="icon-btn" title="Agregar categoría"
+                            onclick="app.abrirModalNuevaCategoria('servicio-categoria')" style="flex-shrink:0;">
+                            <svg class="icon">
+                                <use href="#icon-plus" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr;">
                     <button type="submit">
                         <svg class="icon">
@@ -1930,6 +1995,20 @@
                     <label for="editar-servicio-nombre">Nombre del servicio</label>
                     <input type="text" id="editar-servicio-nombre" required placeholder="Ej: Internet, Luz, Agua"
                         maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label for="editar-servicio-categoria">Categoría</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <select id="editar-servicio-categoria" style="flex: 1;">
+                            <option value="">Sin categoría</option>
+                        </select>
+                        <button type="button" class="icon-btn" title="Agregar categoría"
+                            onclick="app.abrirModalNuevaCategoria('editar-servicio-categoria')" style="flex-shrink:0;">
+                            <svg class="icon">
+                                <use href="#icon-plus" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr;">
                     <button type="submit">
@@ -1973,6 +2052,36 @@
         </div>
     </div>
 
+    <!-- Modal Nueva Categoría -->
+    <div class="modal" id="modal-nueva-categoria">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Categorías</h3>
+            </div>
+            <div class="form-group">
+                <label for="nueva-categoria-nombre">Nombre de categoría</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="nueva-categoria-nombre" placeholder="Ej: Hogar, Streaming, Salud"
+                        maxlength="30" style="flex:1;">
+                    <button type="button" class="icon-btn" onclick="app.guardarNuevaCategoria()" title="Agregar">
+                        <svg class="icon">
+                            <use href="#icon-plus" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="categorias-lista"
+                style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; min-height: 2rem;"></div>
+            <div class="form-actions2">
+                <button type="button" onclick="app.cerrarModalCategorias()">
+                    <svg class="icon">
+                        <use href="#icon-cancel" />
+                    </svg>Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Agregar Factura -->
     <div class="modal" id="modal-agregar-factura">
         <div class="modal-content">
@@ -1981,17 +2090,10 @@
             </div>
             <form id="form-factura">
                 <div class="form-group">
-                    <label for="factura-monto">Monto</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="number" id="factura-monto" required placeholder="$" step="0.01" style="flex: 1;">
-                        <button type="button" class="icon-btn" id="btn-toggle-negativo"
-                            onclick="app.toggleMontoNegativo('factura-monto')" title="Cambiar a saldo a favor">
-                            <svg class="icon" style="width: 1.5em; height: 1.5em;">
-                                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="18"
-                                    font-weight="bold" fill="currentColor">±</text>
-                            </svg>
-                        </button>
-                    </div>
+                    <label for="factura-servicio">Servicio</label>
+                    <select id="factura-servicio" required>
+                        <!-- Los servicios se cargarán dinámicamente -->
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="factura-tipo">Tipo de factura</label>
@@ -2003,10 +2105,22 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="factura-servicio">Servicio</label>
-                    <select id="factura-servicio" required>
-                        <!-- Los servicios se cargarán dinámicamente -->
-                    </select>
+                    <label for="factura-monto">Monto</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+                        <button type="button" class="icon-btn" id="btn-factura-moneda"
+                            onclick="app.toggleMoneda('factura-moneda','btn-factura-moneda')"
+                            title="Cambiar moneda">ARS</button>
+                        <input type="hidden" id="factura-moneda" value="ars">
+                        <input type="number" id="factura-monto" required placeholder="0,00" step="0.01"
+                            style="flex: 1;">
+                        <button type="button" class="icon-btn" id="btn-toggle-negativo"
+                            onclick="app.toggleMontoNegativo('factura-monto')" title="Cambiar a saldo a favor">
+                            <svg class="icon" style="width: 1.5em; height: 1.5em;">
+                                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="18"
+                                    font-weight="bold" fill="currentColor">±</text>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="factura-fecha">Fecha de vencimiento</label>
@@ -2023,6 +2137,12 @@
                     <label for="factura-fecha-pago">Fecha de pago</label>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="date" id="factura-fecha-pago" disabled style="flex: 1;">
+                        <button type="button" id="btn-toggle-credito" class="icon-btn" onclick="app.toggleConCredito()"
+                            title="Contado / Crédito" style="display:none;">
+                            <svg class="icon">
+                                <use href="#icon-cash" />
+                            </svg>
+                        </button>
                         <button type="button" id="btn-toggle-pagada" class="icon-btn" onclick="app.toggleEstadoPago()"
                             title="Marcar como pagada/no pagada">
                             <svg class="icon">
@@ -2031,6 +2151,7 @@
                         </button>
                     </div>
                 </div>
+                <input type="hidden" id="factura-con-credito" value="false">
                 <div class="form-actions">
                     <button type="submit"><svg class="icon">
                             <use href="#icon-save" />
@@ -2054,18 +2175,10 @@
             </div>
             <form id="form-editar-factura">
                 <div class="form-group">
-                    <label for="editar-factura-monto">Monto</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="number" id="editar-factura-monto" required placeholder="$" step="0.01"
-                            style="flex: 1;">
-                        <button type="button" class="icon-btn" id="btn-editar-toggle-negativo"
-                            onclick="app.toggleMontoNegativo('editar-factura-monto')" title="Cambiar a saldo a favor">
-                            <svg class="icon" style="width: 1.5em; height: 1.5em;">
-                                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="18"
-                                    font-weight="bold" fill="currentColor">±</text>
-                            </svg>
-                        </button>
-                    </div>
+                    <label for="editar-factura-servicio">Servicio</label>
+                    <select id="editar-factura-servicio" required>
+                        <!-- Los servicios se cargarán dinámicamente -->
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="editar-factura-tipo">Tipo de factura</label>
@@ -2077,10 +2190,22 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="editar-factura-servicio">Servicio</label>
-                    <select id="editar-factura-servicio" required>
-                        <!-- Los servicios se cargarán dinámicamente -->
-                    </select>
+                    <label for="editar-factura-monto">Monto</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+                        <button type="button" class="icon-btn" id="btn-editar-factura-moneda"
+                            onclick="app.toggleMoneda('editar-factura-moneda','btn-editar-factura-moneda')"
+                            title="Cambiar moneda">ARS</button>
+                        <input type="hidden" id="editar-factura-moneda" value="ars">
+                        <input type="number" id="editar-factura-monto" required placeholder="0,00" step="0.01"
+                            style="flex: 1;">
+                        <button type="button" class="icon-btn" id="btn-editar-toggle-negativo"
+                            onclick="app.toggleMontoNegativo('editar-factura-monto')" title="Cambiar a saldo a favor">
+                            <svg class="icon" style="width: 1.5em; height: 1.5em;">
+                                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="18"
+                                    font-weight="bold" fill="currentColor">±</text>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="editar-factura-fecha">Fecha de vencimiento</label>
@@ -2097,14 +2222,22 @@
                     <label for="editar-factura-fecha-pago">Fecha de pago</label>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <input type="date" id="editar-factura-fecha-pago" disabled style="flex: 1;">
+                        <button type="button" id="btn-editar-toggle-credito" class="icon-btn"
+                            onclick="app.toggleConCredito('editar')" title="Contado / crédito" style="display:none;">
+                            <svg class="icon">
+                                <use href="#icon-cash" />
+                            </svg>
+                        </button>
                         <button type="button" id="btn-editar-toggle-pagada" class="icon-btn"
-                            onclick="app.toggleEstadoPagoEditar()" title="Marcar como pagada/no pagada">
+                            onclick="app.toggleEstadoPago('btn-editar-toggle-pagada', 'editar-factura-fecha-pago')"
+                            title="Marcar como pagada/no pagada">
                             <svg class="icon">
                                 <use href="#icon-card" />
                             </svg>
                         </button>
                     </div>
                 </div>
+                <input type="hidden" id="editar-factura-con-credito" value="false">
                 <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                     <button type="submit"><svg class="icon">
                             <use href="#icon-save" />
@@ -2128,7 +2261,11 @@
     <div class="modal" id="modal-facturas-servicio">
         <div class="modal-content modal-facturas-content">
             <div class="modal-header modal-facturas-header">
-                <h3 id="modal-facturas-titulo"></h3>
+                <div>
+                    <h3 id="modal-facturas-titulo"></h3>
+                    <span id="modal-facturas-categoria"
+                        style="display:none; font-size:0.75rem; font-weight:600; color:var(--text-muted); background:var(--input-bg); border:1px solid var(--border); border-radius:var(--radius); padding:0.1rem 0.75rem; margin-top:0.25rem; display:inline-block;"></span>
+                </div>
                 <button class="icon-btn transparent" id="btn-editar-servicio-desde-modal"
                     onclick="app.editarServicioDesdeModal()" title="Editar servicio" style="margin-left: auto;">
                     <svg class="icon">
@@ -2191,7 +2328,14 @@
             <form id="form-ingreso">
                 <div class="form-group">
                     <label for="ingreso-monto">Monto</label>
-                    <input type="number" id="ingreso-monto" required placeholder="$" step="0.01" min="0">
+                    <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+                        <button type="button" class="icon-btn" id="btn-ingreso-moneda"
+                            onclick="app.toggleMoneda('ingreso-moneda','btn-ingreso-moneda')"
+                            title="Cambiar moneda">ARS</button>
+                        <input type="hidden" id="ingreso-moneda" value="ars">
+                        <input type="number" id="ingreso-monto" required placeholder="0,00" step="0.01" min="0"
+                            style="flex: 1;">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="ingreso-tipo">Tipo</label>
@@ -2236,7 +2380,14 @@
             <form id="form-editar-ingreso">
                 <div class="form-group">
                     <label for="editar-ingreso-monto">Monto</label>
-                    <input type="number" id="editar-ingreso-monto" required placeholder="$" step="0.01" min="0">
+                    <div style="display: flex; gap: 0.5rem; align-items: stretch;">
+                        <button type="button" class="icon-btn" id="btn-editar-ingreso-moneda"
+                            onclick="app.toggleMoneda('editar-ingreso-moneda','btn-editar-ingreso-moneda')"
+                            title="Cambiar moneda">ARS</button>
+                        <input type="hidden" id="editar-ingreso-moneda" value="ars">
+                        <input type="number" id="editar-ingreso-monto" required placeholder="0,00" step="0.01" min="0"
+                            style="flex: 1;">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="editar-ingreso-tipo">Tipo</label>
@@ -2483,6 +2634,8 @@
                 this.servicioActual = null;
                 this.facturaActual = null;
                 this.origenModalFactura = null; // 'menu' o 'servicio'
+                this._anoExpandidoFacturas = {};
+                this._anoExpandidoIngresos = {};
 
                 // Modo calculadora - NUEVO
                 this.modoCalculadora = false;
@@ -2528,11 +2681,6 @@
                 this.cargarDatosPerfilActivo();
 
                 this.init();
-            }
-
-            obtenerFechaLocal() {
-                const hoy = new Date();
-                return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
             }
 
             // ========================================
@@ -2963,7 +3111,8 @@
             actualizarCalculadora() {
                 if (!this.modoCalculadora) return;
 
-                let total = 0;
+                let totalARS = 0;
+                let totalUSD = 0;
                 let contadorFacturas = 0;
 
                 // Obtener fecha actual
@@ -2981,7 +3130,7 @@
 
                     // Calcular solo facturas pendientes del mes actual o siguiente
                     servicio.facturas.forEach(factura => {
-                        if (!factura.pagada && factura.monto > 0) {
+                        if (!factura.pagada && factura.monto > 0 && !factura.conCredito) {
                             // Obtener mes y año de la factura
                             const fechaFactura = new Date(factura.fecha + 'T00:00:00');
                             const mesFactura = fechaFactura.getMonth();
@@ -2996,14 +3145,28 @@
                             const esMesPasado = (mesFactura === mesPasado && anioFactura === anioPasado);
 
                             if (esMesActual || esMesSiguiente || esMesPasado) {
-                                total += factura.monto;
+                                if ((factura.moneda || 'ars') === 'usd') {
+                                    totalUSD += factura.monto;
+                                } else {
+                                    totalARS += factura.monto;
+                                }
                                 contadorFacturas++;
                             }
                         }
                     });
                 });
 
-                document.getElementById('calculadora-total').textContent = this.formatearMoneda(total);
+                // Mostrar ARS (siempre visible, aunque sea $0)
+                document.getElementById('calculadora-total').textContent = this.formatearMoneda(totalARS, 'ars');
+
+                // Mostrar USD solo si hay monto
+                const elUSD = document.getElementById('calculadora-total-usd');
+                if (totalUSD > 0) {
+                    elUSD.textContent = this.formatearMoneda(totalUSD, 'usd');
+                    elUSD.style.display = 'block';
+                } else {
+                    elUSD.style.display = 'none';
+                }
 
                 // Actualizar contador con plural correcto
                 const textoFacturas = contadorFacturas === 1 ? 'factura' : 'facturas';
@@ -3243,6 +3406,16 @@
                         return;
                     }
 
+                    // Enter en modal nueva categoría
+                    if (e.key === 'Enter') {
+                        const modalCat = document.getElementById('modal-nueva-categoria');
+                        if (modalCat?.classList.contains('active')) {
+                            e.preventDefault();
+                            this.guardarNuevaCategoria();
+                            return;
+                        }
+                    }
+
                     // Ctrl/Cmd + Z/Y para undo/redo
                     if (e.ctrlKey || e.metaKey) {
                         if (e.key === 'z' && !e.shiftKey) {
@@ -3253,6 +3426,11 @@
                             this.rehacer();
                         }
                     }
+                });
+
+                document.getElementById('menu-categorias').addEventListener('click', () => {
+                    this.cerrarMenuAjustes();
+                    this.abrirModalNuevaCategoria(null);
                 });
 
                 // Menu informacion
@@ -3332,65 +3510,69 @@
                 const mesActual = hoy.getMonth();
                 const añoActual = hoy.getFullYear();
 
-                let totalAPagar = 0;
-                let totalPagadoMes = 0;
-                let totalPagadoDelMesActual = 0;
-                let totalFacturasMesActual = 0;
+                let totalAPagarARS = 0, totalAPagarUSD = 0;
+                let totalPagadoMesARS = 0, totalPagadoMesUSD = 0;
+                let totalPagadoDelMesActualARS = 0, totalPagadoDelMesActualUSD = 0;
+                let totalFacturasMesActualARS = 0, totalFacturasMesActualUSD = 0;
 
                 this.servicios.filter(s => s.id !== this.SERVICIO_INGRESOS_ID).forEach(servicio => {
                     servicio.facturas.forEach(factura => {
                         const fechaFactura = new Date(factura.fecha + 'T00:00:00');
                         const mesFactura = fechaFactura.getMonth();
                         const añoFactura = fechaFactura.getFullYear();
-
                         const esDelMesActual = mesFactura === mesActual && añoFactura === añoActual;
+                        const moneda = factura.moneda || 'ars';
 
-                        // Calcular total del mes actual
+                        const excluir = factura.conCredito === true;
+
                         if (esDelMesActual) {
-                            if (factura.monto < 0) {
-                                return;
-                            }
-
-                            totalFacturasMesActual += factura.monto;
-
-                            if (!factura.pagada) {
-                                totalAPagar += factura.monto;
+                            if (factura.monto < 0) return;
+                            if (moneda === 'usd') {
+                                if (!excluir) totalFacturasMesActualUSD += factura.monto;
+                                if (!factura.pagada && !excluir) { totalAPagarUSD += factura.monto; }
+                                else if (factura.pagada && !excluir) { totalPagadoDelMesActualUSD += factura.monto; }
                             } else {
-                                // 👇 NUEVO: Contar pagos de facturas del mes actual
-                                totalPagadoDelMesActual += factura.monto;
+                                if (!excluir) totalFacturasMesActualARS += factura.monto;
+                                if (!factura.pagada && !excluir) { totalAPagarARS += factura.monto; }
+                                else if (factura.pagada && !excluir) { totalPagadoDelMesActualARS += factura.monto; }
                             }
                         }
 
-                        // Calcular pagado este mes (TODAS las facturas)
-                        if (factura.pagada && factura.fechaPago && factura.monto > 0) {
+                        if (factura.pagada && factura.fechaPago && factura.monto > 0 && !excluir) {
                             const fechaPago = new Date(factura.fechaPago + 'T00:00:00');
                             if (fechaPago.getMonth() === mesActual && fechaPago.getFullYear() === añoActual) {
-                                totalPagadoMes += factura.monto;
+                                if (moneda === 'usd') { totalPagadoMesUSD += factura.monto; }
+                                else { totalPagadoMesARS += factura.monto; }
                             }
                         }
                     });
                 });
 
-                // Guardar datos
                 this.datosResumen = {
-                    pendiente: totalAPagar,
-                    pagadoMes: totalPagadoMes,
-                    pagadoDelMesActual: totalPagadoDelMesActual,
-                    totalPeriodo: totalFacturasMesActual
+                    pendienteARS: totalAPagarARS,
+                    pendienteUSD: totalAPagarUSD,
+                    pagadoMesARS: totalPagadoMesARS,
+                    pagadoMesUSD: totalPagadoMesUSD,
+                    pagadoDelMesActualARS: totalPagadoDelMesActualARS,
+                    pagadoDelMesActualUSD: totalPagadoDelMesActualUSD,
+                    totalPeriodoARS: totalFacturasMesActualARS,
+                    totalPeriodoUSD: totalFacturasMesActualUSD,
+                    // Compatibilidad legacy (usa ARS para la barra de progreso)
+                    pendiente: totalAPagarARS + totalAPagarUSD,
+                    pagadoMes: totalPagadoMesARS,
+                    pagadoDelMesActual: totalPagadoDelMesActualARS,
+                    totalPeriodo: totalFacturasMesActualARS
                 };
 
-                // CARGAR el estado guardado ANTES de mostrar
                 const estadoGuardado = localStorage.getItem('resumen-mostrar-pagado');
                 this.mostrandoPagadoMes = estadoGuardado === 'true';
 
-                // Mostrar según estado actual
                 if (this.mostrandoPagadoMes) {
                     this.mostrarPagadoEnResumen();
                 } else {
                     this.mostrarPendienteEnResumen();
                 }
 
-                // Actualizar estadísticas
                 this.actualizarEstadisticas();
             }
 
@@ -3458,7 +3640,6 @@
             }
 
             mostrarPendienteEnResumen() {
-                // Establecer el estado ANTES de obtener el color
                 this.mostrandoPagadoMes = false;
 
                 const fechaHoy = new Date();
@@ -3467,65 +3648,63 @@
 
                 const colorBorde = this.obtenerColorBordeMasPrioritario();
 
-                // Calcular porcentaje de pago
-                const totalPagado = this.datosResumen.totalPeriodo - this.datosResumen.pendiente;
-                const porcentajePagado = this.datosResumen.totalPeriodo > 0
-                    ? (totalPagado / this.datosResumen.totalPeriodo) * 100
-                    : 0;
+                const totalARS = this.datosResumen.totalPeriodoARS || 0;
+                const totalUSD = this.datosResumen.totalPeriodoUSD || 0;
+                const pendienteARS = this.datosResumen.pendienteARS || 0;
+                const pendienteUSD = this.datosResumen.pendienteUSD || 0;
 
-                // Crear estado actual para comparación
+                const pagadoARS = totalARS - pendienteARS;
+                const porcentajePagado = totalARS > 0 ? (pagadoARS / totalARS) * 100 : (pendienteUSD === 0 ? 100 : 0);
+
                 const estadoActual = {
                     tipo: 'pendiente',
-                    valor: this.datosResumen.pendiente,
-                    porcentaje: porcentajePagado,
-                    colorBorde: colorBorde,
-                    fecha: fechaFormateada
+                    pendienteARS, pendienteUSD, porcentajePagado, colorBorde, fecha: fechaFormateada
                 };
 
-                // Verificar si cambió
-                const estadoCambio = !this.ultimoEstadoResumen ||
-                    JSON.stringify(this.ultimoEstadoResumen) !== JSON.stringify(estadoActual);
-
-                // Determinar si usar animación
+                const estadoCambio = this._objetosCambiaron(this.ultimoEstadoResumen, estadoActual);
                 const animacion = estadoCambio ? 'animation: slideDownFade 0.2s ease-out;' : '';
 
-                // DETERMINAR QUÉ MOSTRAR: "Al día" o el monto
-                const estaAlDia = this.datosResumen.pendiente === 0;
-                const valorMostrar = estaAlDia
-                    ? '<span style="font-size: 2rem;">😎 Al día</span>'
-                    : this.formatearMoneda(this.datosResumen.pendiente);
+                const estaAlDia = pendienteARS === 0 && pendienteUSD === 0;
+                const hayUSD = pendienteUSD > 0;
+                const hayARS = pendienteARS > 0;
+
+                let valorMostrar;
+                if (estaAlDia) {
+                    valorMostrar = '<span style="font-size: 2rem;">Al día</span>';
+                } else if (hayARS && hayUSD) {
+                    valorMostrar = `<div class="resumen-valor">${this.formatearMoneda(pendienteARS, 'ars')}</div>
+                        <div class="resumen-valor-usd">${this.formatearMoneda(pendienteUSD, 'usd')}</div>`;
+                } else if (hayUSD) {
+                    valorMostrar = this.formatearMoneda(pendienteUSD, 'usd');
+                } else {
+                    valorMostrar = this.formatearMoneda(pendienteARS, 'ars');
+                }
 
                 const resumenHTML = `
         <div class="resumen-monto" id="resumen-toggle" style="${animacion}">
             <div class="resumen-titulo">Resumen de Servicios</div>
-            <div class="resumen-valor">${valorMostrar}</div>
-            <div class="resumen-label">Pendiente de pago</div>
-            <div class="resumen-progreso">
-                <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
+            ${(hayARS && hayUSD) ? valorMostrar : `<div class="resumen-valor">${valorMostrar}</div>`}
+            <div class="resumen-footer">
+                <div class="resumen-label">Pendiente de pago</div>
+                <div class="resumen-progreso">
+                    <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
+                </div>
+                <div class="resumen-fecha">${fechaFormateada}</div>
             </div>
-            <div class="resumen-fecha">${fechaFormateada}</div>
         </div>
     `;
                 document.getElementById('resumen-mes').innerHTML = resumenHTML;
                 localStorage.setItem('resumen-mostrar-pagado', 'false');
-
-                // Guardar estado actual
                 this.ultimoEstadoResumen = estadoActual;
 
-                // Aplicar clase de borde a la CARD padre
                 const cardResumen = document.getElementById('resumen-mes').closest('.card');
                 if (cardResumen) {
-                    // Remover todas las clases de borde previas
                     cardResumen.classList.remove('borde-vencido', 'borde-urgente', 'borde-proximo', 'borde-lejano', 'borde-pagado');
-                    // Agregar la clase correspondiente
-                    if (colorBorde) {
-                        cardResumen.classList.add(colorBorde);
-                    }
+                    if (colorBorde) cardResumen.classList.add(colorBorde);
                 }
             }
 
             mostrarPagadoEnResumen() {
-                // Establecer el estado ANTES de obtener el color
                 this.mostrandoPagadoMes = true;
 
                 const fechaHoy = new Date();
@@ -3534,53 +3713,57 @@
 
                 const colorBorde = this.obtenerColorBordeMasPrioritario();
 
-                // Calcular porcentaje: pagado del mes actual / total del mes actual
-                const porcentajePagado = this.datosResumen.totalPeriodo > 0
-                    ? (this.datosResumen.pagadoDelMesActual / this.datosResumen.totalPeriodo) * 100
+                const totalARS = this.datosResumen.totalPeriodoARS || 0;
+                const pagadoMesARS = this.datosResumen.pagadoMesARS || 0;
+                const pagadoMesUSD = this.datosResumen.pagadoMesUSD || 0;
+                const pagadoDelMesActualARS = this.datosResumen.pagadoDelMesActualARS || 0;
+
+                const porcentajePagado = totalARS > 0
+                    ? (pagadoDelMesActualARS / totalARS) * 100
                     : 0;
 
-                // Crear estado actual para comparación
                 const estadoActual = {
                     tipo: 'pagado',
-                    valor: this.datosResumen.pagadoMes,
-                    porcentaje: porcentajePagado,
-                    colorBorde: colorBorde,
-                    fecha: fechaFormateada
+                    pagadoMesARS, pagadoMesUSD, porcentajePagado, colorBorde, fecha: fechaFormateada
                 };
 
-                // Verificar si cambió
-                const estadoCambio = !this.ultimoEstadoResumen ||
-                    JSON.stringify(this.ultimoEstadoResumen) !== JSON.stringify(estadoActual);
-
-                // Determinar si usar animación
+                const estadoCambio = this._objetosCambiaron(this.ultimoEstadoResumen, estadoActual);
                 const animacion = estadoCambio ? 'animation: slideDownFade 0.2s ease-out;' : '';
+
+                const hayUSD = pagadoMesUSD > 0;
+                const hayARS = pagadoMesARS > 0;
+
+                let valorMostrar;
+                if (hayARS && hayUSD) {
+                    valorMostrar = `<div class="resumen-valor">${this.formatearMoneda(pagadoMesARS, 'ars')}</div>
+                        <div class="resumen-valor-usd">${this.formatearMoneda(pagadoMesUSD, 'usd')}</div>`;
+                } else if (hayUSD) {
+                    valorMostrar = this.formatearMoneda(pagadoMesUSD, 'usd');
+                } else {
+                    valorMostrar = this.formatearMoneda(pagadoMesARS, 'ars');
+                }
 
                 const resumenHTML = `
         <div class="resumen-monto" id="resumen-toggle" style="${animacion}">
             <div class="resumen-titulo">Resumen de Pagos</div>
-            <div class="resumen-valor">${this.formatearMoneda(this.datosResumen.pagadoMes)}</div>
-            <div class="resumen-label">Pagado este mes</div>
-            <div class="resumen-progreso">
-                <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
+            ${(hayARS && hayUSD) ? valorMostrar : `<div class="resumen-valor">${valorMostrar}</div>`}
+            <div class="resumen-footer">
+                <div class="resumen-label">Pagado este mes</div>
+                <div class="resumen-progreso">
+                    <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
+                </div>
+                <div class="resumen-fecha">${fechaFormateada}</div>
             </div>
-            <div class="resumen-fecha">${fechaFormateada}</div>
         </div>
     `;
                 document.getElementById('resumen-mes').innerHTML = resumenHTML;
                 localStorage.setItem('resumen-mostrar-pagado', 'true');
-
-                // Guardar estado actual
                 this.ultimoEstadoResumen = estadoActual;
 
-                // Aplicar clase de borde a la CARD padre
                 const cardResumen = document.getElementById('resumen-mes').closest('.card');
                 if (cardResumen) {
-                    // Remover todas las clases de borde previas
                     cardResumen.classList.remove('borde-vencido', 'borde-urgente', 'borde-proximo', 'borde-lejano', 'borde-pagado');
-                    // Agregar la clase correspondiente
-                    if (colorBorde) {
-                        cardResumen.classList.add(colorBorde);
-                    }
+                    if (colorBorde) cardResumen.classList.add(colorBorde);
                 }
             }
 
@@ -3634,8 +3817,10 @@
                 let cantidadPendientes = 0;
                 let cantidadPagadas = 0;
                 let cantidadVencidas = 0;
-                let totalMes = 0;
-                let totalIngresos = 0;
+                let cantidadFacturasMes = 0;
+                let totalMesARS = 0, totalMesUSD = 0;
+                let totalPagadoMesARS = 0, totalPagadoMesUSD = 0;
+                let totalIngresosARS = 0, totalIngresosUSD = 0;
 
                 this.servicios.forEach(servicio => {
                     servicio.facturas.forEach(factura => {
@@ -3645,31 +3830,46 @@
 
                         // Solo contar facturas del mes seleccionado
                         if (mesFactura === mesSeleccionado && añoFactura === añoSeleccionado) {
+                            const moneda = factura.moneda || 'ars';
+
                             // Si es del servicio de ingresos, solo sumar al total de ingresos
                             if (servicio.id === this.SERVICIO_INGRESOS_ID) {
-                                totalIngresos += factura.monto;
+                                if (moneda === 'usd') totalIngresosUSD += factura.monto;
+                                else totalIngresosARS += factura.monto;
                                 return;
                             }
 
                             // Saldos a favor (negativos): cuentan como pagadas pero no suman al monto
                             if (factura.monto < 0) {
-                                cantidadPagadas++; // Se cuenta como factura pagada
-                                return; // No suma al monto total
+                                cantidadPagadas++;
+                                return;
                             }
 
                             // Facturas normales (positivas)
-                            totalMes += factura.monto;
+                            cantidadFacturasMes++;
+                            if (!factura.conCredito) {
+                                if (moneda === 'usd') totalMesUSD += factura.monto;
+                                else totalMesARS += factura.monto;
+                            }
 
-                            if (factura.pagada) {
-                                cantidadPagadas++;
-                            } else {
+                            if (!factura.pagada) {
                                 cantidadPendientes++;
-
-                                // Verificar si está vencida
                                 const vencimiento = new Date(factura.fecha + 'T00:00:00');
                                 vencimiento.setHours(0, 0, 0, 0);
-                                if (vencimiento < hoy) {
-                                    cantidadVencidas++;
+                                if (vencimiento < hoy) cantidadVencidas++;
+                            }
+                        }
+
+                        // Pagado en este mes por fecha de pago (sin importar el vencimiento)
+                        if (factura.pagada && factura.fechaPago && factura.monto > 0
+                            && servicio.id !== this.SERVICIO_INGRESOS_ID) {
+                            const fechaPago = new Date(factura.fechaPago + 'T00:00:00');
+                            if (fechaPago.getMonth() === mesSeleccionado && fechaPago.getFullYear() === añoSeleccionado) {
+                                cantidadPagadas++;
+                                if (!factura.conCredito) {
+                                    const moneda = factura.moneda || 'ars';
+                                    if (moneda === 'usd') totalPagadoMesUSD += factura.monto;
+                                    else totalPagadoMesARS += factura.monto;
                                 }
                             }
                         }
@@ -3678,48 +3878,94 @@
 
                 // Crear un hash del estado actual para comparación
                 const estadoActual = {
-                    totalMes,
+                    totalMesARS, totalMesUSD,
+                    totalPagadoMesARS, totalPagadoMesUSD,
                     cantidadPendientes,
                     cantidadPagadas,
                     cantidadVencidas,
-                    totalIngresos,
+                    cantidadFacturasMes,
+                    totalIngresosARS, totalIngresosUSD,
                     mesSeleccionado,
                     añoSeleccionado
                 };
 
                 // Comparar con el estado anterior
-                const estadoCambio = !this.ultimoEstadoEstadisticas ||
-                    JSON.stringify(this.ultimoEstadoEstadisticas) !== JSON.stringify(estadoActual);
+                const estadoCambio = this._objetosCambiaron(this.ultimoEstadoEstadisticas, estadoActual);
 
                 // Función para renderizar el contenido
                 const renderizarContenido = () => {
+                    const hayUSDMes = totalMesUSD > 0;
+                    const hayARSMes = totalMesARS > 0;
+
+                    const montoHTML = hayARSMes
+                        ? this.formatearMoneda(totalMesARS, 'ars')
+                        : hayUSDMes
+                            ? this.formatearMoneda(totalMesUSD, 'usd')
+                            : this.formatearMoneda(0, 'ars');
+
+                    const montoUSDItem = hayUSDMes ? `
+    <div class="calculador-resultado-item">
+        <span class="estadistica-label">Monto USD</span>
+        <span class="estadistica-valor">${this.formatearMoneda(totalMesUSD, 'usd')}</span>
+    </div>` : '';
+
+                    let ingresosHTML = '';
+                    if (this.ingresosHabilitado()) {
+                        const hayIngUSD = totalIngresosUSD > 0;
+                        const hayIngARS = totalIngresosARS > 0;
+                        const ingMontoHTML = hayIngARS
+                            ? this.formatearMoneda(totalIngresosARS, 'ars')
+                            : hayIngUSD
+                                ? this.formatearMoneda(totalIngresosUSD, 'usd')
+                                : this.formatearMoneda(0, 'ars');
+
+                        const ingUSDItem = hayIngUSD ? `
+    <div class="calculador-resultado-item">
+        <span class="estadistica-label">Ingresos USD</span>
+        <span class="estadistica-valor">${this.formatearMoneda(totalIngresosUSD, 'usd')}</span>
+    </div>` : '';
+
+                        ingresosHTML = `
+    <div class="calculador-resultado-item">
+        <span class="estadistica-label">Ingresos</span>
+        <span class="estadistica-valor">${ingMontoHTML}</span>
+    </div>
+    ${ingUSDItem}`;
+                    }
+
                     const itemsHTML = `
-        <div class="estadistica-item">
-            <span class="estadistica-label">Monto</span>
-            <span class="estadistica-valor">${this.formatearMoneda(totalMes)}</span>
-        </div>
-        <div class="estadistica-item">
+        <div class="calculador-resultado-item">
+        <span class="estadistica-label">Monto en facturas</span>
+        <span class="estadistica-valor">${montoHTML}</span>
+    </div>
+    ${montoUSDItem}
+    ${totalPagadoMesARS > 0 ? `
+    <div class="calculador-resultado-item">
+        <span class="estadistica-label">Monto pagado</span>
+        <span class="estadistica-valor">${this.formatearMoneda(totalPagadoMesARS, 'ars')}</span>
+    </div>` : ''}
+    ${totalPagadoMesUSD > 0 ? `
+    <div class="calculador-resultado-item">
+        <span class="estadistica-label">Monto USD (Pagado)</span>
+        <span class="estadistica-valor">${this.formatearMoneda(totalPagadoMesUSD, 'usd')}</span>
+    </div>` : ''}
+        <div class="calculador-resultado-item">
             <span class="estadistica-label">Facturas</span>
-            <span class="estadistica-valor">${cantidadPendientes + cantidadPagadas}</span>
+            <span class="estadistica-valor">${cantidadFacturasMes}</span>
         </div>    
-        <div class="estadistica-item">
+        <div class="calculador-resultado-item">
             <span class="estadistica-label">Pendientes</span>
             <span class="estadistica-valor">${cantidadPendientes}</span>
         </div>
-        <div class="estadistica-item">
+        <div class="calculador-resultado-item">
             <span class="estadistica-label">Pagadas</span>
             <span class="estadistica-valor">${cantidadPagadas}</span>
         </div>
-        <div class="estadistica-item">
+        <div class="calculador-resultado-item">
             <span class="estadistica-label">Vencidas</span>
             <span class="estadistica-valor">${cantidadVencidas}</span>
         </div>
-        ${this.ingresosHabilitado() ? `
-        <div class="estadistica-item">
-            <span class="estadistica-label">Ingresos</span>
-            <span class="estadistica-valor">${this.formatearMoneda(totalIngresos)}</span>
-        </div>
-        ` : ''}
+        ${ingresosHTML}
 `;
 
                     const lista = document.querySelector('#estadisticas-mensual-container .estadisticas-lista');
@@ -3743,7 +3989,7 @@
                 // Si es la primera vez O no hay datos, crear/recrear toda la estructura
                 if (!yaExisteSelector || !hayDatos) {
                     const estadisticasHTML = `
-    <div class="estadisticas-selector-container">
+    <div class="calculador-campo">
     <label class="calculador-label">Mes</label>
     <select id="select-mes-estadisticas" class="estadisticas-selector">
             ${this.generarOpcionesMeses(mesSeleccionado, añoSeleccionado)}
@@ -3904,7 +4150,6 @@
                 const inputHasta = document.getElementById('calculador-hasta');
                 const resultadosContainer = document.getElementById('calculador-resultados');
 
-                // Validar que todos los elementos existan antes de continuar
                 if (!selectServicio || !inputDesde || !inputHasta || !resultadosContainer) {
                     return;
                 }
@@ -3913,138 +4158,177 @@
                 const desde = inputDesde.value;
                 const hasta = inputHasta.value;
 
-                // Valores por defecto
                 let totalRegistros = 0;
-                let montoTotal = 0;
-                let montoPromedio = 0;
                 let variacionTexto = '0%';
+                let variacionUSDTexto = null;
 
-                // Si hay servicio seleccionado, calcular
+                // Variables de moneda — se calculan una sola vez
+                let _arsTotal = 0, _usdTotal = 0;
+                let _arsCount = 0, _usdCount = 0;
+
                 if (servicioId) {
                     const servicio = this.servicios.find(s => s.id === servicioId);
 
                     if (servicio) {
                         const esServicioIngresos = servicioId === this.SERVICIO_INGRESOS_ID;
 
-                        // Filtrar facturas por rango de fechas
+                        // Filtrar facturas por rango de fechas (único pase)
                         let facturasFiltradas = servicio.facturas;
 
                         if (desde) {
                             const fechaDesde = new Date(desde + 'T00:00:00');
-                            facturasFiltradas = facturasFiltradas.filter(f => {
-                                const fechaFactura = new Date(f.fecha + 'T00:00:00');
-                                return fechaFactura >= fechaDesde;
-                            });
+                            facturasFiltradas = facturasFiltradas.filter(f =>
+                                new Date(f.fecha + 'T00:00:00') >= fechaDesde
+                            );
                         }
 
                         if (hasta) {
                             const fechaHasta = new Date(hasta + 'T00:00:00');
-                            facturasFiltradas = facturasFiltradas.filter(f => {
-                                const fechaFactura = new Date(f.fecha + 'T00:00:00');
-                                return fechaFactura <= fechaHasta;
-                            });
+                            facturasFiltradas = facturasFiltradas.filter(f =>
+                                new Date(f.fecha + 'T00:00:00') <= fechaHasta
+                            );
                         }
 
-                        // Ordenar por fecha (más antiguas primero)
+                        // Ordenar por fecha (más antiguas primero) — necesario para variación
                         facturasFiltradas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-                        // Calcular totales básicos (incluye complementarios)
                         totalRegistros = facturasFiltradas.length;
-                        montoTotal = facturasFiltradas.reduce((sum, f) => sum + f.monto, 0);
-                        montoPromedio = totalRegistros > 0 ? montoTotal / totalRegistros : 0;
 
-                        // Para cálculo de variación: excluir complementarios si es servicio de ingresos
+                        // Calcular totales por moneda — único pase, reutilizado abajo
+                        facturasFiltradas.forEach(f => {
+                            if ((f.moneda || 'ars') === 'usd') {
+                                _usdTotal += f.monto;
+                                _usdCount++;
+                            } else {
+                                _arsTotal += f.monto;
+                                _arsCount++;
+                            }
+                        });
+
+                        // Para variación: excluir complementarios si es servicio de ingresos
                         let facturasParaVariacion = facturasFiltradas;
                         if (esServicioIngresos) {
                             facturasParaVariacion = facturasFiltradas.filter(f => f.tipo !== 'complementario');
                         }
 
-                        // Calcular variación de forma adaptativa
-                        const totalParaVariacion = facturasParaVariacion.length;
-
-                        if (totalParaVariacion >= 2) {
-                            let promedioPrimeros, promedioUltimos;
-
-                            if (totalParaVariacion <= 3) {
-                                promedioPrimeros = facturasParaVariacion[0].monto;
-                                promedioUltimos = facturasParaVariacion[totalParaVariacion - 1].monto;
-                            } else if (totalParaVariacion <= 8) {
-                                const mitad = Math.floor(totalParaVariacion / 2);
-                                const primerasMitad = facturasParaVariacion.slice(0, mitad);
-                                const ultimasMitad = facturasParaVariacion.slice(-mitad);
-
-                                promedioPrimeros = primerasMitad.reduce((sum, f) => sum + f.monto, 0) / mitad;
-                                promedioUltimos = ultimasMitad.reduce((sum, f) => sum + f.monto, 0) / mitad;
-                            } else {
-                                const cantidadGrupo = Math.min(6, Math.max(3, Math.floor(totalParaVariacion * 0.3)));
-                                const primerosRegistros = facturasParaVariacion.slice(0, cantidadGrupo);
-                                const ultimosRegistros = facturasParaVariacion.slice(-cantidadGrupo);
-
-                                promedioPrimeros = primerosRegistros.reduce((sum, f) => sum + f.monto, 0) / cantidadGrupo;
-                                promedioUltimos = ultimosRegistros.reduce((sum, f) => sum + f.monto, 0) / cantidadGrupo;
+                        // Helper para calcular variación dado un array de facturas
+                        const calcularVariacion = (facturas) => {
+                            const total = facturas.length;
+                            if (total >= 2) {
+                                let promPrim, promUlt;
+                                if (total <= 3) {
+                                    promPrim = facturas[0].monto;
+                                    promUlt = facturas[total - 1].monto;
+                                } else if (total <= 8) {
+                                    const mitad = Math.floor(total / 2);
+                                    promPrim = facturas.slice(0, mitad).reduce((s, f) => s + f.monto, 0) / mitad;
+                                    promUlt = facturas.slice(-mitad).reduce((s, f) => s + f.monto, 0) / mitad;
+                                } else {
+                                    const g = Math.min(6, Math.max(3, Math.floor(total * 0.3)));
+                                    promPrim = facturas.slice(0, g).reduce((s, f) => s + f.monto, 0) / g;
+                                    promUlt = facturas.slice(-g).reduce((s, f) => s + f.monto, 0) / g;
+                                }
+                                if (promPrim !== 0) {
+                                    const v = ((promUlt - promPrim) / Math.abs(promPrim)) * 100;
+                                    return `${v > 0 ? '+' : ''}${v.toFixed(1)}%`;
+                                } else {
+                                    return promUlt > 0 ? '+∞' : '0%';
+                                }
+                            } else if (total === 1) {
+                                return 'N/A';
                             }
+                            return null;
+                        };
 
-                            // Calcular porcentaje de variación
-                            if (promedioPrimeros !== 0) {
-                                const variacion = ((promedioUltimos - promedioPrimeros) / Math.abs(promedioPrimeros)) * 100;
-                                const signo = variacion > 0 ? '+' : '';
-                                variacionTexto = `${signo}${variacion.toFixed(1)}%`;
-                            } else {
-                                variacionTexto = promedioUltimos > 0 ? '+∞' : '0%';
-                            }
-                        } else if (totalParaVariacion === 1) {
-                            variacionTexto = 'N/A';
-                        } else if (totalParaVariacion === 0 && esServicioIngresos && totalRegistros > 0) {
+                        // Calcular variación por moneda usando las facturas ya filtradas
+                        const facturasVariacionARS = facturasParaVariacion.filter(f => (f.moneda || 'ars') === 'ars');
+                        const facturasVariacionUSD = facturasParaVariacion.filter(f => (f.moneda || 'ars') === 'usd');
+
+                        const varARS = calcularVariacion(facturasVariacionARS);
+                        const varUSD = calcularVariacion(facturasVariacionUSD);
+
+                        if (varARS !== null) {
+                            variacionTexto = varARS;
+                        } else if (facturasVariacionARS.length === 0 && facturasVariacionUSD.length > 0) {
+                            variacionTexto = null;
+                        } else if (facturasParaVariacion.length === 0 && esServicioIngresos && totalRegistros > 0) {
                             variacionTexto = 'Solo extras';
+                        } else if (facturasVariacionARS.length === 1) {
+                            variacionTexto = 'N/A';
                         }
+
+                        variacionUSDTexto = varUSD;
                     }
                 }
 
-                // Crear hash del estado para comparación
+                // Hash del estado para comparar y evitar re-renders innecesarios
                 const estadoCalculador = {
-                    servicioId,
-                    desde,
-                    hasta,
+                    servicioId, desde, hasta,
                     totalRegistros,
-                    montoTotal,
-                    montoPromedio,
-                    variacionTexto
+                    _arsTotal, _usdTotal,
+                    variacionTexto, variacionUSDTexto
                 };
 
-                // Comparar con estado anterior
-                const calculadorCambio = !this.ultimoEstadoCalculador ||
-                    JSON.stringify(this.ultimoEstadoCalculador) !== JSON.stringify(estadoCalculador);
+                const calculadorCambio = this._objetosCambiaron(this.ultimoEstadoCalculador, estadoCalculador);
 
-                // 👇 FUNCIÓN HELPER PARA GENERAR HTML (UNA SOLA VEZ)
-                const generarResultadosHTML = (registros, total, promedio, variacion) => `
-        <div class="calculador-resultado-item">
-            <span class="calculador-resultado-label">Facturas</span>
-            <span class="calculador-resultado-valor">${registros}</span>
-        </div>
-        <div class="calculador-resultado-item">
-            <span class="calculador-resultado-label">Monto Total</span>
-            <span class="calculador-resultado-valor">${this.formatearMoneda(total)}</span>
-        </div>
-        <div class="calculador-resultado-item">
-            <span class="calculador-resultado-label">Monto Promedio</span>
-            <span class="calculador-resultado-valor">${this.formatearMoneda(promedio)}</span>
-        </div>
-        <div class="calculador-resultado-item">
-            <span class="calculador-resultado-label">Variación</span>
-            <span class="calculador-resultado-valor">${variacion}</span>
-        </div>
-    `;
+                // Construir HTML reutilizando las vars ya calculadas (_arsTotal, _usdTotal, etc.)
+                const _hayARS = _arsTotal !== 0;
+                const _hayUSD = _usdTotal !== 0;
 
-                // Renderizar resultados
+                const _montoHTML = _hayARS
+                    ? this.formatearMoneda(_arsTotal, 'ars')
+                    : _hayUSD ? this.formatearMoneda(_usdTotal, 'usd') : this.formatearMoneda(0, 'ars');
+
+                const _montoUSDItem = _hayUSD ? `
+    <div class="calculador-resultado-item">
+        <span class="calculador-resultado-label">Monto Total USD</span>
+        <span class="calculador-resultado-valor">${this.formatearMoneda(_usdTotal, 'usd')}</span>
+    </div>` : '';
+
+                const _promARS = _arsCount > 0 ? _arsTotal / _arsCount : 0;
+                const _promUSD = _usdCount > 0 ? _usdTotal / _usdCount : 0;
+                const _promHTML = _hayARS
+                    ? this.formatearMoneda(_promARS, 'ars')
+                    : _hayUSD ? this.formatearMoneda(_promUSD, 'usd') : this.formatearMoneda(0, 'ars');
+
+                const _promUSDItem = _hayUSD ? `
+    <div class="calculador-resultado-item">
+        <span class="calculador-resultado-label">Monto Promedio USD</span>
+        <span class="calculador-resultado-valor">${this.formatearMoneda(_promUSD, 'usd')}</span>
+    </div>` : '';
+
+                const _varUSDItem = variacionUSDTexto !== null && variacionUSDTexto !== undefined ? `
+    <div class="calculador-resultado-item">
+        <span class="calculador-resultado-label">Variación USD</span>
+        <span class="calculador-resultado-valor">${variacionUSDTexto}</span>
+    </div>` : '';
+
+                const generarResultadosHTML = (registros, variacion) => `
+    <div class="calculador-resultado-item">
+        <span class="calculador-resultado-label">Facturas</span>
+        <span class="calculador-resultado-valor">${registros}</span>
+    </div>
+    <div class="calculador-resultado-item">
+        <span class="calculador-resultado-label">Monto Total</span>
+        <span class="calculador-resultado-valor">${_montoHTML}</span>
+    </div>
+    ${_montoUSDItem}
+    <div class="calculador-resultado-item">
+        <span class="calculador-resultado-label">Monto Promedio</span>
+        <span class="calculador-resultado-valor">${_promHTML}</span>
+    </div>
+    ${_promUSDItem}
+    ${variacion !== null && variacion !== undefined ? `
+    <div class="calculador-resultado-item">
+        <span class="calculador-resultado-label">Variación</span>
+        <span class="calculador-resultado-valor">${variacion}</span>
+    </div>` : ''}
+    ${_varUSDItem}
+`;
+
                 const renderizarResultados = () => {
-                    resultadosContainer.innerHTML = generarResultadosHTML(
-                        totalRegistros,
-                        montoTotal,
-                        montoPromedio,
-                        variacionTexto
-                    );
+                    resultadosContainer.innerHTML = generarResultadosHTML(totalRegistros, variacionTexto);
 
-                    // Solo animar si hubo cambio
                     if (calculadorCambio) {
                         resultadosContainer.style.opacity = '0';
                         setTimeout(() => {
@@ -4055,15 +4339,12 @@
                 };
 
                 if (calculadorCambio) {
-                    // Animación de salida solo si cambió
                     resultadosContainer.style.animation = 'slideUpFade 0.2s ease-out forwards';
-
                     setTimeout(() => {
                         renderizarResultados();
                         this.ultimoEstadoCalculador = estadoCalculador;
                     }, 190);
                 } else {
-                    // No cambió, solo actualizar sin animar
                     renderizarResultados();
                 }
             }
@@ -4224,7 +4505,8 @@
                 let estado = '', claseEstado = '', montoTexto = '-', fechaTexto = '';
 
                 if (ultimaFactura) {
-                    montoTexto = this.formatearMoneda(ultimaFactura.monto);
+                    const moneda = ultimaFactura.moneda || 'ars';
+                    montoTexto = this.formatearMoneda(ultimaFactura.monto, moneda);
                     fechaTexto = this.formatearFecha(ultimaFactura.fecha);
 
                     if (ultimaFactura.pagada) {
@@ -4592,6 +4874,15 @@
                 const listaFacturas = document.getElementById('lista-facturas-modal');
 
                 titulo.textContent = servicio.nombre;
+                const tagCategoria = document.getElementById('modal-facturas-categoria');
+                if (tagCategoria) {
+                    if (servicio.categoria) {
+                        tagCategoria.textContent = servicio.categoria;
+                        tagCategoria.style.display = 'inline-block';
+                    } else {
+                        tagCategoria.style.display = 'none';
+                    }
+                }
 
                 if (servicio.facturas.length === 0) {
                     listaFacturas.innerHTML = '<p class="mensaje-sin-facturas">No hay facturas registradas</p>';
@@ -4619,28 +4910,29 @@
 
                 modal.dataset.servicioId = servicioId;
                 this.abrirModal('modal-facturas-servicio');
+                const anoGuardado = this._anoExpandidoFacturas[servicioId];
+                if (anoGuardado) {
+                    this._restaurarAnoExpandido(anoGuardado);
+                    this._anoExpandidoFacturas[servicioId] = null;
+                }
             }
 
             toggleGrupoAno(headerElement) {
                 const chevron = headerElement.querySelector('.facturas-grupo-chevron');
                 const contenido = headerElement.nextElementSibling;
 
-                // Si el grupo actual está colapsado (lo vamos a abrir)
                 if (chevron.classList.contains('collapsed')) {
-                    // Cerrar todos los demás grupos abiertos
                     const todosLosChevrons = document.querySelectorAll('.facturas-grupo-chevron:not(.collapsed)');
                     const todosLosContenidos = document.querySelectorAll('.facturas-grupo-contenido:not(.collapsed)');
 
                     todosLosChevrons.forEach(ch => ch.classList.add('collapsed'));
                     todosLosContenidos.forEach(cont => cont.classList.add('collapsed'));
 
-                    // Pequeño delay antes de abrir el nuevo grupo
                     setTimeout(() => {
                         chevron.classList.remove('collapsed');
                         contenido.classList.remove('collapsed');
                     }, 200);
                 } else {
-                    // Si ya está abierto, simplemente cerrarlo sin delay
                     chevron.classList.add('collapsed');
                     contenido.classList.add('collapsed');
                 }
@@ -4654,23 +4946,56 @@
                     const servicio = this.servicios.find(s => s.id === servicioId);
                     if (servicio) {
                         document.getElementById('editar-servicio-nombre').value = servicio.nombre;
+                        this._poblarSelectCategorias('editar-servicio-categoria', servicio.categoria || '');
                     }
                     this.abrirModal('modal-editar-servicio');
                 } else {
                     // Modo nuevo
                     document.getElementById('form-servicio').reset();
+                    this._poblarSelectCategorias('servicio-categoria', '');
                     this.abrirModal('modal-agregar-servicio');
                 }
+            }
+
+            _restaurarAnoExpandido(anoObjetivo) {
+                if (!anoObjetivo) return;
+                const headers = document.querySelectorAll('.facturas-grupo-header');
+                let encontrado = false;
+                headers.forEach(header => {
+                    const textoAno = header.querySelector('.facturas-grupo-ano-texto')?.textContent;
+                    if (textoAno === anoObjetivo) encontrado = true;
+                });
+                if (!encontrado) return;  // si el año no existe, no tocar nada
+
+                headers.forEach(header => {
+                    const textoAno = header.querySelector('.facturas-grupo-ano-texto')?.textContent;
+                    const chevron = header.querySelector('.facturas-grupo-chevron');
+                    const contenido = header.nextElementSibling;
+                    if (textoAno === anoObjetivo) {
+                        chevron.classList.remove('collapsed');
+                        contenido.classList.remove('collapsed');
+                    } else {
+                        chevron.classList.add('collapsed');
+                        contenido.classList.add('collapsed');
+                    }
+                });
             }
 
             generarHTMLFactura(factura, onclick = null) {
                 const { estadoPago, claseMonto } = this.obtenerEstadoFactura(factura);
                 const clickHandler = onclick ? `onclick="${onclick}"` : '';
+                const moneda = factura.moneda || 'ars';
+                const badgeClass = moneda === 'usd' ? 'usd' : 'ars';
+                const pagoBadge = factura.pagada
+                    ? (factura.conCredito
+                        ? '<span class="moneda-badge credito">Crédito</span>'
+                        : '<span class="moneda-badge contado">Contado</span>')
+                    : '';
 
                 return `
         <div class="factura-item" data-id="${factura.id}">
             <div class="factura-info" ${clickHandler}>
-                <div class="${claseMonto}">${this.formatearMoneda(factura.monto)}</div>
+                <div class="${claseMonto}">${this.formatearMoneda(factura.monto, moneda)}<span class="moneda-badge ${badgeClass}">${moneda.toUpperCase()}</span>${pagoBadge}</div>
                 <div class="factura-fecha">
                     ${factura.tipo || 'mensual'} | Vence: ${this.formatearFecha(factura.fecha)}
                 </div>
@@ -4722,6 +5047,108 @@
     `;
             }
 
+            // ── Categorías ──────────────────────────────────────────────
+            _getCategorias() {
+                return JSON.parse(localStorage.getItem('categorias-servicios') || '[]');
+            }
+
+            _saveCategorias(cats) {
+                localStorage.setItem('categorias-servicios', JSON.stringify(cats));
+            }
+
+            _poblarSelectCategorias(selectId, valorSeleccionado = '') {
+                const sel = document.getElementById(selectId);
+                if (!sel) return;
+                const cats = this._getCategorias();
+                // Mantener primera opción "Sin categoría"
+                sel.innerHTML = `<option value="">Sin categoría</option>`;
+                cats.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.textContent = c;
+                    if (c === valorSeleccionado) opt.selected = true;
+                    sel.appendChild(opt);
+                });
+            }
+
+            abrirModalNuevaCategoria(targetSelectId) {
+                this._categoriaTargetSelect = targetSelectId;
+                // Recordar qué modal de servicio estaba abierto para reabrirlo al volver
+                this._modalServicioOrigen = document.querySelector('.modal.active')?.id || null;
+                if (this._modalServicioOrigen) this.cerrarModal(this._modalServicioOrigen);
+                document.getElementById('nueva-categoria-nombre').value = '';
+                this._renderCategorias();
+                this.abrirModal('modal-nueva-categoria');
+            }
+
+            cerrarModalCategorias() {
+                this.cerrarModal('modal-nueva-categoria');
+                if (this._modalServicioOrigen) {
+                    this.abrirModal(this._modalServicioOrigen);
+                    this._modalServicioOrigen = null;
+                }
+            }
+
+            _renderCategorias() {
+                const lista = document.getElementById('categorias-lista');
+                if (!lista) return;
+                const cats = this._getCategorias();
+                if (cats.length === 0) {
+                    lista.innerHTML = `<span style="font-size:0.85rem; color:var(--text-muted);">Sin categorías definidas</span>`;
+                    return;
+                }
+                lista.innerHTML = cats.map(c => `
+                    <span class="categoria-tag">
+                        <button class="categoria-tag-del" onclick="app.eliminarCategoria('${c.replace(/'/g, "\\'")}')" title="Eliminar">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                        ${this.escaparHTML(c)}
+                    </span>
+                `).join('');
+            }
+
+            eliminarCategoria(nombre) {
+                let cats = this._getCategorias().filter(c => c !== nombre);
+                this._saveCategorias(cats);
+                // Si algún servicio usaba esta categoría, limpiarla
+                this.servicios.forEach(s => { if (s.categoria === nombre) s.categoria = ''; });
+                this.guardarDatos();
+                this.guardarEstado();
+                this._poblarSelectCategorias('servicio-categoria');
+                this._poblarSelectCategorias('editar-servicio-categoria');
+                this._renderCategorias();
+                this.mostrarToast('Categoría eliminada', 'success');
+            }
+
+            guardarNuevaCategoria() {
+                const nombre = document.getElementById('nueva-categoria-nombre').value.trim();
+                if (!nombre) {
+                    this.mostrarToast('El nombre es requerido', 'error');
+                    return;
+                }
+                const cats = this._getCategorias();
+                if (cats.some(c => c.toLowerCase() === nombre.toLowerCase())) {
+                    this.mostrarToast('Esa categoría ya existe', 'error');
+                    return;
+                }
+                cats.push(nombre);
+                cats.sort((a, b) => a.localeCompare(b));
+                this._saveCategorias(cats);
+                document.getElementById('nueva-categoria-nombre').value = '';
+                this._poblarSelectCategorias('servicio-categoria',
+                    this._categoriaTargetSelect === 'servicio-categoria' ? nombre : '');
+                this._poblarSelectCategorias('editar-servicio-categoria',
+                    this._categoriaTargetSelect === 'editar-servicio-categoria' ? nombre : '');
+                const sel = document.getElementById(this._categoriaTargetSelect);
+                if (sel) sel.value = nombre;
+                this.guardarEstado();
+                this._renderCategorias();
+                this.mostrarToast('Categoría agregada', 'success');
+            }
+            // ────────────────────────────────────────────────────────────
+
             guardarServicio(e) {
                 e.preventDefault();
 
@@ -4730,6 +5157,9 @@
                 const nombre = esEditar
                     ? document.getElementById('editar-servicio-nombre').value.trim()
                     : document.getElementById('servicio-nombre').value.trim();
+                const categoria = esEditar
+                    ? document.getElementById('editar-servicio-categoria').value
+                    : document.getElementById('servicio-categoria').value;
 
                 if (!nombre) {
                     this.mostrarToast('El nombre del servicio es obligatorio', 'error');
@@ -4752,7 +5182,7 @@
                     const servicio = this.servicios.find(s => s.id === this.servicioActual);
                     if (servicio) {
                         // Verificar si hubo cambios
-                        if (servicio.nombre === nombre) {
+                        if (servicio.nombre === nombre && (servicio.categoria || '') === categoria) {
                             this.mostrarToast('Sin cambios', 'info');
                             this.cerrarModal('modal-editar-servicio');
                             // Volver al modal de facturas
@@ -4762,6 +5192,7 @@
                             return;
                         }
                         servicio.nombre = nombre;
+                        servicio.categoria = categoria;
                         this.mostrarToast('Servicio actualizado', 'success');
                     }
                 } else {
@@ -4769,6 +5200,7 @@
                     const nuevoServicio = {
                         id: this.generarId(),
                         nombre: nombre,
+                        categoria: categoria,
                         facturas: []
                     };
                     this.servicios.push(nuevoServicio);
@@ -4844,6 +5276,11 @@
                 // Resetear estado del botón toggle de monto (AGREGAR)
                 if (!esEditar) {
                     this.actualizarEstadoBotonToggle('factura-monto', 'btn-toggle-negativo');
+                    this.setMonedaBtn('factura-moneda', 'btn-factura-moneda', 'ars');
+                    const btnCreditoAgregar = document.getElementById('btn-toggle-credito');
+                    btnCreditoAgregar.style.display = 'none';
+                    document.getElementById('factura-con-credito').value = 'false';
+                    this._resetBtnCredito(btnCreditoAgregar);
                 }
 
                 const serviciosOrdenados = [...this.servicios]
@@ -4869,20 +5306,28 @@
 
                             document.getElementById('editar-factura-tipo').value = factura.tipo || 'mensual';
                             document.getElementById('editar-factura-fecha').value = factura.fecha;
+                            this.setMonedaBtn('editar-factura-moneda', 'btn-editar-factura-moneda', factura.moneda || 'ars');
                             selectServicio.value = servicioId;
 
+                            const btnCredito = document.getElementById('btn-editar-toggle-credito');
+                            const inputCredito = document.getElementById('editar-factura-con-credito');
                             if (factura.pagada) {
                                 btnTogglePagada.classList.add('pagada');
                                 inputFechaPago.disabled = false;
-                                // Actualizar el icono a estado pagado
-                                if (iconUse) {
-                                    iconUse.setAttribute('href', '#icon-cancel');
-                                }
-                                if (factura.fechaPago) {
-                                    inputFechaPago.value = factura.fechaPago;
+                                if (iconUse) iconUse.setAttribute('href', '#icon-cancel');
+                                inputFechaPago.value = factura.fechaPago || this.obtenerFechaLocal();
+                                if (btnCredito) btnCredito.style.display = 'flex';
+                                if (inputCredito) inputCredito.value = factura.conCredito ? 'true' : 'false';
+                                if (factura.conCredito) {
+                                    btnCredito.classList.add('pagada');
+                                    btnCredito.querySelector('use').setAttribute('href', '#icon-card');
                                 } else {
-                                    inputFechaPago.value = this.obtenerFechaLocal();
+                                    this._resetBtnCredito(btnCredito);
                                 }
+                            } else {
+                                if (btnCredito) { btnCredito.style.display = 'none'; }
+                                if (inputCredito) inputCredito.value = 'false';
+                                this._resetBtnCredito(btnCredito);
                             }
                         }
                     }
@@ -4891,46 +5336,62 @@
                 this.abrirModal(modalId);
             }
 
-            toggleEstadoPago() {
-                const btnTogglePagada = document.getElementById('btn-toggle-pagada');
-                const inputFechaPago = document.getElementById('factura-fecha-pago');
-                const iconUse = btnTogglePagada.querySelector('use');
-                const estaPagada = btnTogglePagada.classList.contains('pagada');
+            toggleConCredito(modo = '') {
+                const esEditar = modo === 'editar';
+                const btn = document.getElementById(esEditar ? 'btn-editar-toggle-credito' : 'btn-toggle-credito');
+                const input = document.getElementById(esEditar ? 'editar-factura-con-credito' : 'factura-con-credito');
+                const iconUse = btn.querySelector('use');
+                const esCredito = input.value === 'true';
 
-                if (estaPagada) {
-                    // Cambiar a NO pagada
-                    btnTogglePagada.classList.remove('pagada');
-                    inputFechaPago.disabled = true;
-                    inputFechaPago.value = '';
-                    iconUse.setAttribute('href', '#icon-card');
+                if (esCredito) {
+                    input.value = 'false';
+                    iconUse.setAttribute('href', '#icon-cash');
+                    btn.classList.remove('pagada');
+                    btn.title = 'Pagada al contado';
+                    this.mostrarToast('Pagada al contado', 'info');
                 } else {
-                    // Cambiar a pagada
-                    btnTogglePagada.classList.add('pagada');
-                    inputFechaPago.disabled = false;
-                    inputFechaPago.value = this.obtenerFechaLocal();
-                    iconUse.setAttribute('href', '#icon-cancel');
+                    input.value = 'true';
+                    iconUse.setAttribute('href', '#icon-card');
+                    btn.classList.add('pagada');
+                    btn.title = 'Pagada con crédito';
+                    this.mostrarToast('Pagada con crédito', 'info');
                 }
             }
 
-            toggleEstadoPagoEditar() {
-                const btnTogglePagada = document.getElementById('btn-editar-toggle-pagada');
-                const inputFechaPago = document.getElementById('editar-factura-fecha-pago');
-                const iconUse = btnTogglePagada.querySelector('use');
+            _resetBtnCredito(btn) {
+                if (!btn) return;
+                const iconUse = btn.querySelector('use');
+                if (iconUse) iconUse.setAttribute('href', '#icon-cash');
+                btn.classList.remove('pagada');
+                btn.title = 'Contado / crédito';
+            }
 
+            toggleEstadoPago(btnId = 'btn-toggle-pagada', inputId = 'factura-fecha-pago') {
+                const btnTogglePagada = document.getElementById(btnId);
+                const inputFechaPago = document.getElementById(inputId);
+                const iconUse = btnTogglePagada.querySelector('use');
                 const estaPagada = btnTogglePagada.classList.contains('pagada');
+                const esEditar = btnId === 'btn-editar-toggle-pagada';
+
+                const btnCredito = document.getElementById(esEditar ? 'btn-editar-toggle-credito' : 'btn-toggle-credito');
+                const inputCredito = document.getElementById(esEditar ? 'editar-factura-con-credito' : 'factura-con-credito');
 
                 if (estaPagada) {
-                    // Cambiar a NO pagada
                     btnTogglePagada.classList.remove('pagada');
                     inputFechaPago.disabled = true;
                     inputFechaPago.value = '';
                     iconUse.setAttribute('href', '#icon-card');
+                    if (btnCredito) { btnCredito.style.display = 'none'; }
+                    if (inputCredito) { inputCredito.value = 'false'; }
+                    this._resetBtnCredito(btnCredito);
+                    this.mostrarToast('Factura pendiente', 'info');
                 } else {
-                    // Cambiar a pagada
                     btnTogglePagada.classList.add('pagada');
                     inputFechaPago.disabled = false;
                     inputFechaPago.value = this.obtenerFechaLocal();
                     iconUse.setAttribute('href', '#icon-cancel');
+                    if (btnCredito) { btnCredito.style.display = 'flex'; }
+                    this.mostrarToast('Factura pagada', 'success');
                 }
             }
 
@@ -4961,17 +5422,17 @@
 
                 if (!input || !btn) return;
 
+                // Limpiar estilos inline residuales
+                btn.style.background = '';
+                btn.style.color = '';
+
                 const valor = parseFloat(input.value) || 0;
 
                 if (valor < 0) {
-                    // Valor negativo
-                    btn.style.background = 'var(--c-green)';
-                    btn.style.color = 'white';
+                    btn.classList.add('pagada');
                     btn.title = 'Cambiar a gasto normal';
                 } else {
-                    // Valor positivo o cero
-                    btn.style.background = 'var(--c-gray-btn)';
-                    btn.style.color = 'var(--text-main)';
+                    btn.classList.remove('pagada');
                     btn.title = 'Cambiar a saldo a favor';
                 }
             }
@@ -4985,9 +5446,11 @@
                 const monto = parseFloat(document.getElementById(esEditar ? 'editar-factura-monto' : 'factura-monto').value);
                 const tipo = document.getElementById(esEditar ? 'editar-factura-tipo' : 'factura-tipo').value;
                 const fecha = document.getElementById(esEditar ? 'editar-factura-fecha' : 'factura-fecha').value;
+                const moneda = document.getElementById(esEditar ? 'editar-factura-moneda' : 'factura-moneda').value;
                 const btnTogglePagada = document.getElementById(esEditar ? 'btn-editar-toggle-pagada' : 'btn-toggle-pagada');
                 const estaPagada = btnTogglePagada.classList.contains('pagada');
                 const fechaPago = estaPagada ? document.getElementById(esEditar ? 'editar-factura-fecha-pago' : 'factura-fecha-pago').value : null;
+                const conCredito = estaPagada ? (document.getElementById(esEditar ? 'editar-factura-con-credito' : 'factura-con-credito')?.value === 'true') : false;
                 const servicioSeleccionadoId = document.getElementById(esEditar ? 'editar-factura-servicio' : 'factura-servicio').value;
 
                 // Validar monto (permitir negativos para saldos a favor)
@@ -5040,6 +5503,8 @@
                                 factura.fecha = fecha;
                                 factura.pagada = estaPagada;
                                 factura.fechaPago = fechaPago;
+                                factura.moneda = moneda;
+                                factura.conCredito = conCredito;
 
                                 const servicioNuevo = this.servicios.find(s => s.id === servicioNuevoId);
                                 if (servicioNuevo) {
@@ -5052,7 +5517,9 @@
                                     factura.tipo === tipo &&
                                     factura.fecha === fecha &&
                                     factura.pagada === estaPagada &&
-                                    factura.fechaPago === fechaPago) {
+                                    factura.fechaPago === fechaPago &&
+                                    (factura.moneda || 'ars') === moneda &&
+                                    (factura.conCredito || false) === conCredito) {
                                     this.mostrarToast('Sin cambios', 'info');
                                     this.cerrarModal('modal-editar-factura');
                                     this.abrirModalFacturasServicio(servicioAnteriorId);
@@ -5063,6 +5530,8 @@
                                 factura.fecha = fecha;
                                 factura.pagada = estaPagada;
                                 factura.fechaPago = fechaPago;
+                                factura.moneda = moneda;
+                                factura.conCredito = conCredito;
                             }
                         }
                     }
@@ -5074,7 +5543,9 @@
                         tipo: tipo,
                         fecha: fecha,
                         pagada: estaPagada,
-                        fechaPago: fechaPago
+                        fechaPago: fechaPago,
+                        moneda: moneda,
+                        conCredito: conCredito
                     };
 
                     const servicioDestino = this.servicios.find(s => s.id === servicioNuevoId);
@@ -5103,83 +5574,24 @@
                 this.mostrarToast(esNueva ? 'Factura agregada' : 'Factura actualizada', 'success');
             }
 
-            marcarPagada(facturaId) {
-                const hoy = this.obtenerFechaLocal();
-                let servicioId = null;
-
-                this.servicios.forEach(servicio => {
-                    const factura = servicio.facturas.find(f => f.id === facturaId);
-                    if (factura) {
-                        factura.pagada = true;
-                        factura.fechaPago = hoy;
-                        servicioId = servicio.id;
-                    }
-                });
-
-                this.guardarDatos();
-                this.guardarEstado();
-                this.enModoBusqueda = false;
-                this.renderServicios();
-
-                if (servicioId) {
-                    this.actualizarServicioIndividual(servicioId);
-
-                    // Actualizar el modal de facturas si está abierto
-                    const modalFacturas = document.getElementById('modal-facturas-servicio');
-                    if (modalFacturas.classList.contains('active') && modalFacturas.dataset.servicioId === servicioId) {
-                        this.abrirModalFacturasServicio(servicioId);
-                    }
-                }
-                this.mostrarToast('Factura marcada como pagada', 'success');
-            }
-
-            marcarNoPagada(facturaId) {
-                let servicioId = null;
-
-                this.servicios.forEach(servicio => {
-                    const factura = servicio.facturas.find(f => f.id === facturaId);
-                    if (factura) {
-                        factura.pagada = false;
-                        factura.fechaPago = null;
-                        servicioId = servicio.id;
-                    }
-                });
-
-                this.guardarDatos();
-                this.guardarEstado();
-                this.enModoBusqueda = false;
-                this.renderServicios();
-
-                if (servicioId) {
-                    this.actualizarServicioIndividual(servicioId);
-
-                    // Actualizar el modal de facturas si está abierto
-                    const modalFacturas = document.getElementById('modal-facturas-servicio');
-                    if (modalFacturas.classList.contains('active') && modalFacturas.dataset.servicioId === servicioId) {
-                        this.abrirModalFacturasServicio(servicioId);
-                    }
-                }
-                this.mostrarToast('Factura marcada como no pagada', 'success');
-            }
             editarFactura(facturaId) {
-                // Buscar el servicio que contiene esta factura
                 const servicio = this.servicios.find(s => s.facturas.some(f => f.id === facturaId));
                 if (!servicio) return;
                 const factura = servicio.facturas.find(f => f.id === facturaId);
                 if (!factura) return;
+
+                const modal = document.getElementById('modal-facturas-servicio');
+                if (modal?.classList.contains('active')) {
+                    const sid = modal.dataset.servicioId;
+                    const item = document.querySelector(`.factura-item[data-id="${facturaId}"]`);
+                    const grupo = item?.closest('.facturas-grupo-ano');
+                    const ano = grupo?.querySelector('.facturas-grupo-ano-texto')?.textContent || null;
+                    this._anoExpandidoFacturas[sid] = ano;
+                }
+
                 this.cerrarModal('modal-facturas-servicio');
                 this.abrirModalFactura(servicio.id, facturaId);
-                // Actualizar estado del botón según el signo del monto
-                const btnEditarToggle = document.getElementById('btn-editar-toggle-negativo');
-                if (btnEditarToggle && factura.monto < 0) {
-                    btnEditarToggle.style.background = 'var(--c-green)';
-                    btnEditarToggle.style.color = 'white';
-                    btnEditarToggle.title = 'Cambiar a gasto normal';
-                } else if (btnEditarToggle) {
-                    btnEditarToggle.style.background = 'var(--c-gray-btn)';
-                    btnEditarToggle.style.color = 'var(--text-main)';
-                    btnEditarToggle.title = 'Cambiar a saldo a favor';
-                }
+                this.actualizarEstadoBotonToggle('editar-factura-monto', 'btn-editar-toggle-negativo');
             }
 
             establecerFechaHoy(tipo = 'factura', modo = 'agregar') {
@@ -5253,7 +5665,10 @@
 
             guardarEstado() {
                 // Crear una copia profunda del estado actual DESPUÉS del cambio
-                const nuevoEstado = JSON.parse(JSON.stringify(this.servicios));
+                const nuevoEstado = {
+                    servicios: JSON.parse(JSON.stringify(this.servicios)),
+                    categorias: JSON.parse(JSON.stringify(this._getCategorias()))
+                };
 
                 // Si estamos en medio del historial, eliminar estados futuros
                 if (this.historialIndex < this.historial.length - 1) {
@@ -5274,14 +5689,14 @@
             }
 
             inicializarHistorial() {
-                // Limpiar historial anterior
                 this.historial = [];
                 this.historialIndex = -1;
 
-                // Guardar el estado inicial actual
                 if (this.servicios && this.servicios.length >= 0) {
-                    const estadoInicial = JSON.parse(JSON.stringify(this.servicios));
-                    this.historial.push(estadoInicial);
+                    this.historial.push({
+                        servicios: JSON.parse(JSON.stringify(this.servicios)),
+                        categorias: JSON.parse(JSON.stringify(this._getCategorias()))
+                    });
                     this.historialIndex = 0;
                 }
 
@@ -5291,7 +5706,9 @@
             deshacer() {
                 if (this.historialIndex > 0) {
                     this.historialIndex--;
-                    this.servicios = JSON.parse(JSON.stringify(this.historial[this.historialIndex]));
+                    const estado = this.historial[this.historialIndex];
+                    this.servicios = JSON.parse(JSON.stringify(estado.servicios));
+                    this._saveCategorias(JSON.parse(JSON.stringify(estado.categorias)));
                     this.guardarDatos();
                     this.renderServicios();
                     this.cerrarTodosLosModales();
@@ -5303,7 +5720,9 @@
             rehacer() {
                 if (this.historialIndex < this.historial.length - 1) {
                     this.historialIndex++;
-                    this.servicios = JSON.parse(JSON.stringify(this.historial[this.historialIndex]));
+                    const estado = this.historial[this.historialIndex];
+                    this.servicios = JSON.parse(JSON.stringify(estado.servicios));
+                    this._saveCategorias(JSON.parse(JSON.stringify(estado.categorias)));
                     this.guardarDatos();
                     this.renderServicios();
                     this.cerrarTodosLosModales();
@@ -5340,12 +5759,15 @@
                     }
 
                     // Inicializar historial con estado actual (después de cargar)
-                    this.historial = [JSON.parse(JSON.stringify(this.servicios))];
+                    this.historial = [{
+                        servicios: JSON.parse(JSON.stringify(this.servicios)),
+                        categorias: JSON.parse(JSON.stringify(this._getCategorias()))
+                    }];
                     this.historialIndex = 0;
                 } catch (error) {
                     console.error('Error al cargar datos:', error);
                     this.servicios = [];
-                    this.historial = [[]];
+                    this.historial = [{ servicios: [], categorias: [] }];
                     this.historialIndex = 0;
                 }
             }
@@ -5489,6 +5911,7 @@
                     const datos = {
                         version: '1.0',
                         fecha: new Date().toISOString(),
+                        categorias: this._getCategorias(),
                         servicios: this.servicios
                     };
 
@@ -5613,27 +6036,32 @@
                                     }
                                 });
 
+                                // Combinar categorías
+                                let categoriasAgregadas = 0;
+                                if (Array.isArray(datos.categorias)) {
+                                    const catsActuales = this._getCategorias();
+                                    const catsNuevas = datos.categorias.filter(c => !catsActuales.some(ca => ca.toLowerCase() === c.toLowerCase()));
+                                    if (catsNuevas.length > 0) {
+                                        const catsMerge = [...catsActuales, ...catsNuevas].sort((a, b) => a.localeCompare(b));
+                                        this._saveCategorias(catsMerge);
+                                        categoriasAgregadas = catsNuevas.length;
+                                    }
+                                }
+
                                 // Construir mensaje según lo que se hizo
-                                if (serviciosAgregados === 0 && facturasAgregadas === 0 && facturasActualizadas === 0) {
+                                if (serviciosAgregados === 0 && facturasAgregadas === 0 && facturasActualizadas === 0 && categoriasAgregadas === 0) {
                                     this.mostrarToast('No hay datos nuevos para agregar', 'info');
                                     document.getElementById('opciones-importacion').style.display = 'none';
                                     return;
                                 }
 
                                 let mensajePartes = [];
-                                if (serviciosAgregados > 0) {
-                                    mensajePartes.push(`${serviciosAgregados} servicio${serviciosAgregados !== 1 ? 's' : ''}`);
-                                }
-                                if (facturasAgregadas > 0) {
-                                    mensajePartes.push(`${facturasAgregadas} factura${facturasAgregadas !== 1 ? 's' : ''} nueva${facturasAgregadas !== 1 ? 's' : ''}`);
-                                }
-                                if (facturasActualizadas > 0) {
-                                    mensajePartes.push(`${facturasActualizadas} actualizada${facturasActualizadas !== 1 ? 's' : ''}`);
-                                }
+                                if (serviciosAgregados > 0) mensajePartes.push(`${serviciosAgregados} servicio${serviciosAgregados !== 1 ? 's' : ''}`);
+                                if (facturasAgregadas > 0) mensajePartes.push(`${facturasAgregadas} factura${facturasAgregadas !== 1 ? 's' : ''} nueva${facturasAgregadas !== 1 ? 's' : ''}`);
+                                if (facturasActualizadas > 0) mensajePartes.push(`${facturasActualizadas} actualizada${facturasActualizadas !== 1 ? 's' : ''}`);
+                                if (categoriasAgregadas > 0) mensajePartes.push(`${categoriasAgregadas} categoría${categoriasAgregadas !== 1 ? 's' : ''}`);
 
-                                const mensajeFinal = mensajePartes.length > 0
-                                    ? `Importado: ${mensajePartes.join(', ')}`
-                                    : 'Importación completada';
+                                const mensajeFinal = `Importado: ${mensajePartes.join(', ')}`;
 
                                 this.guardarDatos();
                                 this.guardarEstado();
@@ -5642,16 +6070,20 @@
                                 this.mostrarToast(mensajeFinal, 'success');
 
                             } else {
-                                // Modo reemplazar: comportamiento original
-                                const mensaje = `Se importarán ${cantidad} servicios y ${facturas} facturas. ¿Deseas reemplazar todos los datos actuales?`;
+                                // Modo reemplazar
+                                const cats = Array.isArray(datos.categorias) ? datos.categorias : [];
+                                const cantCats = cats.length;
+                                const catsTxt = cantCats > 0 ? `, ${cantCats} categoría${cantCats !== 1 ? 's' : ''}` : '';
+                                const mensaje = `Se restauraran ${cantidad} servicios, ${facturas} facturas${catsTxt}. ¿Deseas reemplazar todos los datos actuales?`;
 
                                 if (confirm(mensaje)) {
                                     this.servicios = datos.servicios;
+                                    this._saveCategorias(cats);
                                     this.guardarDatos();
                                     this.guardarEstado();
                                     this.renderServicios();
                                     this.actualizarEstadisticas();
-                                    this.mostrarToast(`Importados ${cantidad} servicios y ${facturas} facturas.`, 'success');
+                                    this.mostrarToast(`Restaurados ${cantidad} servicios, ${facturas} facturas${catsTxt}.`, 'success');
                                 }
                             }
                         } catch (error) {
@@ -5677,6 +6109,7 @@
                 if (confirm('¿Estás seguro de eliminar todos los datos?')) {
                     {
                         this.servicios = [];
+                        this._saveCategorias([]);
                         this.guardarDatos();
                         this.guardarEstado();
                         this.renderServicios();
@@ -5766,6 +6199,10 @@
                     modal.classList.remove('active');
                 });
                 document.body.classList.remove('modal-open');
+
+                // Limpiar años guardados al cerrar por backdrop
+                this._anoExpandidoFacturas = {};
+                this._anoExpandidoIngresos = {};
             }
 
             toggleMenuAjustes() {
@@ -5848,11 +6285,61 @@
                 return Date.now().toString(36) + Math.random().toString(36).substr(2);
             }
 
-            formatearMoneda(monto) {
+            obtenerFechaLocal() {
+                const hoy = new Date();
+                return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+            }
+
+            // Comparación shallow de objetos planos (evita JSON.stringify para detección de cambios)
+            _objetosCambiaron(anterior, actual) {
+                if (!anterior) return true;
+                const keysA = Object.keys(anterior);
+                const keysB = Object.keys(actual);
+                if (keysA.length !== keysB.length) return true;
+                for (const k of keysA) {
+                    if (anterior[k] !== actual[k]) return true;
+                }
+                return false;
+            }
+
+            formatearMoneda(monto, moneda = 'ars') {
+                const esEntero = Number.isInteger(monto) || monto % 1 === 0;
+                const decimales = esEntero ? 0 : 2;
+                if (moneda === 'usd') {
+                    return 'u$s ' + new Intl.NumberFormat('es-AR', {
+                        minimumFractionDigits: decimales,
+                        maximumFractionDigits: decimales
+                    }).format(monto);
+                }
                 return new Intl.NumberFormat('es-AR', {
                     style: 'currency',
-                    currency: 'ARS'
+                    currency: 'ARS',
+                    minimumFractionDigits: decimales,
+                    maximumFractionDigits: decimales
                 }).format(monto);
+            }
+
+            // Alterna entre ARS y USD en los campos ocultos + actualiza el botón visual
+            toggleMoneda(hiddenId, btnId) {
+                const hidden = document.getElementById(hiddenId);
+                const btn = document.getElementById(btnId);
+                if (!hidden || !btn) return;
+                const nuevo = hidden.value === 'ars' ? 'usd' : 'ars';
+                hidden.value = nuevo;
+                btn.textContent = nuevo.toUpperCase();
+                btn.classList.toggle('activo-usd', nuevo === 'usd');
+                this.mostrarToast(nuevo === 'usd' ? 'Dolares' : 'Pesos', 'info');
+            }
+
+            // Fija la moneda de un icon-btn desde código (usado al cargar datos para editar)
+            setMonedaBtn(hiddenId, btnId, moneda) {
+                const hidden = document.getElementById(hiddenId);
+                const btn = document.getElementById(btnId);
+                if (!hidden || !btn) return;
+                const m = (moneda || 'ars').toLowerCase();
+                hidden.value = m;
+                btn.textContent = m.toUpperCase();
+                btn.classList.toggle('activo-usd', m === 'usd');
             }
 
             formatearFecha(fecha) {
@@ -5900,31 +6387,49 @@
                         const ingresosHTML = grupo.items.map(ingreso => {
                             const tipoTexto = ingreso.tipo === 'complementario' ? 'Complementario' : 'Regular';
                             const tipoEmoji = ingreso.tipo === 'complementario' ? '💼' : '💵';
+                            const monedaIngreso = ingreso.moneda || 'ars';
+                            const badgeClass = monedaIngreso === 'usd' ? 'usd' : 'ars';
 
                             return `
-                    <div class="factura-item" data-id="${ingreso.id}">
-                        <div class="factura-info" onclick="app.abrirModalIngreso('${ingreso.id}')">
-                            <div class="factura-monto">${this.formatearMoneda(ingreso.monto)}</div>
-                            <div class="factura-fecha">${tipoEmoji} ${tipoTexto} | Cobrado: ${this.formatearFecha(ingreso.fecha)}</div>
-                        </div>
-                    </div>
-                `;
+                         <div class="factura-item" data-id="${ingreso.id}">
+                             <div class="factura-info" onclick="app.abrirModalIngreso('${ingreso.id}')">
+                                 <div class="factura-monto">${this.formatearMoneda(ingreso.monto, monedaIngreso)}<span class="moneda-badge ${badgeClass}">${monedaIngreso.toUpperCase()}</span></div>
+                                 <div class="factura-fecha">${tipoEmoji} ${tipoTexto} | Cobrado: ${this.formatearFecha(ingreso.fecha)}</div>
+                             </div>
+                         </div>
+                     `;
                         }).join('');
 
                         return this.generarGrupoAno(grupo.ano, grupo.items, ingresosHTML, 'ingreso', index);
                     }).join('');
                 }
 
+                document.getElementById('modal-ingresos-lista').dataset.servicioId = servicioId;
                 this.abrirModal('modal-ingresos-lista');
+                const anoGuardado = this._anoExpandidoIngresos[servicioId];
+                if (anoGuardado) {
+                    this._restaurarAnoExpandido(anoGuardado);
+                    this._anoExpandidoIngresos[servicioId] = null;
+                }
             }
 
             abrirModalIngreso(ingresoId = null, desdeMenu = false) {
+                if (ingresoId) {
+                    const modal = document.getElementById('modal-ingresos-lista');
+                    if (modal?.classList.contains('active')) {
+                        const sid = modal.dataset.servicioId;
+                        const item = document.querySelector(`.factura-item[data-id="${ingresoId}"]`);
+                        const grupo = item?.closest('.facturas-grupo-ano');
+                        const ano = grupo?.querySelector('.facturas-grupo-ano-texto')?.textContent || null;
+                        this._anoExpandidoIngresos[sid] = ano;
+                    }
+                }
+
                 this.cerrarModal('modal-ingresos-lista');
                 this.ingresoActual = ingresoId;
                 this.ingresoDesdeMenu = desdeMenu;
 
                 if (ingresoId) {
-                    // Modo editar - usar modal separado
                     const servicio = this.servicios.find(s => s.id === this.SERVICIO_INGRESOS_ID);
                     if (servicio) {
                         const ingreso = servicio.facturas.find(f => f.id === ingresoId);
@@ -5932,12 +6437,13 @@
                             document.getElementById('editar-ingreso-monto').value = ingreso.monto;
                             document.getElementById('editar-ingreso-tipo').value = ingreso.tipo || 'regular';
                             document.getElementById('editar-ingreso-fecha').value = ingreso.fecha;
+                            this.setMonedaBtn('editar-ingreso-moneda', 'btn-editar-ingreso-moneda', ingreso.moneda || 'ars');
                         }
                     }
                     this.abrirModal('modal-editar-ingreso');
                 } else {
-                    // Modo nuevo
                     document.getElementById('form-ingreso').reset();
+                    this.setMonedaBtn('ingreso-moneda', 'btn-ingreso-moneda', 'ars');
                     this.abrirModal('modal-agregar-ingreso');
                 }
             }
@@ -5951,6 +6457,7 @@
                 const monto = parseFloat(document.getElementById(esEditar ? 'editar-ingreso-monto' : 'ingreso-monto').value);
                 const tipo = document.getElementById(esEditar ? 'editar-ingreso-tipo' : 'ingreso-tipo').value;
                 const fecha = document.getElementById(esEditar ? 'editar-ingreso-fecha' : 'ingreso-fecha').value;
+                const moneda = document.getElementById(esEditar ? 'editar-ingreso-moneda' : 'ingreso-moneda').value;
 
                 // Validar monto (no permitir negativos en ingresos)
                 if (!this.validarMonto(monto, false)) {
@@ -5974,7 +6481,7 @@
                     const ingreso = servicio.facturas.find(f => f.id === this.ingresoActual);
                     if (ingreso) {
                         // Verificar si hubo cambios
-                        if (ingreso.monto === monto && ingreso.tipo === tipo && ingreso.fecha === fecha) {
+                        if (ingreso.monto === monto && ingreso.tipo === tipo && ingreso.fecha === fecha && (ingreso.moneda || 'ars') === moneda) {
                             this.mostrarToast('Sin cambios', 'info');
                             this.cerrarModal('modal-editar-ingreso');
                             this.abrirModalIngresosLista(this.SERVICIO_INGRESOS_ID);
@@ -5983,6 +6490,7 @@
                         ingreso.monto = monto;
                         ingreso.tipo = tipo;
                         ingreso.fecha = fecha;
+                        ingreso.moneda = moneda;
                     }
                 } else {
                     // Crear nuevo ingreso
@@ -5991,6 +6499,7 @@
                         monto: monto,
                         tipo: tipo,
                         fecha: fecha,
+                        moneda: moneda,
                         pagada: true // Los ingresos siempre están "pagados" (cobrados)
                     };
                     servicio.facturas.push(nuevoIngreso);
@@ -6097,14 +6606,12 @@
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 1.02
+    //                 NOTAS SISTEMA DeltaF VERSION 0.69
     // ====================================================================
     
      - CAMBIOS
-     1) Se unifican tarjetas de estadisticas
-     2) el calculo de la calculadora del boton agregar, ahora tiene en cuenta el mes anterior tambien, quedando
-     en el calculo mes anterior, mes actual y mes siguiente
-     3) se agrega etiqueta "mes" en el campo correspondiente de la tarjeta de estadisticas
+     1) Se agrega funcion para marcar si se apgo con credito o en efectivo/tranferencia, para que la cuenta de la
+     tarjeta de estadisticas sea de realice de forma correcta
 
 
      - BUGS CONOCIDOS:
