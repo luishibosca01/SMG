@@ -26,8 +26,10 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/svg+xml" href="./icon.svg">
     <style>
+        /* ============================================================
+           VARIABLES
+        ============================================================ */
         :root {
-            /* --- Variables de Color (Tema Claro) --- */
             --bg-body: #ffffff;
             --bg-card: #f0f4f9;
             --bg-header: #ffffff;
@@ -36,20 +38,21 @@
             --text-inv: #ffffff;
             --border: #dde3ea;
             --input-bg: #dde3ea;
-            --input-focus: #dde3ea;
             --c-blue: rgba(76, 114, 172, 0.8);
             --c-green: rgba(76, 172, 140, 0.8);
             --c-red: rgba(172, 90, 76, 0.8);
             --c-purple: rgba(129, 76, 172, 0.8);
             --c-gold: rgba(172, 155, 76, 0.8);
-            --c-gray-btn: #dde3ea;
             --c-white: #ffffff;
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-modal: 0 10px 40px rgba(0, 0, 0, 0.3);
             --radius: 20px;
+            --transition-fast: 0.2s;
+            --transition-base: 0.3s;
         }
 
         body.dark-mode {
-            /* --- Variables de Color (Tema Oscuro) --- */
             --bg-body: #131314;
             --bg-card: #1e1f20;
             --bg-header: #131314f6;
@@ -57,15 +60,12 @@
             --text-muted: #b4b4b4;
             --border: #313333;
             --input-bg: #313333;
-            --input-focus: #313333;
-            --c-gray-btn: #313333;
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
-        body.modal-open {
-            overflow: hidden !important;
-        }
-
+        /* ============================================================
+           RESET & BASE
+        ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -84,19 +84,24 @@
             background: var(--bg-body);
             color: var(--text-main);
             overflow-anchor: none;
-            transition: background 0.3s, color 0.3s;
             overflow-y: auto;
             touch-action: pan-y;
+            transition: background var(--transition-base), color var(--transition-base);
         }
 
-        /* --- Layout & Contenedores --- */
+        body.modal-open {
+            overflow: hidden !important;
+        }
+
+        /* ============================================================
+           LAYOUT
+        ============================================================ */
         .container {
             max-width: 1300px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 1rem 0.5rem;
         }
 
-        /* Layout de 2 columnas para desktop */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -104,80 +109,51 @@
         }
 
         .header {
-            background: var(--bg-header);
-            padding: 0 0.6rem;
-            box-shadow: var(--shadow);
             position: sticky;
             top: 0;
             z-index: 90;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: var(--bg-header);
+            padding: 0 0.6rem;
+            box-shadow: var(--shadow);
         }
 
         .header h1 {
-            font-size: 1.25rem;
-            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 0.5rem;
             flex-shrink: 0;
             margin-right: auto;
             margin-left: 1rem;
+            font-size: 1.25rem;
+            color: var(--text-main);
         }
 
         .header-actions {
             display: flex;
+            align-items: center;
             gap: 0.5rem;
-            align-items: center;
         }
 
-        .icon-btn {
-            background: var(--c-gray-btn);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.72rem;
-            font-weight: 800;
-            letter-spacing: 0.04em;
-            transition: background 0.2s, color 0.2s, border-color 0.2s;
-            flex-shrink: 0;
-        }
-
-        .icon-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .icon-btn.transparent {
-            background: transparent;
-            border: none;
-        }
-
-        .icon-btn:active,
-        .search-clear:active {
-            transform: scale(0.95);
-        }
-
+        /* ============================================================
+           CARD
+        ============================================================ */
         .card {
             background: var(--bg-card);
             border-radius: var(--radius);
-            padding: 1.5rem 1rem;
+            padding: 1.5rem 0.5rem;
             box-shadow: var(--shadow);
             color: var(--text-main);
             margin-bottom: 1rem;
         }
 
         .card h2 {
-            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 1rem;
             color: var(--text-main);
         }
 
@@ -186,7 +162,50 @@
             gap: 0.5rem;
         }
 
-        /* --- Iconos --- */
+        /* Bordes de estado en card de resumen */
+        .card.borde-vencido,
+        .card.borde-urgente {
+            border-left: 4px solid var(--c-red);
+        }
+
+        .card.borde-proximo {
+            border-left: 4px solid var(--c-gold);
+        }
+
+        .card.borde-lejano {
+            border-left: 4px solid var(--c-blue);
+        }
+
+        .card.borde-pagado {
+            border-left: 4px solid var(--c-green);
+        }
+
+        .card-fade-in {
+            animation: slideDownFade var(--transition-base) ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Tarjeta colapsable */
+        .card-header-collapsible {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card-header-collapsible+.collapsible-content {
+            padding-top: 0;
+            transition: max-height var(--transition-base), opacity var(--transition-base), padding var(--transition-base);
+        }
+
+        .card-header-collapsible+.collapsible-content:not(.collapsed) {
+            padding-top: 1rem;
+        }
+
+        /* ============================================================
+           ICONOS
+        ============================================================ */
         .icon {
             width: 1.2em;
             height: 1.2em;
@@ -201,8 +220,14 @@
             fill: none;
         }
 
-        /* --- Botones --- */
+        /* ============================================================
+           BOTONES
+        ============================================================ */
         button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
             width: 100%;
             padding: 0.875rem;
             border: 1px solid transparent;
@@ -210,13 +235,9 @@
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
             color: var(--text-main);
-            background: var(--c-gray-btn);
+            background: var(--input-bg);
+            transition: transform var(--transition-fast), background var(--transition-fast);
         }
 
         button:active {
@@ -233,38 +254,61 @@
             opacity: 0.5;
         }
 
-        .btn-add {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            padding: 0;
-            background: var(--c-blue);
-            color: var(--c-white);
-            position: fixed;
-            bottom: 3rem;
-            right: 2rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            z-index: 110;
-            animation: slideUp 1s ease-in-out 1;
-            backdrop-filter: blur(3px);
+        /* Botón icono cuadrado */
+        .icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
         }
 
-        .btn-add.modo-calculadora {
-            background: var(--c-red);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
         }
 
-        .btn-add #btn-add-icon {
-            display: inline-block;
-            transition: transform 0.3s;
+        .icon-btn.transparent {
+            background: transparent;
+            border: none;
         }
 
-        .btn-add.modo-calculadora #btn-add-icon {
-            transform: rotate(45deg);
+        .icon-btn:active,
+        .search-clear:active {
+            transform: scale(0.98);
         }
 
+        .icon-btn.pagada {
+            border-color: var(--c-green);
+            background: rgba(96, 172, 148, 0.1);
+            color: var(--c-green);
+        }
+
+        .icon-btn.activo-usd {
+            color: var(--c-green) !important;
+            border-color: var(--c-green) !important;
+        }
+
+        .icon-btn:not(.activo-usd)[id*="moneda"] {
+            color: var(--c-red) !important;
+            border-color: var(--c-red) !important;
+        }
+
+        #btn-sort.filtro-activo {
+            color: var(--c-red);
+            border: 1px solid var(--c-red);
+        }
+
+        /* Botones de header transparentes */
         #btn-filter,
         #btn-undo,
         #btn-redo,
@@ -274,146 +318,46 @@
             background: none;
         }
 
-        .servicios-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            max-height: 850px;
-            opacity: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            margin-top: 1rem;
-            transition: all 0.3s;
-        }
-
-        .servicio-item {
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .servicio-item:active,
-        .facturas-grupo-header:active {
-            transform: scale(0.99);
-        }
-
-        .servicio-nombre {
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding-bottom: 0.5rem;
-        }
-
-        .servicio-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .servicio-monto {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        .servicio-fecha {
-            font-size: 0.9rem;
-        }
-
-        .servicio-estado {
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 0.25rem;
+        /* Botón flotante + */
+        .btn-add {
+            position: fixed;
+            bottom: 3rem;
+            right: 2rem;
+            z-index: 110;
+            width: 60px;
+            height: 60px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            background: var(--c-blue);
             color: var(--c-white);
-            display: inline-block;
-            border-radius: var(--radius);
-            padding: .1rem 1rem .1rem 1rem;
+            box-shadow: var(--shadow-float);
+            backdrop-filter: blur(3px);
+            animation: slideUp 1s ease-in-out 1;
         }
 
-        .estado-vencido,
-        .estado-urgente {
+        .btn-add.modo-calculadora {
             background: var(--c-red);
         }
 
-        .estado-proximo {
-            background: var(--c-gold);
+        .btn-add #btn-add-icon {
+            display: inline-block;
+            transition: transform var(--transition-base);
         }
 
-        .estado-pagado {
-            background: var(--c-green);
+        .btn-add.modo-calculadora #btn-add-icon {
+            transform: rotate(45deg);
         }
 
-        .estado-lejano {
-            background: var(--c-blue);
-        }
-
-        .estado-sin-facturas-mes {
-            background: var(--c-purple);
-        }
-
-        /* --- Modal --- */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .modal.active {
-            display: flex;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            padding: 1rem;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.2s ease-in-out;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-header h3 {
-            font-size: 1.2rem;
-            color: var(--text-main);
-        }
-
-        /* --- Formularios --- */
+        /* ============================================================
+           FORMULARIOS
+        ============================================================ */
         .form-group {
             margin-bottom: 1rem;
         }
 
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--input-focus);
-        }
-
         input,
-        select,
-        .form-group select {
+        select {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid var(--border);
@@ -423,25 +367,30 @@
             color: var(--text-main);
         }
 
-        .form-group select {
-            padding: 0.875rem;
-            cursor: pointer;
-        }
-
-        label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 0.25rem;
-        }
-
         input:focus,
         select:focus {
             outline: none;
         }
 
-        /* Ocultar flechas de input number */
+        .form-group select {
+            padding: 0.875rem;
+            cursor: pointer;
+        }
+
+        .form-group select:focus {
+            border-color: var(--border);
+        }
+
+        label {
+            display: block;
+            padding-left: 1rem;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Ocultar flechas number */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -464,7 +413,81 @@
             margin-top: 0.5rem;
         }
 
-        /* --- Facturas --- */
+        /* ============================================================
+           SCROLLBAR (reutilizable)
+        ============================================================ */
+        .custom-scroll,
+        .modal-content {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .custom-scroll::-webkit-scrollbar,
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track,
+        .modal-content::-webkit-scrollbar-track {
+            background: var(--bg-body);
+            border-radius: var(--radius);
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb,
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: var(--radius);
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover,
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* ============================================================
+           MODAL
+        ============================================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            box-shadow: var(--shadow-modal);
+            animation: slideUp 0.2s ease-in-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+        /* Modal facturas (layout flex interno) */
         .modal-facturas-content {
             display: flex;
             flex-direction: column;
@@ -475,9 +498,8 @@
         .modal-facturas-header {
             position: sticky;
             top: 0;
-            background: var(--bg-card);
             z-index: 10;
-            margin-bottom: 0;
+            background: var(--bg-card);
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--border);
         }
@@ -485,8 +507,8 @@
         .modal-facturas-footer {
             position: sticky;
             bottom: 0;
-            background: var(--bg-card);
             z-index: 10;
+            background: var(--bg-card);
             padding-top: 1rem;
             border-top: 1px solid var(--border);
             display: flex;
@@ -494,64 +516,32 @@
             gap: 0.5rem;
         }
 
-        .facturas-lista {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem 0;
-            margin: 0 -1rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        /* ============================================================
+           OVERLAYS (modal, menú ajustes, menú agregar — patrón común)
+        ============================================================ */
+        .menu-overlay,
+        .menu-agregar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 100;
         }
 
-        .factura-item {
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
+        .menu-agregar-overlay {
+            background: rgba(0, 0, 0, 0.3);
         }
 
-        .factura-item.pagada {
-            opacity: 0.6;
-            border-color: var(--c-green);
+        .menu-overlay.active,
+        .menu-agregar-overlay.active {
+            display: block;
         }
 
-        .factura-info {
-            flex: 1;
-            cursor: pointer;
-        }
-
-        .factura-monto {
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--text-main);
-        }
-
-        .factura-monto-favor {
-            color: var(--c-green);
-            font-weight: 700;
-        }
-
-        .factura-fecha {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-        }
-
-        .factura-actions {
-            display: flex;
-            gap: 0.5rem;
-            border: 1px solid var(--text-main);
-            border-radius: var(--radius);
-        }
-
-        /* --- Animaciones --- */
+        /* ============================================================
+           ANIMACIONES
+        ============================================================ */
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -590,283 +580,450 @@
 
         @keyframes slideUp2 {
             from {
-                transform: translateX(-50%) translateY(100px);
                 opacity: 0;
+                transform: translateX(-50%) translateY(100px);
             }
 
             to {
-                transform: translateX(-50%) translateY(0);
                 opacity: 1;
+                transform: translateX(-50%) translateY(0);
             }
         }
 
-        .card-fade-in {
-            animation: slideDownFade 0.3s ease-out forwards;
+        /* ============================================================
+           CHEVRONS (patrón unificado para todos los grupos colapsables)
+        ============================================================ */
+        .chevron-icon,
+        .facturas-grupo-chevron,
+        .servicios-grupo-cat-chevron,
+        .menu-item-parent svg.menu-chevron {
+            transition: transform var(--transition-fast);
+            flex-shrink: 0;
+            color: var(--text-muted);
+        }
+
+        .chevron-icon {
+            transition: transform var(--transition-base) ease;
+        }
+
+        .chevron-icon.collapsed,
+        .facturas-grupo-chevron.collapsed,
+        .servicios-grupo-cat-chevron.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .chevron-icon.semi-collapsed {
+            transform: rotate(180deg);
+        }
+
+        .menu-item-parent.open svg.menu-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* ============================================================
+           COLLAPSIBLE CONTENT (patrón unificado)
+           Usado por: tarjetas principales, grupos de facturas y categorías
+        ============================================================ */
+        .collapsible-content {
+            max-height: 1500px;
+            opacity: 0;
+            visibility: hidden;
+            transition: max-height var(--transition-base), opacity var(--transition-base), visibility var(--transition-base);
+        }
+
+        .collapsible-content:not(.collapsed) {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .collapsible-content.collapsed {
+            max-height: 0;
             opacity: 0;
         }
 
-        /* --- Scrollbar --- */
-        .custom-scroll {
-            overflow-y: auto;
+        #servicios-content:not(.collapsed) {
+            overflow-y: visible;
             overflow-x: hidden;
         }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .custom-scroll::-webkit-scrollbar-track {
-            background: var(--bg-body);
-            border-radius: var(--radius);
-        }
-
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: var(--radius);
-        }
-
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-
-        /* --- Empty State --- */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-muted);
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-            opacity: 0.3;
-        }
-
-        .empty-state p {
-            font-size: 0.95rem;
-        }
-
-        /* --- Menu Ajustes --- */
-        .menu-ajustes {
-            position: fixed;
-            top: 0;
-            right: -280px;
-            width: 280px;
-            height: 100dvh;
-            background: var(--bg-card);
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s;
-            z-index: 120;
-            padding: 1rem;
-            overscroll-behavior: contain;
+        /* Grupos de facturas por año y grupos de categorías — mismo patrón */
+        .facturas-grupo-contenido,
+        .servicios-grupo-cat-contenido {
             display: flex;
             flex-direction: column;
-        }
-
-        .menu-ajustes.active {
-            right: 0;
-        }
-
-        .menu-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            z-index: 100;
-
-        }
-
-        .menu-overlay.active {
-            display: block;
-        }
-
-        .menu-item {
-            padding: 1rem 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--text-main);
-            transition: color 0.2s;
-        }
-
-        .menu-item:hover,
-        .btn-cerrar-menu:hover {
-            color: var(--text-muted);
-        }
-
-        .menu-item:last-child {
-            border-bottom: none;
-        }
-
-        .menu-content {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .menu-footer {
-            margin-top: auto;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .btn-cerrar-menu {
-            width: 100%;
-            padding: 0.875rem;
-            margin-bottom: 1rem;
-            background: transparent;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 0.5rem;
-            color: var(--text-main);
+            max-height: 2000px;
+            overflow: hidden;
+            opacity: 1;
+            transition: max-height var(--transition-base) ease-out, opacity var(--transition-fast);
         }
 
-        .menu-version {
-            text-align: center;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            padding: 0.5rem 0;
-        }
-
-        .menu-header {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border);
-        }
-
-        /* --- Toast Notifications --- */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            background: var(--bg-card);
-            color: var(--c-white);
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        .facturas-grupo-contenido.collapsed,
+        .servicios-grupo-cat-contenido.collapsed {
+            max-height: 0;
             opacity: 0;
-            transform: translateX(-50%) translateY(100px);
-            transition: all 0.3s ease;
-            z-index: 999;
+        }
+
+        /* Submenús del menú de ajustes */
+        .menu-submenu {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            padding-left: 2.5rem;
+            transition: max-height var(--transition-base) ease-out, opacity 0.25s ease-out;
+        }
+
+        .menu-submenu.open {
+            max-height: 400px;
+            opacity: 1;
+            transition: max-height 0.35s ease-in, opacity 0.25s ease-in;
+        }
+
+        /* ============================================================
+           GRUPOS (headers de facturas y categorías — patrón unificado)
+        ============================================================ */
+        .facturas-grupo-header,
+        .servicios-grupo-cat-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: opacity var(--transition-fast);
+        }
+
+        .facturas-grupo-header {
+            margin: 0.25rem 1rem;
+        }
+
+        .servicios-grupo-cat-header {
+            margin: 0.5rem 0 0.5rem;
+            padding-left: 1rem;
+        }
+
+        .facturas-grupo-header:active,
+        .servicios-grupo-cat-header:active {
+            opacity: 0.7;
+        }
+
+        .facturas-grupo-header-info,
+        .servicios-grupo-cat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Texto del título del grupo */
+        .facturas-grupo-ano-texto,
+        .servicios-grupo-cat-texto {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        /* Contador del grupo */
+        .facturas-grupo-contador,
+        .servicios-grupo-cat-contador {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Indicador de alerta en header de categoría */
+        .cat-alerta-icon {
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            white-space: pre-line;
-            pointer-events: none;
-            max-width: 90%;
-            min-width: 300px;
-            text-align: center;
-            backdrop-filter: blur(3px);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
-        .toast.show {
+        .cat-alerta-icon.vencido {
+            color: var(--c-red);
+        }
+
+        .cat-alerta-icon.urgente {
+            color: var(--c-red);
+        }
+
+        .cat-alerta-icon.proximo {
+            color: var(--c-gold);
+        }
+
+        .cat-alerta-icon.sin-facturas-mes {
+            color: var(--c-purple);
+        }
+
+        /* ============================================================
+           SERVICIOS LISTA
+        ============================================================ */
+        .servicios-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 700px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin-top: 1rem;
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transition: max-height var(--transition-base), opacity var(--transition-base);
         }
 
-        .toast.success {
-            background: var(--c-green);
+        /* Estados colapso de la sección servicios */
+        .servicios-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: flex-start;
+            max-height: 50px;
+            overflow: hidden;
+            opacity: 1;
+            background: var(--bg-card);
+            transition: max-height var(--transition-base), opacity var(--transition-base), margin var(--transition-base);
         }
 
-        .toast.info {
+        .servicios-actions.hidden,
+        #servicios-content.semi-collapsed .servicios-actions {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+        }
+
+        #servicios-content.collapsed .servicios-actions,
+        #servicios-content.collapsed .servicios-lista,
+        #servicios-content.collapsed .search-container,
+        #servicios-content.semi-collapsed .search-container {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Item de servicio */
+        .servicio-item {
+            position: relative;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: opacity var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .servicio-item:active,
+        .facturas-grupo-header:active {
+            transform: scale(0.99);
+        }
+
+        .servicio-item.calculando {
             background: var(--c-blue);
         }
 
-        .toast.error {
+        .servicio-nombre {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-main);
+        }
+
+        .servicio-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .servicio-monto {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .servicio-fecha {
+            font-size: 0.9rem;
+        }
+
+        /* Badge de estado del servicio */
+        .servicio-estado {
+            display: inline-block;
+            margin-top: 0.25rem;
+            padding: 0.1rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--c-white);
+        }
+
+        .servicio-estado.estado-sin-facturas {
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Colores de estado — servicios y facturas comparten la misma paleta */
+        .estado-vencido,
+        .estado-urgente,
+        .factura-estado-vencido {
             background: var(--c-red);
         }
 
-        /* --- Menú Emergente Agregar --- */
-        .menu-agregar {
-            position: fixed;
-            bottom: 7rem;
-            right: 2rem;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            padding: 1rem;
-            display: none;
+        .estado-proximo,
+        .factura-estado-pendiente {
+            background: var(--c-gold);
+        }
+
+        .estado-pagado,
+        .factura-estado-pagado {
+            background: var(--c-green);
+        }
+
+        .estado-lejano {
+            background: var(--c-blue);
+        }
+
+        .estado-sin-facturas-mes {
+            background: var(--c-purple);
+        }
+
+        /* ============================================================
+           FACTURAS LISTA
+        ============================================================ */
+        .facturas-lista {
+            flex: 1;
+            display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            z-index: 110;
-            animation: slideUp 0.2s ease;
+            overflow-y: auto;
+            padding: 1rem;
+            margin: 0 -1rem;
         }
 
-        .menu-agregar.active {
+        .factura-item {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem;
+            transition: opacity var(--transition-fast);
         }
 
-        .menu-agregar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+        .factura-item.pagada {
+            opacity: 0.6;
+            border-color: var(--c-green);
         }
 
-        .menu-agregar-overlay.active {
-            display: block;
-
+        .factura-info {
+            flex: 1;
+            cursor: pointer;
         }
 
-        .resumen-valor {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .factura-monto {
+            font-weight: 600;
+            font-size: 1rem;
             color: var(--text-main);
+        }
+
+        .factura-monto-favor {
+            color: var(--c-green);
+            font-weight: 700;
+        }
+
+        .factura-fecha {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .factura-actions {
+            display: flex;
+            gap: 0.5rem;
+            border: 1px solid var(--text-main);
+            border-radius: var(--radius);
+        }
+
+        /* Badge de estado de factura */
+        .factura-estado-pagado,
+        .factura-estado-vencido,
+        .factura-estado-pendiente {
+            display: inline-block;
+            margin-top: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .mensaje-sin-facturas {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem 0;
+        }
+
+        /* ============================================================
+           RESUMEN
+        ============================================================ */
+        .resumen-monto {
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--radius);
+            cursor: pointer;
+            min-height: 11rem;
+            transition: opacity var(--transition-base);
+        }
+
+        .resumen-monto .resumen-valor,
+        .resumen-valor-usd {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: left;
+        }
+
+        .resumen-titulo {
+            font-weight: 500;
+            color: var(--text-main);
+            text-align: left;
+            margin-bottom: 0.5rem
         }
 
         .resumen-label {
             color: var(--text-muted);
-            margin-top: 1rem;
         }
 
-        /* Estilos base de resumen-monto SIN borde */
-        .resumen-monto {
-            border-radius: var(--radius);
-            text-align: center;
-            cursor: pointer;
-            transition: opacity 0.3s;
-            min-height: 13.5rem;
-            display: flex;
-            flex-direction: column;
+        .resumen-monto .resumen-label {
+            text-align: left;
         }
 
-        /* Barra de progreso en resumen */
+        .resumen-footer {
+            margin-top: auto;
+        }
+
+        .resumen-fecha {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+
         .resumen-progreso {
             width: 100%;
             height: 5px;
             border-radius: 10px;
             overflow: hidden;
-            margin: 1rem 0 1rem 0;
+            margin: 0.25rem 0;
         }
 
         .resumen-progreso-barra {
             height: 100%;
+            border-radius: var(--radius);
             background: var(--bg-card);
-            border-radius: 10px;
-            transition: width 0.3s ease, background 0.3s ease;
+            transition: width var(--transition-base) ease, background var(--transition-base) ease;
         }
 
-        /* Colores de la barra según el estado de las PENDIENTES */
+        /* Color de la barra según estado */
         .card.borde-vencido .resumen-progreso-barra,
         .card.borde-urgente .resumen-progreso-barra {
             background: var(--c-red);
@@ -884,64 +1041,18 @@
             background: var(--c-green);
         }
 
-        /* Bordes dinámicos para la CARD padre (no para resumen-monto) */
-        .card.borde-vencido {
-            border-left: 4px solid var(--c-red);
+        /* ============================================================
+           ESTADÍSTICAS
+        ============================================================ */
+        .estadisticas-container {
+            animation: slideDownFade var(--transition-base) ease;
         }
 
-        .card.borde-urgente {
-            border-left: 4px solid var(--c-red);
+        .estadisticas-lista {
+            display: flex;
+            flex-direction: column;
         }
 
-        .card.borde-proximo {
-            border-left: 4px solid var(--c-gold);
-        }
-
-        .card.borde-lejano {
-            border-left: 4px solid var(--c-blue);
-        }
-
-        .card.borde-pagado {
-            border-left: 4px solid var(--c-green);
-        }
-
-        .resumen-titulo {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: var(--text-main);
-            text-align: left;
-        }
-
-        .resumen-monto .resumen-valor {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-main);
-            text-align: left;
-        }
-
-        .resumen-fecha {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            margin-top: 1rem;
-            text-align: right;
-        }
-
-        .resumen-footer {
-            margin-top: auto;
-        }
-
-        .resumen-monto .resumen-label {
-            color: var(--text-muted);
-            text-align: left;
-        }
-
-        /* --- Estilos para colapso de facturas --- */
-        .servicio-item {
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        /* Estadísticas Unificadas */
         .estadisticas-selector {
             width: 100%;
             background: var(--input-bg);
@@ -950,19 +1061,44 @@
             color: var(--text-main);
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: opacity var(--transition-fast);
         }
 
-        .estadisticas-container {
-            animation: slideDownFade 0.3s ease;
-        }
-
-        .estadisticas-lista {
+        .est-cat-tags-row {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            padding: 0.75rem 0 0.25rem;
         }
 
-        /* --- Estilos Calculador --- */
+        .est-cat-tag {
+            display: flex;
+            flex-shrink: 0;
+            width: fit-content;
+            padding: 0.3rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--input-bg);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+        }
+
+        .est-cat-tag:active {
+            transform: scale(0.95);
+        }
+
+        .est-cat-tag--activa {
+            background: var(--c-blue);
+            border-color: transparent;
+            color: var(--text-inv);
+        }
+
+        /* ============================================================
+           CALCULADOR DE PERÍODO
+        ============================================================ */
         .calculador-campo {
             display: flex;
             flex-direction: column;
@@ -993,169 +1129,71 @@
             color: var(--text-main);
         }
 
-        /* Estado de factura */
-        .factura-estado-pagado,
-        .factura-estado-vencido,
-        .factura-estado-pendiente {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 5px;
-            font-weight: 600;
-            margin-top: 0.25rem;
-            display: inline-block;
-        }
-
-        /* Variaciones de color */
-        .factura-estado-pagado {
-            background: var(--c-green);
-        }
-
-        .factura-estado-vencido {
-            background: var(--c-red);
-        }
-
-        .factura-estado-pendiente {
-            background: var(--c-gold);
-        }
-
-        .mensaje-sin-facturas {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 2rem 0;
-        }
-
-        .servicio-estado.estado-sin-facturas {
-            background: transparent;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        /* Tarjeta colapsable */
-        .card-header-collapsible {
-            display: flex;
-            justify-content: space-between;
+        /* ============================================================
+           CALCULADORA FLOTANTE
+        ============================================================ */
+        .calculadora-flotante {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            z-index: 998;
+            display: none;
             align-items: center;
-            cursor: pointer;
-            user-select: none;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            background: var(--c-blue);
+            color: var(--text-main);
+            box-shadow: var(--shadow-float);
+            backdrop-filter: blur(3px);
+            transform: translateX(-50%);
+            animation: slideUp2 0.2s ease-out;
         }
 
-        .card-header-collapsible+.collapsible-content {
-            padding-top: 0;
-            transition: all 0.3s;
+        .calculadora-total,
+        .calculadora-contador {
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
         }
 
-        .card-header-collapsible+.collapsible-content:not(.collapsed) {
-            padding-top: 1rem;
+        .calculadora-total {
+            min-width: 120px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
         }
 
-        .chevron-icon {
-            transition: transform 0.3s ease;
-            flex-shrink: 0;
+        .calculadora-contador {
+            font-size: 0.85rem;
+            font-weight: 500;
+            opacity: 0.9;
         }
 
-        .chevron-icon.collapsed {
-            transform: rotate(-90deg);
-        }
-
-        .chevron-icon.semi-collapsed {
-            transform: rotate(180deg);
-        }
-
-        .collapsible-content {
-            max-height: 1500px;
-            transition: all 0.3s;
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .collapsible-content:not(.collapsed) {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        #servicios-content:not(.collapsed) {
-            overflow-y: visible;
-            overflow-x: hidden;
-        }
-
-        .collapsible-content.collapsed {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        /* Estados de la tarjeta de servicios (3 estados) */
-        .servicios-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            justify-content: flex-start;
-            max-height: 50px;
-            opacity: 1;
-            overflow: hidden;
-            transition: all 0.3s;
-            background: var(--bg-card);
-        }
-
-        .servicios-actions.hidden {
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-        }
-
-        #servicios-content.semi-collapsed .servicios-actions {
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-        }
-
-        /* Cuando está completamente colapsado */
-        #servicios-content.collapsed .servicios-actions,
-        #servicios-content.collapsed .servicios-lista {
-            max-height: 0;
-            opacity: 0;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        /* Contenedor de búsqueda */
+        /* ============================================================
+           BÚSQUEDA
+        ============================================================ */
         .search-container {
             position: relative;
             max-height: 50px;
-            opacity: 1;
             overflow: visible;
-            transition: all 0.3s;
+            opacity: 1;
             background: var(--bg-card);
-        }
-
-        #servicios-content.semi-collapsed .search-container {
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-            overflow: hidden;
-        }
-
-        #servicios-content.collapsed .search-container {
-            max-height: 0;
-            opacity: 0;
-            margin-bottom: 0;
-            overflow: hidden;
+            transition: max-height var(--transition-base), opacity var(--transition-base), padding var(--transition-base);
         }
 
         .search-input {
             width: 100%;
-            padding: 0.75rem 2.5rem 0.75rem 2.5rem;
+            padding: 0.75rem 2.5rem;
             border: 1px solid var(--border);
             border-radius: var(--radius);
             font-size: 0.95rem;
             background: var(--input-bg);
             color: var(--text-main);
-            transition: border-color 0.2s;
+            transition: border-color var(--transition-fast);
         }
 
         .search-input:focus {
             outline: none;
-            border-color: var(--input-focus);
+            border-color: var(--border);
         }
 
         .search-input::placeholder {
@@ -1179,16 +1217,16 @@
             right: 0;
             top: 0;
             bottom: 0;
-            background: transparent;
-            border: none;
-            padding: 0 1rem;
-            cursor: pointer;
-            color: var(--text-muted);
-            width: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.2s;
+            width: 3rem;
+            padding: 0 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color var(--transition-fast);
         }
 
         .search-clear:hover {
@@ -1201,156 +1239,193 @@
             pointer-events: none;
         }
 
-        .icon-btn.pagada {
-            border-color: var(--c-green);
-            background: rgba(96, 172, 148, 0.1);
-            color: var(--c-green);
-        }
-
-        /* --- Grupos de Facturas por Año --- */
-        .facturas-grupo-ano {
-            margin-bottom: none;
-        }
-
-        .facturas-grupo-header {
-            display: flex;
-            align-items: center;
-            border-radius: var(--radius);
-            cursor: pointer;
-            margin: 0.25rem 1rem 0.25rem;
-            transition: all 0.2s;
-            justify-content: space-between;
-        }
-
-        .facturas-grupo-header-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .facturas-grupo-ano-texto {
-            font-weight: 600;
-            font-size: 1rem;
-            color: var(--text-main);
-        }
-
-        .facturas-grupo-contador {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            padding: 0.25rem 0.5rem;
-        }
-
-        .facturas-grupo-chevron {
-            transition: transform 0.2s;
+        /* ============================================================
+           EMPTY STATE
+        ============================================================ */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
             color: var(--text-muted);
         }
 
-        .facturas-grupo-chevron.collapsed {
-            transform: rotate(-90deg);
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            opacity: 0.3;
         }
 
-        .facturas-grupo-contenido {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            max-height: 2000px;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, opacity 0.2s;
-            opacity: 1;
-        }
-
-        .facturas-grupo-contenido.collapsed {
-            max-height: 0;
-            opacity: 0;
-        }
-
-        /* Estilos para modal de información */
-        .info-content {
-            max-height: 60vh;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .info-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .info-section h4 {
-            color: var(--text-main);
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .info-item {
-            margin-bottom: 0.75rem;
-            padding-left: 0.5rem;
-        }
-
-        .info-item strong {
-            color: var(--text-main);
+        .empty-state p {
             font-size: 0.95rem;
         }
 
-        .info-content em {
-            color: var(--c-blue);
-            font-style: normal;
-        }
-
-        /* Calculadora flotante */
-        .calculadora-flotante {
+        /* ============================================================
+           TOAST
+        ============================================================ */
+        .toast {
             position: fixed;
             bottom: 2rem;
             left: 50%;
-            transform: translateX(-50%);
-            background: var(--c-blue);
-            color: var(--text-main);
-            padding: 1rem 1.5rem;
-            border-radius: 50px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            z-index: 999;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            z-index: 998;
-            animation: slideUp2 0.3s ease-out;
+            justify-content: center;
+            gap: 0.75rem;
+            min-width: 300px;
+            max-width: 90%;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            background: var(--bg-card);
+            color: var(--c-white);
+            box-shadow: var(--shadow-float);
             backdrop-filter: blur(3px);
-        }
-
-        .calculadora-total {
-            font-size: 1.5rem;
-            font-weight: 700;
-            min-width: 120px;
+            opacity: 0;
+            pointer-events: none;
+            white-space: pre-line;
             text-align: center;
-            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+            transform: translateX(-50%) translateY(100px);
+            transition: opacity var(--transition-base) ease, transform var(--transition-base) ease;
         }
 
-        .calculadora-contador {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            font-weight: 500;
-            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
-        /* Servicio seleccionado para calcular */
-        .servicio-item.calculando {
+        .toast.success {
+            background: var(--c-green);
+        }
+
+        .toast.info {
             background: var(--c-blue);
         }
 
-        /* Tarjeta resumen: monto USD como segunda línea, mismo tamaño */
-        .resumen-valor-usd {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-main);
-            text-align: left;
+        .toast.error {
+            background: var(--c-red);
         }
 
-        /* Badge de moneda en lista de facturas */
+        /* ============================================================
+           MENÚ AJUSTES (panel lateral)
+        ============================================================ */
+        .menu-ajustes {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            z-index: 120;
+            display: flex;
+            flex-direction: column;
+            width: 280px;
+            height: 100dvh;
+            padding: 1rem;
+            background: var(--bg-card);
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            overscroll-behavior: contain;
+            transition: right var(--transition-base);
+        }
+
+        .menu-ajustes.active {
+            right: 0;
+        }
+
+        .menu-header {
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .menu-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: color var(--transition-fast);
+        }
+
+        .menu-item:hover,
+        .btn-cerrar-menu:hover {
+            color: var(--text-muted);
+        }
+
+        .menu-item-parent svg.menu-chevron {
+            margin-left: auto;
+        }
+
+        .btn-cerrar-menu {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.875rem;
+            margin-bottom: 1rem;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: color var(--transition-fast);
+        }
+
+        .menu-version {
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        #ingresos-indicator {
+            margin-left: auto;
+            padding-right: 1rem;
+        }
+
+        /* ============================================================
+           MENÚ EMERGENTE AGREGAR
+        ============================================================ */
+        .menu-agregar {
+            position: fixed;
+            bottom: 7rem;
+            right: 2rem;
+            z-index: 110;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-radius: var(--radius);
+            background: var(--bg-card);
+            box-shadow: var(--shadow-modal);
+            animation: slideUp 0.2s ease;
+        }
+
+        .menu-agregar.active {
+            display: flex;
+        }
+
+        /* ============================================================
+           BADGES DE MONEDA
+        ============================================================ */
         .moneda-badge {
             display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 700;
+            margin-left: 0.4rem;
             padding: 0.1rem 0.35rem;
             border-radius: 4px;
-            margin-left: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 700;
             vertical-align: middle;
         }
 
@@ -1364,59 +1439,92 @@
 
         .moneda-badge.contado {
             color: var(--c-blue);
+            text-transform: uppercase;
         }
 
         .moneda-badge.credito {
             color: var(--c-gold);
+            text-transform: uppercase;
         }
 
-        /* Botón toggle de moneda en modales */
-        .icon-btn.activo-usd {
-            color: var(--c-green) !important;
-            border-color: var(--c-green) !important;
-        }
-
-        .icon-btn:not(.activo-usd)[id*="moneda"] {
-            color: var(--c-red) !important;
-            border-color: var(--c-red) !important;
-        }
-
+        /* ============================================================
+           CATEGORÍAS (tags en gestión)
+        ============================================================ */
         .categoria-tag {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            background: var(--input-bg);
+            padding: 0.35rem 0.75rem 0.35rem 0.5rem;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+            background: var(--input-bg);
             font-size: 0.875rem;
             font-weight: 500;
         }
 
         .categoria-tag-del {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            width: 18px;
-            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-muted);
-            border-radius: 50%;
             flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            background: none;
+            cursor: pointer;
+            color: var(--text-muted);
         }
 
         .categoria-tag-del:active {
-            color: var(--c-red);
-            transform: scale(0.9);
+            color: var(--text-main);
         }
 
-        /* moviles */
+        /* ============================================================
+           MODAL DE INFORMACIÓN
+        ============================================================ */
+        .info-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .info-item {
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .info-item strong {
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .info-content em {
+            color: var(--c-blue);
+            font-style: normal;
+        }
+
+        /* ============================================================
+           MEDIA QUERIES
+        ============================================================ */
         @media (max-width: 767px) {
             .servicios-lista {
                 min-height: 400px;
+                max-height: 5000px;
+            }
+
+            .collapsible-content {
                 max-height: 5000px;
             }
 
@@ -1435,11 +1543,6 @@
                 bottom: 12rem;
                 right: 2rem;
             }
-
-            .collapsible-content {
-                max-height: 5000px;
-            }
-
         }
 
         @media (min-width: 768px) {
@@ -1464,9 +1567,14 @@
                 padding-right: 8px;
             }
 
-        }
+            .card {
+                padding: 1.5rem 1rem;
+            }
 
-        /* --- codigo css --- */
+            .container {
+                padding: 1.5rem;
+            }
+        }
     </style>
     <script>
         // Aplicar estado de tarjetas colapsables
@@ -1571,10 +1679,6 @@
             <line x1="4" y1="18" x2="20" y2="18" class="icon-line" stroke="currentColor" stroke-width="2"></line>
             <polygon points="15 4 20 9 15 14" class="icon-line" stroke="currentColor" stroke-width="2"></polygon>
         </symbol>
-        <symbol id="icon-clock" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" class="icon-line" stroke="currentColor"></circle>
-            <polyline points="12 6 12 12 16 14" class="icon-line" stroke="currentColor"></polyline>
-        </symbol>
         <symbol id="icon-trash" viewBox="0 0 24 24">
             <polyline points="3 6 5 6 21 6" class="icon-line" stroke="currentColor"></polyline>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" class="icon-line"
@@ -1660,6 +1764,28 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" class="icon-line" stroke="currentColor"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75" class="icon-line" stroke="currentColor"></path>
         </symbol>
+        <symbol id="icon-categorias" viewBox="0 0 24 24">
+            <path d="M3 7h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 18h7v3H3zM3 3h7v3H3z" class="icon-line"
+                stroke="currentColor" />
+        </symbol>
+        <symbol id="icon-estadisticas" viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
+            <path d="M7 12h2v5H7zm4-3h2v8h-2zm4-3h2v11h-2z" />
+        </symbol>
+        <symbol id="icon-deuda" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" class="icon-line" stroke="currentColor" stroke-width="2" fill="none">
+            </circle>
+            <line x1="12" y1="8" x2="12" y2="12" class="icon-line" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16" class="icon-line" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round"></line>
+        </symbol>
+        <symbol id="icon-pagado" viewBox="0 0 24 24">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" class="icon-line" stroke="currentColor" stroke-width="2"
+                fill="none" stroke-linecap="round"></path>
+            <polyline points="22 4 12 14.01 9 11.01" class="icon-line" stroke="currentColor" stroke-width="2"
+                fill="none" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        </symbol>
     </svg>
 
     <!-- Header -->
@@ -1684,7 +1810,7 @@
         <div class="menu-header"><svg class="icon">
                 <use href="#icon-menu" />
             </svg> Ajustes</div>
-        <div class="menu-content">
+        <div class="menu-content custom-scroll">
             <div class="menu-item" id="menu-perfiles">
                 <svg class="icon">
                     <use href="#icon-users" />
@@ -1693,7 +1819,7 @@
             </div>
             <div class="menu-item" id="menu-tema">
                 <svg class="icon">
-                    <use href="#icon-moon" />
+                    <use id="icon-tema-use" href="#icon-moon" />
                 </svg>
                 <span>Tema</span>
             </div>
@@ -1703,13 +1829,16 @@
                 </svg>
                 <span>Respaldar</span>
             </div>
-            <div class="menu-item" id="menu-importar">
+            <div class="menu-item menu-item-parent" id="menu-importar">
                 <svg class="icon">
                     <use href="#icon-upload" />
                 </svg>
                 <span>Restaurar</span>
+                <svg class="icon menu-chevron" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor"></polyline>
+                </svg>
             </div>
-            <div id="opciones-importacion" style="display: none; padding-left: 2.5rem; margin-top: 0.5rem;">
+            <div id="opciones-importacion" class="menu-submenu">
                 <div class="menu-item" id="menu-importar-reemplazar">
                     <span>Reemplazar</span>
                 </div>
@@ -1717,24 +1846,42 @@
                     <span>Combinar</span>
                 </div>
             </div>
-
-            <div class="menu-item" id="menu-limpiar">
+            <div class="menu-item menu-item-parent" id="menu-limpiar">
                 <svg class="icon">
                     <use href="#icon-trash" />
                 </svg>
-                <span>Borrar todo</span>
+                <span>Borrar</span>
+                <svg class="icon menu-chevron" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor"></polyline>
+                </svg>
+            </div>
+            <div id="opciones-borrar" class="menu-submenu">
+                <div class="menu-item" id="menu-borrar-todo">
+                    <span>Todo</span>
+                </div>
+                <div class="menu-item" id="menu-borrar-servicios">
+                    <span>Servicios</span>
+                </div>
+                <div class="menu-item" id="menu-borrar-facturas">
+                    <span>Facturas</span>
+                </div>
+                <div class="menu-item" id="menu-borrar-ingresos">
+                    <span>Ingresos</span>
+                </div>
+                <div class="menu-item" id="menu-borrar-categorias">
+                    <span>Categorías</span>
+                </div>
             </div>
             <div class="menu-item" id="menu-toggle-ingresos">
                 <svg class="icon">
                     <use href="#icon-dollar" />
                 </svg>
                 <span>Ingresos</span>
-                <span id="ingresos-indicator" style="margin-left: auto"></span>
+                <span id="ingresos-indicator"></span>
             </div>
             <div class="menu-item" id="menu-categorias">
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M3 7h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 18h7v3H3zM3 3h7v3H3z" class="icon-line"
-                        stroke="currentColor" />
+                <svg class="icon">
+                    <use href="#icon-categorias" />
                 </svg>
                 <span>Categorías</span>
             </div>
@@ -1745,7 +1892,6 @@
                 <span>Información</span>
             </div>
         </div>
-
         <div class="menu-footer">
             <button class="btn-cerrar-menu" id="btn-cerrar-menu">
                 <svg class="icon">
@@ -1753,7 +1899,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Version 0.69</div> <!-- DeltaF -->
+            <div class="menu-version">Lushibosca 0.77</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -1770,10 +1916,8 @@
                 <div class="card card-fade-in" style="animation-delay: 0.1s;">
                     <h2 class="card-header-collapsible" id="estadisticas-header">
                         <span>
-                            <svg class="icon" viewBox="0 0 24 24">
-                                <path
-                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
-                                <path d="M7 12h2v5H7zm4-3h2v8h-2zm4-3h2v11h-2z" />
+                            <svg class="icon">
+                                <use href="#icon-estadisticas" />
                             </svg>
                             Estadísticas
                         </span>
@@ -1904,7 +2048,7 @@
     </button>
 
     <!-- Calculadora flotante -->
-    <div class="calculadora-flotante" id="calculadora-flotante" style="display: none;">
+    <div class="calculadora-flotante" id="calculadora-flotante">
         <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
             <div class="calculadora-total" id="calculadora-total">$0,00</div>
             <div class="calculadora-total" id="calculadora-total-usd" style="display: none;"></div>
@@ -2045,9 +2189,26 @@
                     <option value="monto-asc">Monto (Menor a mayor)</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label>Ver</label>
+                <select id="select-vista">
+                    <option value="todo">Todo</option>
+                    <option value="categorias">Categorías</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Filtrar por estado</label>
+                <select id="select-filtro-estado">
+                    <option value="">Sin filtro</option>
+                    <option value="pendiente">Pendientes</option>
+                    <option value="vencido">Vencidos</option>
+                    <option value="pagado">Pagados</option>
+                    <option value="sin-facturas-mes">Sin facturas este mes</option>
+                    <option value="sin-facturas">Sin facturas</option>
+                </select>
+            </div>
             <div class="form-actions">
-                <button onclick="app.aplicarOrden()">Aplicar</button>
-                <button onclick="app.cerrarModal('modal-ordenar')">Cancelar</button>
+                <button onclick="app.cerrarModal('modal-ordenar')">Cerrar</button>
             </div>
         </div>
     </div>
@@ -2059,9 +2220,9 @@
                 <h3>Categorías</h3>
             </div>
             <div class="form-group">
-                <label for="nueva-categoria-nombre">Nombre de categoría</label>
+                <label for="nueva-categoria-nombre">Agregar nueva categoría</label>
                 <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="nueva-categoria-nombre" placeholder="Ej: Hogar, Streaming, Salud"
+                    <input type="text" id="nueva-categoria-nombre" placeholder="Ej: impuestos, Hogar, Credito"
                         maxlength="30" style="flex:1;">
                     <button type="button" class="icon-btn" onclick="app.guardarNuevaCategoria()" title="Agregar">
                         <svg class="icon">
@@ -2072,6 +2233,16 @@
             </div>
             <div id="categorias-lista"
                 style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; min-height: 2rem;"></div>
+            <div style="margin-bottom: 1rem;">
+                <button type="button" id="btn-toggle-agrupacion" class="icon-btn"
+                    style="width:100%; height:auto; padding:0.75rem 1rem; border-radius:var(--radius);"
+                    onclick="app.toggleAgrupacionCategorias()">
+                    <svg class="icon icon-line" viewBox="0 0 24 24">
+                        <use href="#icon-categorias" />
+                    </svg>
+                    <span id="btn-toggle-agrupacion-texto">Agrupar por categorías: ON</span>
+                </button>
+            </div>
             <div class="form-actions2">
                 <button type="button" onclick="app.cerrarModalCategorias()">
                     <svg class="icon">
@@ -2636,7 +2807,14 @@
                 this.origenModalFactura = null; // 'menu' o 'servicio'
                 this._anoExpandidoFacturas = {};
                 this._anoExpandidoIngresos = {};
+                try {
+                    this._catColapsadas = JSON.parse(localStorage.getItem('cat-colapsadas') || '{}');
+                } catch (e) {
+                    this._catColapsadas = {};
+                }
 
+                this._agrupacionActiva = localStorage.getItem('cat-agrupacion') !== 'off';
+                this.filtroEstado = '';
                 // Modo calculadora - NUEVO
                 this.modoCalculadora = false;
                 this.serviciosSeleccionados = new Set();
@@ -2676,6 +2854,7 @@
 
                 // Tipo de estadística seleccionado
                 this.tipoEstadisticaActual = localStorage.getItem('estadisticas-tipo') || 'mensual';
+                this._estadisticaCategoriaActiva = null;
 
                 // Cargar datos del perfil activo - NUEVO
                 this.cargarDatosPerfilActivo();
@@ -2724,12 +2903,41 @@
 
                 // Botón ordenar
                 document.getElementById('btn-sort').addEventListener('click', () => {
-                    // Sincronizar el select con el orden actual antes de abrir el modal
-                    const select = document.getElementById('select-orden');
-                    if (select) {
-                        select.value = this.ordenActual;
+                    // Si hay filtro activo, tocarlo limpia el filtro
+                    if (this.filtroEstado) {
+                        this.filtroEstado = '';
+                        this._actualizarBtnSort();
+                        this.renderServicios();
+                        this.mostrarToast('Filtro eliminado', 'info');
+                        return;
                     }
+                    const select = document.getElementById('select-orden');
+                    if (select) select.value = this.ordenActual;
+                    const selectVista = document.getElementById('select-vista');
+                    if (selectVista) selectVista.value = this._agrupacionActiva ? 'categorias' : 'todo';
+                    const selectFiltro = document.getElementById('select-filtro-estado');
+                    if (selectFiltro) selectFiltro.value = this.filtroEstado;
                     this.abrirModal('modal-ordenar');
+                });
+
+                document.getElementById('select-filtro-estado').addEventListener('change', (e) => {
+                    this.filtroEstado = e.target.value;
+                    this._actualizarBtnSort();
+                    this.renderServicios();
+                });
+
+                document.getElementById('select-orden').addEventListener('change', () => {
+                    this.aplicarOrden();
+                });
+
+                document.getElementById('select-vista').addEventListener('change', (e) => {
+                    const activar = e.target.value === 'categorias';
+                    if (activar !== this._agrupacionActiva) {
+                        this._agrupacionActiva = activar;
+                        localStorage.setItem('cat-agrupacion', activar ? 'on' : 'off');
+                        this._actualizarBtnAgrupacion();
+                        this.renderServicios();
+                    }
                 });
 
                 // Listeners para sincronizar botón toggle de monto con el input
@@ -2862,6 +3070,10 @@
 
                 // Cargar datos del nuevo perfil
                 this.cargarDatosPerfilActivo(); // Esta función ahora también inicializa el historial
+
+                // Resetear filtro de categoría al cambiar de perfil
+                this._estadisticaCategoriaActiva = null;
+                this.ultimoEstadoEstadisticas = null;
 
                 // Actualizar interfaz
                 this.renderServicios();
@@ -3180,12 +3392,6 @@
                     return false;
                 }
 
-                // Validar que no sea cero
-                if (monto === 0) {
-                    this.mostrarToast('El monto no puede ser 0', 'error');
-                    return false;
-                }
-
                 // Validar que sea positivo (solo si no se permiten negativos)
                 if (!permitirNegativos && monto < 0) {
                     this.mostrarToast('El monto debe ser positivo', 'error');
@@ -3272,7 +3478,12 @@
                 document.getElementById('menu-importar').addEventListener('click', () => this.mostrarOpcionesImportacion());
                 document.getElementById('menu-importar-reemplazar').addEventListener('click', () => this.importarDatos('reemplazar'));
                 document.getElementById('menu-importar-combinar').addEventListener('click', () => this.importarDatos('combinar'));
-                document.getElementById('menu-limpiar').addEventListener('click', () => this.limpiarDatos());
+                document.getElementById('menu-limpiar').addEventListener('click', () => this.mostrarOpcionesBorrar());
+                document.getElementById('menu-borrar-todo').addEventListener('click', () => this.limpiarDatos('todo'));
+                document.getElementById('menu-borrar-servicios').addEventListener('click', () => this.limpiarDatos('servicios'));
+                document.getElementById('menu-borrar-facturas').addEventListener('click', () => this.limpiarDatos('facturas'));
+                document.getElementById('menu-borrar-ingresos').addEventListener('click', () => this.limpiarDatos('ingresos'));
+                document.getElementById('menu-borrar-categorias').addEventListener('click', () => this.limpiarDatos('categorias'));
                 document.getElementById('menu-toggle-ingresos').addEventListener('click', () => this.toggleIngresos());
 
                 // Menú agregar
@@ -3527,14 +3738,18 @@
 
                         if (esDelMesActual) {
                             if (factura.monto < 0) return;
+                            // Pagada fuera del mes actual: no cuenta ni en total ni en pagado (barra consistente)
+                            const pagadaEsteMes = factura.pagada && factura.fechaPago &&
+                                (() => { const fp = new Date(factura.fechaPago + 'T00:00:00'); return fp.getMonth() === mesActual && fp.getFullYear() === añoActual; })();
+                            const contarEnTotal = !factura.pagada || pagadaEsteMes;
                             if (moneda === 'usd') {
-                                if (!excluir) totalFacturasMesActualUSD += factura.monto;
+                                if (!excluir && contarEnTotal) totalFacturasMesActualUSD += factura.monto;
                                 if (!factura.pagada && !excluir) { totalAPagarUSD += factura.monto; }
-                                else if (factura.pagada && !excluir) { totalPagadoDelMesActualUSD += factura.monto; }
+                                else if (pagadaEsteMes && !excluir) { totalPagadoDelMesActualUSD += factura.monto; }
                             } else {
-                                if (!excluir) totalFacturasMesActualARS += factura.monto;
+                                if (!excluir && contarEnTotal) totalFacturasMesActualARS += factura.monto;
                                 if (!factura.pagada && !excluir) { totalAPagarARS += factura.monto; }
-                                else if (factura.pagada && !excluir) { totalPagadoDelMesActualARS += factura.monto; }
+                                else if (pagadaEsteMes && !excluir) { totalPagadoDelMesActualARS += factura.monto; }
                             }
                         }
 
@@ -3653,8 +3868,8 @@
                 const pendienteARS = this.datosResumen.pendienteARS || 0;
                 const pendienteUSD = this.datosResumen.pendienteUSD || 0;
 
-                const pagadoARS = totalARS - pendienteARS;
-                const porcentajePagado = totalARS > 0 ? (pagadoARS / totalARS) * 100 : (pendienteUSD === 0 ? 100 : 0);
+                const pagadoDelMesARS = this.datosResumen.pagadoMesARS || 0;
+                const porcentajePagado = totalARS > 0 ? Math.min((pagadoDelMesARS / totalARS) * 100, 100) : (pendienteUSD === 0 ? 100 : 0);
 
                 const estadoActual = {
                     tipo: 'pendiente',
@@ -3682,13 +3897,13 @@
 
                 const resumenHTML = `
         <div class="resumen-monto" id="resumen-toggle" style="${animacion}">
-            <div class="resumen-titulo">Resumen de Servicios</div>
+            <div class="resumen-titulo"><svg class="icon"><use href="#icon-deuda" /></svg> Resumen de Deuda</div>
             ${(hayARS && hayUSD) ? valorMostrar : `<div class="resumen-valor">${valorMostrar}</div>`}
-            <div class="resumen-footer">
-                <div class="resumen-label">Pendiente de pago</div>
+            <div class="resumen-footer">                
                 <div class="resumen-progreso">
                     <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
                 </div>
+                <div class="resumen-label">Pendiente de pago</div>
                 <div class="resumen-fecha">${fechaFormateada}</div>
             </div>
         </div>
@@ -3719,7 +3934,7 @@
                 const pagadoDelMesActualARS = this.datosResumen.pagadoDelMesActualARS || 0;
 
                 const porcentajePagado = totalARS > 0
-                    ? (pagadoDelMesActualARS / totalARS) * 100
+                    ? Math.min((pagadoMesARS / totalARS) * 100, 100)
                     : 0;
 
                 const estadoActual = {
@@ -3745,13 +3960,13 @@
 
                 const resumenHTML = `
         <div class="resumen-monto" id="resumen-toggle" style="${animacion}">
-            <div class="resumen-titulo">Resumen de Pagos</div>
+            <div class="resumen-titulo"><svg class="icon"><use href="#icon-pagado" /></svg> Resumen de Pagos</div>
             ${(hayARS && hayUSD) ? valorMostrar : `<div class="resumen-valor">${valorMostrar}</div>`}
-            <div class="resumen-footer">
-                <div class="resumen-label">Pagado este mes</div>
+            <div class="resumen-footer">                
                 <div class="resumen-progreso">
                     <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
                 </div>
+                <div class="resumen-label">Pagado este mes</div>
                 <div class="resumen-fecha">${fechaFormateada}</div>
             </div>
         </div>
@@ -3813,6 +4028,9 @@
                     añoSeleccionado = añoActual;
                 }
 
+                // Categoría activa (filtro)
+                const categoriaActiva = this._estadisticaCategoriaActiva || null;
+
                 // Calcular estadísticas del mes seleccionado
                 let cantidadPendientes = 0;
                 let cantidadPagadas = 0;
@@ -3823,6 +4041,12 @@
                 let totalIngresosARS = 0, totalIngresosUSD = 0;
 
                 this.servicios.forEach(servicio => {
+                    // Filtrar por categoría si hay una activa (ingresos siempre pasan)
+                    if (categoriaActiva && servicio.id !== this.SERVICIO_INGRESOS_ID) {
+                        const catServicio = servicio.categoria || '';
+                        if (catServicio !== categoriaActiva) return;
+                    }
+
                     servicio.facturas.forEach(factura => {
                         const fechaFactura = new Date(factura.fecha + 'T00:00:00');
                         const mesFactura = fechaFactura.getMonth();
@@ -3846,17 +4070,21 @@
                             }
 
                             // Facturas normales (positivas)
+                            // Con categoría activa se muestra el monto real sin excluir crédito
                             cantidadFacturasMes++;
-                            if (!factura.conCredito) {
+                            if (!factura.conCredito || categoriaActiva) {
                                 if (moneda === 'usd') totalMesUSD += factura.monto;
                                 else totalMesARS += factura.monto;
                             }
 
                             if (!factura.pagada) {
-                                cantidadPendientes++;
                                 const vencimiento = new Date(factura.fecha + 'T00:00:00');
                                 vencimiento.setHours(0, 0, 0, 0);
-                                if (vencimiento < hoy) cantidadVencidas++;
+                                if (vencimiento < hoy) {
+                                    cantidadVencidas++;
+                                } else {
+                                    cantidadPendientes++;
+                                }
                             }
                         }
 
@@ -3866,7 +4094,7 @@
                             const fechaPago = new Date(factura.fechaPago + 'T00:00:00');
                             if (fechaPago.getMonth() === mesSeleccionado && fechaPago.getFullYear() === añoSeleccionado) {
                                 cantidadPagadas++;
-                                if (!factura.conCredito) {
+                                if (!factura.conCredito || categoriaActiva) {
                                     const moneda = factura.moneda || 'ars';
                                     if (moneda === 'usd') totalPagadoMesUSD += factura.monto;
                                     else totalPagadoMesARS += factura.monto;
@@ -3886,7 +4114,8 @@
                     cantidadFacturasMes,
                     totalIngresosARS, totalIngresosUSD,
                     mesSeleccionado,
-                    añoSeleccionado
+                    añoSeleccionado,
+                    categoriaActiva
                 };
 
                 // Comparar con el estado anterior
@@ -3925,12 +4154,31 @@
         <span class="estadistica-valor">${this.formatearMoneda(totalIngresosUSD, 'usd')}</span>
     </div>` : '';
 
+                        // Porcentaje de ingresos: solo si hay ingresos ARS y facturas ARS en el mes
+                        let porcentajeIngresosHTML = '';
+                        if (hayIngARS && totalMesARS > 0) {
+                            const porcentaje = (totalMesARS / totalIngresosARS) * 100;
+                            const porcentajeTexto = porcentaje.toFixed(1) + '%';
+                            // Color según el nivel: verde < 50%, amarillo < 80%, rojo >= 80%
+                            const color = porcentaje < 50
+                                ? 'var(--c-green)'
+                                : porcentaje < 80
+                                    ? 'var(--c-gold)'
+                                    : 'var(--c-red)';
+                            porcentajeIngresosHTML = `
+    <div class="calculador-resultado-item">
+        <span class="estadistica-label">% del ingreso</span>
+        <span class="estadistica-valor" style="color: ${color}; font-weight: 600;">${porcentajeTexto}</span>
+    </div>`;
+                        }
+
                         ingresosHTML = `
     <div class="calculador-resultado-item">
         <span class="estadistica-label">Ingresos</span>
         <span class="estadistica-valor">${ingMontoHTML}</span>
     </div>
-    ${ingUSDItem}`;
+    ${ingUSDItem}
+    ${porcentajeIngresosHTML}`;
                     }
 
                     const itemsHTML = `
@@ -3995,6 +4243,7 @@
             ${this.generarOpcionesMeses(mesSeleccionado, añoSeleccionado)}
         </select>
     </div>
+    <div id="estadisticas-categorias-tags"></div>
     <div class="estadisticas-lista"></div>
 `;
                     document.getElementById('estadisticas-mensual-container').innerHTML = estadisticasHTML;
@@ -4006,6 +4255,9 @@
                             this.actualizarEstadisticas();
                         });
                     }
+
+                    // Renderizar tags de categoría
+                    this._renderTagsCategoriaEstadisticas();
 
                     // Renderizar contenido inicial
                     renderizarContenido();
@@ -4023,6 +4275,9 @@
                         }
                     }
 
+                    // Actualizar tags de categoría
+                    this._renderTagsCategoriaEstadisticas();
+
                     // Solo animar si el estado cambió
                     const lista = document.querySelector('#estadisticas-mensual-container .estadisticas-lista');
                     if (lista && estadoCambio) {
@@ -4039,6 +4294,45 @@
                         renderizarContenido();
                     }
                 }
+            }
+
+            _renderTagsCategoriaEstadisticas() {
+                const container = document.getElementById('estadisticas-categorias-tags');
+                if (!container) return;
+
+                const cats = this._getCategorias();
+                // Solo mostrar si hay categorías asignadas a algún servicio normal
+                const catsUsadas = cats.filter(c =>
+                    this.servicios.some(s => s.id !== this.SERVICIO_INGRESOS_ID && s.categoria === c)
+                );
+
+                if (catsUsadas.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                const activa = this._estadisticaCategoriaActiva || null;
+
+                const tagsHTML = catsUsadas.map(c => {
+                    const esActiva = c === activa;
+                    return `<button class="est-cat-tag${esActiva ? ' est-cat-tag--activa' : ''}" data-cat="${this.escaparAtributoHTML(c)}">${this.escaparHTML(c)}</button>`;
+                }).join('');
+
+                container.innerHTML = `<div class="est-cat-tags-row">${tagsHTML}</div>`;
+
+                container.querySelectorAll('.est-cat-tag').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const cat = btn.dataset.cat;
+                        if (this._estadisticaCategoriaActiva === cat) {
+                            // Desactivar filtro
+                            this._estadisticaCategoriaActiva = null;
+                        } else {
+                            this._estadisticaCategoriaActiva = cat;
+                        }
+                        this.ultimoEstadoEstadisticas = null; // forzar re-render
+                        this.actualizarEstadisticas();
+                    });
+                });
             }
 
             toggleEstadisticas() {
@@ -4594,11 +4888,10 @@
                 // Ordenar servicios según el orden actual
                 const serviciosOrdenados = this.ordenarServicios(serviciosFiltrados);
 
-                // Renderizar servicios normales
-                let html = serviciosOrdenados.map(servicio => {
+                // Renderizar servicios normales agrupados por categoría
+                const generarItemServicio = (servicio) => {
                     const { estado, claseEstado, montoTexto, fechaTexto } = this.calcularEstadoServicio(servicio);
                     const claseCalculando = this.serviciosSeleccionados.has(servicio.id) ? 'calculando' : '';
-
                     return `
    <div class="servicio-wrapper" data-id="${this.escaparAtributoHTML(servicio.id)}">
       <div class="servicio-item ${claseEstado} ${claseCalculando}" data-id="${this.escaparAtributoHTML(servicio.id)}">
@@ -4611,7 +4904,75 @@
                        </div>
                    </div>
                  `;
-                }).join('');
+                };
+
+                // Agrupar por categoría
+                const gruposCat = {};
+                serviciosOrdenados.forEach(servicio => {
+                    const cat = servicio.categoria || '';
+                    if (!gruposCat[cat]) gruposCat[cat] = [];
+                    gruposCat[cat].push(servicio);
+                });
+
+                // Ordenar: categorías nombradas alfabéticamente, sin categoría al final
+                const catKeys = Object.keys(gruposCat).sort((a, b) => {
+                    if (a === '' && b !== '') return 1;
+                    if (a !== '' && b === '') return -1;
+                    return a.localeCompare(b);
+                });
+
+                let html = '';
+
+                // Si solo hay una categoría (o ninguna), no mostrar encabezado de grupo
+                if (catKeys.length <= 1 || !this._agrupacionActiva) {
+                    html = serviciosOrdenados.map(generarItemServicio).join('');
+                } else {
+                    catKeys.forEach(cat => {
+                        const items = gruposCat[cat];
+                        const catLabel = cat || 'Sin categoría';
+                        const collapsed = this._catColapsadas[cat] ? 'collapsed' : '';
+                        const cantidad = items.length;
+                        const itemsHTML = items.map(generarItemServicio).join('');
+
+                        // Calcular el estado de alerta más prioritario de la categoría
+                        const prioridad = { 'vencido': 4, 'urgente': 3, 'proximo': 2, 'sin-facturas-mes': 1 };
+                        let mejorAlerta = null;
+                        items.forEach(s => {
+                            const { claseEstado } = this.calcularEstadoServicio(s);
+                            if (prioridad[claseEstado] && (!mejorAlerta || prioridad[claseEstado] > prioridad[mejorAlerta])) {
+                                mejorAlerta = claseEstado;
+                            }
+                        });
+
+                        // Generar icono indicador si hay alertas
+                        let alertaIconHTML = '';
+                        if (mejorAlerta) {
+                            const svgPath = (mejorAlerta === 'proximo' || mejorAlerta === 'sin-facturas-mes')
+                                ? '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="currentColor"/>'
+                                : '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><line x1="12" y1="8" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor"/>';
+                            alertaIconHTML = `<svg class="cat-alerta-icon ${mejorAlerta}" viewBox="0 0 24 24" width="14" height="14">${svgPath}</svg>`;
+                        }
+
+                        html += `
+        <div class="servicios-grupo-cat" data-cat="${this.escaparAtributoHTML(cat)}">
+            <div class="servicios-grupo-cat-header" onclick="app.toggleGrupoCat(this)"
+                onpointerdown="app._lpStart(event,this)" onpointerup="app._lpCancel()" onpointerleave="app._lpCancel()" oncontextmenu="event.preventDefault()">
+                <div class="servicios-grupo-cat-header-info">
+                    <span class="servicios-grupo-cat-texto">${this.escaparHTML(catLabel)}</span>
+                    <span class="servicios-grupo-cat-contador">${cantidad} ${cantidad !== 1 ? 'servicios' : 'servicio'}</span>
+                    ${alertaIconHTML}
+                </div>
+                <svg class="icon servicios-grupo-cat-chevron ${collapsed}" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor"></polyline>
+                </svg>
+            </div>
+            <div class="servicios-grupo-cat-contenido ${collapsed}">
+                ${itemsHTML}
+            </div>
+        </div>
+                        `;
+                    });
+                }
 
                 // Agregar servicio de ingresos si está habilitado Y (no hay búsqueda O coincide con la búsqueda)
                 if (this.ingresosHabilitado() && (!this.terminoBusqueda || 'ingresos'.includes(this.terminoBusqueda))) {
@@ -4699,14 +5060,28 @@
             }
 
             aplicarFiltro(servicios) {
-                if (!this.terminoBusqueda) {
-                    return servicios;
+                let resultado = servicios;
+
+                // Filtro por búsqueda de texto
+                if (this.terminoBusqueda) {
+                    resultado = resultado.filter(servicio =>
+                        servicio.id !== this.SERVICIO_INGRESOS_ID &&
+                        servicio.nombre.toLowerCase().includes(this.terminoBusqueda)
+                    );
                 }
 
-                return servicios.filter(servicio =>
-                    servicio.id !== this.SERVICIO_INGRESOS_ID &&
-                    servicio.nombre.toLowerCase().includes(this.terminoBusqueda)
-                );
+                // Filtro por estado
+                if (this.filtroEstado) {
+                    resultado = resultado.filter(servicio => {
+                        const { claseEstado } = this.calcularEstadoServicio(servicio);
+                        if (this.filtroEstado === 'pendiente') {
+                            return ['urgente', 'proximo', 'lejano'].includes(claseEstado);
+                        }
+                        return claseEstado === this.filtroEstado;
+                    });
+                }
+
+                return resultado;
             }
 
             ordenarServicios(servicios) {
@@ -4814,7 +5189,6 @@
                 this.ordenActual = select.value;
                 localStorage.setItem('gestion_servicios_orden', this.ordenActual);
                 this.renderServicios();
-                this.cerrarModal('modal-ordenar');
                 this.mostrarToast('Orden aplicado', 'success');
             }
 
@@ -4917,6 +5291,64 @@
                 }
             }
 
+            toggleGrupoCat(headerElement) {
+                if (this._lpFired) { this._lpFired = false; return; }
+                const chevron = headerElement.querySelector('.servicios-grupo-cat-chevron');
+                const contenido = headerElement.nextElementSibling;
+                const cat = headerElement.closest('.servicios-grupo-cat')?.dataset.cat ?? '';
+
+                const estaColapsado = chevron.classList.contains('collapsed');
+                if (estaColapsado) {
+                    chevron.classList.remove('collapsed');
+                    contenido.classList.remove('collapsed');
+                    delete this._catColapsadas[cat];
+                } else {
+                    chevron.classList.add('collapsed');
+                    contenido.classList.add('collapsed');
+                    this._catColapsadas[cat] = true;
+                }
+                localStorage.setItem('cat-colapsadas', JSON.stringify(this._catColapsadas));
+            }
+
+            _lpStart(event, headerElement) {
+                this._lpTimer = setTimeout(() => {
+                    this._lpFired = true;
+                    this.toggleTodosGruposCat(headerElement);
+                }, 500);
+                this._lpFired = false;
+            }
+
+            _lpCancel() {
+                clearTimeout(this._lpTimer);
+            }
+
+            toggleTodosGruposCat(headerElement) {
+                // Determinar estado del grupo tocado
+                const chevronTocado = headerElement.querySelector('.servicios-grupo-cat-chevron');
+                const estaColapsado = chevronTocado.classList.contains('collapsed');
+
+                // Seleccionar todos los grupos visibles
+                const todosHeaders = document.querySelectorAll('.servicios-grupo-cat-header');
+                todosHeaders.forEach(header => {
+                    const chevron = header.querySelector('.servicios-grupo-cat-chevron');
+                    const contenido = header.nextElementSibling;
+                    const cat = header.closest('.servicios-grupo-cat')?.dataset.cat ?? '';
+                    if (estaColapsado) {
+                        // Expandir todos
+                        chevron.classList.remove('collapsed');
+                        contenido.classList.remove('collapsed');
+                        delete this._catColapsadas[cat];
+                    } else {
+                        // Colapsar todos
+                        chevron.classList.add('collapsed');
+                        contenido.classList.add('collapsed');
+                        this._catColapsadas[cat] = true;
+                    }
+                });
+                localStorage.setItem('cat-colapsadas', JSON.stringify(this._catColapsadas));
+                this.mostrarToast(estaColapsado ? 'Categorías expandidas' : 'Categorías colapsadas', 'info');
+            }
+
             toggleGrupoAno(headerElement) {
                 const chevron = headerElement.querySelector('.facturas-grupo-chevron');
                 const contenido = headerElement.nextElementSibling;
@@ -4928,10 +5360,8 @@
                     todosLosChevrons.forEach(ch => ch.classList.add('collapsed'));
                     todosLosContenidos.forEach(cont => cont.classList.add('collapsed'));
 
-                    setTimeout(() => {
-                        chevron.classList.remove('collapsed');
-                        contenido.classList.remove('collapsed');
-                    }, 200);
+                    chevron.classList.remove('collapsed');
+                    contenido.classList.remove('collapsed');
                 } else {
                     chevron.classList.add('collapsed');
                     contenido.classList.add('collapsed');
@@ -5078,6 +5508,7 @@
                 if (this._modalServicioOrigen) this.cerrarModal(this._modalServicioOrigen);
                 document.getElementById('nueva-categoria-nombre').value = '';
                 this._renderCategorias();
+                this._actualizarBtnAgrupacion();
                 this.abrirModal('modal-nueva-categoria');
             }
 
@@ -5086,6 +5517,38 @@
                 if (this._modalServicioOrigen) {
                     this.abrirModal(this._modalServicioOrigen);
                     this._modalServicioOrigen = null;
+                }
+            }
+
+            toggleAgrupacionCategorias() {
+                this._agrupacionActiva = !this._agrupacionActiva;
+                localStorage.setItem('cat-agrupacion', this._agrupacionActiva ? 'on' : 'off');
+                this._actualizarBtnAgrupacion();
+                this.renderServicios();
+            }
+
+            _actualizarBtnAgrupacion() {
+                const btn = document.getElementById('btn-toggle-agrupacion');
+                const texto = document.getElementById('btn-toggle-agrupacion-texto');
+                if (!btn || !texto) return;
+                if (this._agrupacionActiva) {
+                    texto.textContent = 'Agrupar por categorías: SI';
+                    btn.classList.add('pagada');
+                } else {
+                    texto.textContent = 'Agrupar por categorías: NO';
+                    btn.classList.remove('pagada');
+                }
+            }
+
+            _actualizarBtnSort() {
+                const btn = document.getElementById('btn-sort');
+                if (!btn) return;
+                if (this.filtroEstado) {
+                    btn.classList.add('filtro-activo');
+                    btn.title = 'Filtro activo — toca para limpiar';
+                } else {
+                    btn.classList.remove('filtro-activo');
+                    btn.title = 'Ordenar servicios';
                 }
             }
 
@@ -5100,9 +5563,9 @@
                 lista.innerHTML = cats.map(c => `
                     <span class="categoria-tag">
                         <button class="categoria-tag-del" onclick="app.eliminarCategoria('${c.replace(/'/g, "\\'")}')" title="Eliminar">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                            </svg>
+                            <svg class="icon">
+                        <use href="#icon-cancel" />
+                    </svg>
                         </button>
                         ${this.escaparHTML(c)}
                     </span>
@@ -5119,6 +5582,7 @@
                 this._poblarSelectCategorias('servicio-categoria');
                 this._poblarSelectCategorias('editar-servicio-categoria');
                 this._renderCategorias();
+                this.renderServicios();
                 this.mostrarToast('Categoría eliminada', 'success');
             }
 
@@ -5410,6 +5874,9 @@
 
                 // Cambiar el signo
                 input.value = -valor;
+
+                // Toast informativo
+                this.mostrarToast(valor > 0 ? 'Saldo a favor' : 'Gasto normal', 'info');
 
                 // Actualizar estado del botón
                 const btnId = inputId === 'factura-monto' ? 'btn-toggle-negativo' : 'btn-editar-toggle-negativo';
@@ -5854,7 +6321,7 @@
                             return false;
                         }
 
-                        if (factura.monto === 0 || Math.abs(factura.monto) > 99999999) {
+                        if (Math.abs(factura.monto) > 99999999) {
                             console.error(`Validación: factura[${fidx}].monto fuera de rango en servicio[${idx}]`);
                             return false;
                         }
@@ -5937,11 +6404,15 @@
 
             mostrarOpcionesImportacion() {
                 const opciones = document.getElementById('opciones-importacion');
-                if (opciones.style.display === 'none') {
-                    opciones.style.display = 'block';
-                } else {
-                    opciones.style.display = 'none';
-                }
+                const padre = document.getElementById('menu-importar');
+                const abriendo = !opciones.classList.contains('open');
+
+                // Cerrar el otro submenú si está abierto
+                document.getElementById('opciones-borrar').classList.remove('open');
+                document.getElementById('menu-limpiar').classList.remove('open');
+
+                opciones.classList.toggle('open', abriendo);
+                padre.classList.toggle('open', abriendo);
             }
 
             importarDatos(modo = 'reemplazar') {
@@ -6051,7 +6522,8 @@
                                 // Construir mensaje según lo que se hizo
                                 if (serviciosAgregados === 0 && facturasAgregadas === 0 && facturasActualizadas === 0 && categoriasAgregadas === 0) {
                                     this.mostrarToast('No hay datos nuevos para agregar', 'info');
-                                    document.getElementById('opciones-importacion').style.display = 'none';
+                                    document.getElementById('opciones-importacion').classList.remove('open');
+                                    document.getElementById('menu-importar').classList.remove('open');
                                     return;
                                 }
 
@@ -6101,23 +6573,75 @@
 
                 input.click();
                 // Ocultar opciones después de seleccionar
-                document.getElementById('opciones-importacion').style.display = 'none';
+                document.getElementById('opciones-importacion').classList.remove('open');
+                document.getElementById('menu-importar').classList.remove('open');
                 this.cerrarMenuAjustes();
             }
 
-            limpiarDatos() {
-                if (confirm('¿Estás seguro de eliminar todos los datos?')) {
-                    {
+            mostrarOpcionesBorrar() {
+                const opciones = document.getElementById('opciones-borrar');
+                const padre = document.getElementById('menu-limpiar');
+                const abriendo = !opciones.classList.contains('open');
+
+                // Cerrar el otro submenú si está abierto
+                document.getElementById('opciones-importacion').classList.remove('open');
+                document.getElementById('menu-importar').classList.remove('open');
+
+                opciones.classList.toggle('open', abriendo);
+                padre.classList.toggle('open', abriendo);
+            }
+
+            limpiarDatos(tipo = 'todo') {
+                const mensajes = {
+                    todo: '¿Estás seguro de eliminar TODOS los datos? (servicios, facturas, ingresos y categorías)',
+                    servicios: '¿Estás seguro de eliminar todos los servicios y sus facturas? Los ingresos y categorías se conservarán.',
+                    facturas: '¿Estás seguro de eliminar todas las facturas de todos los servicios? Los servicios se conservarán vacíos.',
+                    ingresos: '¿Estás seguro de eliminar todos los ingresos registrados?',
+                    categorias: '¿Estás seguro de eliminar todas las categorías?'
+                };
+
+                const toasts = {
+                    todo: 'Todos los datos han sido eliminados',
+                    servicios: 'Todos los servicios han sido eliminados',
+                    facturas: 'Todas las facturas han sido eliminadas',
+                    ingresos: 'Todos los ingresos han sido eliminados',
+                    categorias: 'Todas las categorías han sido eliminadas'
+                };
+
+                if (confirm(mensajes[tipo] || mensajes.todo)) {
+                    if (tipo === 'todo') {
                         this.servicios = [];
                         this._saveCategorias([]);
-                        this.guardarDatos();
-                        this.guardarEstado();
-                        this.renderServicios();
-                        this.actualizarBotonesHistorial();
-                        this.actualizarEstadisticas();
-                        this.mostrarToast('Todos los datos han sido eliminados', 'success');
-                        this.cerrarMenuAjustes();
+                    } else if (tipo === 'servicios') {
+                        // Eliminar todos los servicios excepto el de ingresos
+                        this.servicios = this.servicios.filter(s => s.id === this.SERVICIO_INGRESOS_ID);
+                    } else if (tipo === 'facturas') {
+                        // Vaciar facturas de todos los servicios normales (no ingresos)
+                        this.servicios = this.servicios.map(s => {
+                            if (s.id === this.SERVICIO_INGRESOS_ID) return s;
+                            return { ...s, facturas: [] };
+                        });
+                    } else if (tipo === 'ingresos') {
+                        // Eliminar todas las facturas del servicio de ingresos
+                        const servicioIngresos = this.servicios.find(s => s.id === this.SERVICIO_INGRESOS_ID);
+                        if (servicioIngresos) {
+                            servicioIngresos.facturas = [];
+                        }
+                    } else if (tipo === 'categorias') {
+                        // Limpiar categorías y quitar la categoría asignada a los servicios
+                        this._saveCategorias([]);
+                        this.servicios = this.servicios.map(s => ({ ...s, categoria: '' }));
                     }
+
+                    this.guardarDatos();
+                    this.guardarEstado();
+                    this.renderServicios();
+                    this.actualizarBotonesHistorial();
+                    this.actualizarEstadisticas();
+                    this.mostrarToast(toasts[tipo] || toasts.todo, 'success');
+                    document.getElementById('opciones-borrar').classList.remove('open');
+                    document.getElementById('menu-limpiar').classList.remove('open');
+                    this.cerrarMenuAjustes();
                 }
             }
 
@@ -6135,14 +6659,23 @@
                         localStorage.setItem(this.THEME_KEY, 'dark');
                     }
                 }
+                // Sincronizar ícono con el tema cargado
+                const esDark = document.body.classList.contains('dark-mode');
+                this._actualizarIconoTema(esDark);
             }
 
             toggleTema() {
                 document.body.classList.toggle('dark-mode');
                 const esDark = document.body.classList.contains('dark-mode');
                 localStorage.setItem(this.THEME_KEY, esDark ? 'dark' : 'light');
+                this._actualizarIconoTema(esDark);
                 this.mostrarToast(`Tema ${esDark ? 'oscuro' : 'claro'} activado`, 'success');
                 this.cerrarMenuAjustes();
+            }
+
+            _actualizarIconoTema(esDark) {
+                const use = document.getElementById('icon-tema-use');
+                if (use) use.setAttribute('href', esDark ? '#icon-sun' : '#icon-moon');
             }
 
             toggleIngresos() {
@@ -6225,9 +6758,11 @@
                 menu.classList.remove('active');
                 overlay.classList.remove('active');
 
-                // Ocultar opciones de importación
-                const opciones = document.getElementById('opciones-importacion');
-                if (opciones) opciones.style.display = 'none';
+                // Cerrar submenús animados
+                document.getElementById('opciones-importacion')?.classList.remove('open');
+                document.getElementById('opciones-borrar')?.classList.remove('open');
+                document.getElementById('menu-importar')?.classList.remove('open');
+                document.getElementById('menu-limpiar')?.classList.remove('open');
 
                 // Restaurar scroll del body
                 document.body.classList.remove('modal-open');
@@ -6606,12 +7141,11 @@
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 0.69
+    //                 NOTAS SISTEMA DeltaF VERSION 0.77
     // ====================================================================
     
      - CAMBIOS
-     1) Se agrega funcion para marcar si se apgo con credito o en efectivo/tranferencia, para que la cuenta de la
-     tarjeta de estadisticas sea de realice de forma correcta
+     1) 
 
 
      - BUGS CONOCIDOS:
