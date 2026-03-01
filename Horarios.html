@@ -1579,7 +1579,7 @@
                     </svg>
                     Ajustes
                 </span>
-                <span class="version-text">LUSHIBOSCA-7.35</span>
+                <span class="version-text">LUSHIBOSCA-7.36</span>
             </h3>
             <div class="form-group">
                 <label>Horas Diarias</label>
@@ -1627,6 +1627,14 @@
                     </label>
                 </div>
                 <div id="config-total-feedback" class="config-hint-text">(Total semanal: --hs)</div>
+            </div>
+            <div class="form-group">
+                <label>Tiempo Fuera</label>
+                <button id="btn-toggle-ignorar-tf" onclick="UILogic.toggleIgnorarTiempoFuera()"
+                    style="justify-content:space-between; padding:0.75rem 1rem; border:1px solid var(--border); color:var(--text-muted); font-weight:600; transition: all 0.2s;">
+                    <span>Ignorar calculo de Tiempo Fuera</span>
+                    <span id="hint-ignorar-tf" style="font-size:0.9rem;">No</span>
+                </button>
             </div>
             <div class="form-group">
                 <label>Agregar Nuevo Perfil</label>
@@ -2854,7 +2862,7 @@
             // DATA MANAGEMENT MODULE 
             // ====================================================================
             const DataManagement = (function (S) {
-                let registros = [], diasHabiles = [1, 2, 3, 4, 5], horasDiarias = 7, editandoId = null; let vistaActual = 'diaria';
+                let registros = [], diasHabiles = [1, 2, 3, 4, 5], horasDiarias = 7, editandoId = null; let vistaActual = 'diaria'; let ignorarTiempoFuera = false;
                 let filtroActivo = false;
                 let filtroDesde = null;
                 let filtroHasta = null;
@@ -3257,7 +3265,8 @@
                             diasHabiles: diasFinal,
                             horasDiarias: horasFinal,
                             temaOscuro: t,
-                            vistaActual: (v === 'semana' || v === 'diaria') ? v : 'diaria'
+                            vistaActual: (v === 'semana' || v === 'diaria') ? v : 'diaria',
+                            ignorarTiempoFuera: localStorage.getItem('ignorarTiempoFuera') === 'true'
                         };
                     } catch (e) {
                         console.error('Error config:', e);
@@ -3272,7 +3281,8 @@
                 }
 
                 function calcularHoras(e, s, tf = null, cr = null, esCalculoTemporal = false) {
-                    const tfMinutos = tf ? tiempoEnMinutos(tf) : 0;
+                    const tfEfectivo = ignorarTiempoFuera ? null : tf;
+                    const tfMinutos = tfEfectivo ? tiempoEnMinutos(tfEfectivo) : 0;
                     const crMinutos = cr ? tiempoEnMinutos(cr) : 0;
 
                     // NO verificar tipo especial si es cálculo temporal (hora actual)
@@ -3641,8 +3651,9 @@
 
                             if (diferencia > 0.01) { // Usamos 0.01 para evitar errores de redondeo pequeños
                                 // Convertimos la diferencia a formato HH:MM
-                                const h = Math.floor(diferencia);
-                                const m = Math.round((diferencia - h) * 60);
+                                let h = Math.floor(diferencia);
+                                let m = Math.round((diferencia - h) * 60);
+                                if (m === 60) { h++; m = 0; }
                                 cr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
                             }
                             // Si diferencia <= 0, significa que ya cumplió el horario, así que cr se queda en null
@@ -4480,6 +4491,16 @@
                     horasDiarias: () => horasDiarias,
                     setDiasHabiles: (v) => diasHabiles = v,
                     setHorasDiarias: (v) => horasDiarias = v,
+                    getIgnorarTiempoFuera: () => ignorarTiempoFuera,
+                    setIgnorarTiempoFuera: (v) => { ignorarTiempoFuera = v; },
+                    recalcularTotalesEnMemoria: function () {
+                        registros.forEach(r => {
+                            if (r.entrada && r.salida && !TiposRegistro.esRegistroEspecial(r.entrada, r.salida)) {
+                                const t = calcularHoras(r.entrada, r.salida, r.tiempoFuera || null, r.credito || null);
+                                if (t) { r.horas = t.horas; r.minutos = t.minutos; r.total = t.total; }
+                            }
+                        });
+                    },
                     editandoId: () => editandoId,
                     setEditandoId: (id) => editandoId = id,
                     vistaActual: () => vistaActual,
@@ -4512,6 +4533,13 @@
                         const prevState = HistoryManager.undo();
                         if (prevState) {
                             registros.splice(0, registros.length, ...prevState);
+                            // Recalcular en memoria para reflejar el flag actual sin tocar el historial
+                            registros.forEach(r => {
+                                if (r.entrada && r.salida && !TiposRegistro.esRegistroEspecial(r.entrada, r.salida)) {
+                                    const t = calcularHoras(r.entrada, r.salida, r.tiempoFuera || null, r.credito || null);
+                                    if (t) { r.horas = t.horas; r.minutos = t.minutos; r.total = t.total; }
+                                }
+                            });
                             guardarYActualizar();
                             UILogic.mostrarToast('Deshecho', 'info');
 
@@ -4535,6 +4563,13 @@
                         const nextState = HistoryManager.redo();
                         if (nextState) {
                             registros.splice(0, registros.length, ...nextState);
+                            // Recalcular en memoria para reflejar el flag actual sin tocar el historial
+                            registros.forEach(r => {
+                                if (r.entrada && r.salida && !TiposRegistro.esRegistroEspecial(r.entrada, r.salida)) {
+                                    const t = calcularHoras(r.entrada, r.salida, r.tiempoFuera || null, r.credito || null);
+                                    if (t) { r.horas = t.horas; r.minutos = t.minutos; r.total = t.total; }
+                                }
+                            });
                             guardarYActualizar();
                             UILogic.mostrarToast('Rehecho', 'info');
 
@@ -4698,9 +4733,9 @@
                 function horasATexto(t) {
                     const totalHoras = Math.max(0, t);
 
-                    const h = Math.floor(totalHoras);
-                    const m = Math.round((totalHoras - h) * 60);
-
+                    let h = Math.floor(totalHoras);
+                    let m = Math.round((totalHoras - h) * 60);
+                    if (m === 60) { h++; m = 0; }
                     let partes = [];
 
                     if (h > 0) {
@@ -5242,8 +5277,9 @@
                     // Promedio horas diarias
                     const totalHoras = registrosValidos.reduce((sum, r) => sum + r.total, 0);
                     const promedioDiario = totalHoras / registrosValidos.length;
-                    const hPromedio = Math.floor(promedioDiario);
-                    const mPromedio = Math.round((promedioDiario - hPromedio) * 60);
+                    let hPromedio = Math.floor(promedioDiario);
+                    let mPromedio = Math.round((promedioDiario - hPromedio) * 60);
+                    if (mPromedio === 60) { hPromedio++; mPromedio = 0; }
 
                     // CALCULAR SEMANA PASADA
                     const hoy = new Date();
@@ -5306,8 +5342,9 @@
                             totalSemanaPasada += horasDiariasObjetivo;
                         }
                     });
-                    const hSemanaPasada = Math.floor(totalSemanaPasada);
-                    const mSemanaPasada = Math.round((totalSemanaPasada - hSemanaPasada) * 60);
+                    let hSemanaPasada = Math.floor(totalSemanaPasada);
+                    let mSemanaPasada = Math.round((totalSemanaPasada - hSemanaPasada) * 60);
+                    if (mSemanaPasada === 60) { hSemanaPasada++; mSemanaPasada = 0; }
 
                     // Construir texto con detalles
                     let textoSemanaPasada = `${hSemanaPasada}h ${mSemanaPasada}m`;
@@ -5327,8 +5364,9 @@
                             .join(', ');
                         textoSemanaPasada += ` [${detalles}]`;
                     }
-                    const hTotal = Math.floor(totalHoras);
-                    const mTotal = Math.round((totalHoras - hTotal) * 60);
+                    let hTotal = Math.floor(totalHoras);
+                    let mTotal = Math.round((totalHoras - hTotal) * 60);
+                    if (mTotal === 60) { hTotal++; mTotal = 0; }
 
                     return {
                         entradaPromedio: `${String(hEntrada).padStart(2, '0')}:${String(mEntrada).padStart(2, '0')}`,
@@ -6086,6 +6124,37 @@
                     });
                 }
 
+                function toggleIgnorarTiempoFuera() {
+                    const nuevoValor = !D.getIgnorarTiempoFuera();
+                    D.setIgnorarTiempoFuera(nuevoValor);
+                    try { localStorage.setItem('ignorarTiempoFuera', nuevoValor); } catch (e) { }
+                    actualizarEstadoBotonIgnorarTF();
+                    // Recalcular totales en memoria (sin guardar en historial ni perfil)
+                    D.recalcularTotalesEnMemoria();
+                    actualizarUI();
+                    mostrarToast(nuevoValor ? 'Tiempo fuera ignorado en cálculos' : 'Tiempo fuera incluido en cálculos', 'info');
+                }
+
+                function actualizarEstadoBotonIgnorarTF() {
+                    const btn = document.getElementById('btn-toggle-ignorar-tf');
+                    const hint = document.getElementById('hint-ignorar-tf');
+                    const activo = D.getIgnorarTiempoFuera();
+                    if (!btn) return;
+                    if (activo) {
+                        btn.style.background = 'rgba(96, 172, 148, 0.1)';
+                        btn.style.color = 'var(--c-green)';
+                        btn.style.borderColor = 'var(--c-green)';
+                        btn.style.fontWeight = 'bold';
+                        if (hint) { hint.textContent = 'Sí'; hint.style.color = 'var(--c-green)'; }
+                    } else {
+                        btn.style.background = '';
+                        btn.style.color = 'var(--text-muted)';
+                        btn.style.borderColor = 'var(--border)';
+                        btn.style.fontWeight = '600';
+                        if (hint) { hint.textContent = 'No'; hint.style.color = 'var(--text-muted)'; }
+                    }
+                }
+
                 function cerrarEdicion() {
                     ModalManager.cerrar('modal-editar', () => {
                         D.setEditandoId(null);
@@ -6242,8 +6311,9 @@
                         }
                     });
 
-                    const horasTotales = Math.floor(totalHoras);
-                    const minutosTotales = Math.round((totalHoras - horasTotales) * 60);
+                    let horasTotales = Math.floor(totalHoras);
+                    let minutosTotales = Math.round((totalHoras - horasTotales) * 60);
+                    if (minutosTotales === 60) { horasTotales++; minutosTotales = 0; }
 
                     // ============================================
                     // ESTRUCTURA MODULAR DEL REPORTE
@@ -6424,8 +6494,9 @@ REPORTE DE HORAS TRABAJADAS
                                     totalSemanal += datos.remotos.length * horasDiariasObjetivo;
                                 }
 
-                                const horasSem = Math.floor(totalSemanal);
-                                const minutosSem = Math.round((totalSemanal - horasSem) * 60);
+                                let horasSem = Math.floor(totalSemanal);
+                                let minutosSem = Math.round((totalSemanal - horasSem) * 60);
+                                if (minutosSem === 60) { horasSem++; minutosSem = 0; }
 
                                 const fechaLunes = new Date(lunes.replace(/-/g, '/') + ' 00:00:00');
                                 const fechaDomingo = new Date(fechaLunes);
@@ -6904,6 +6975,7 @@ Generado por Sistema Horarios
                         });
 
                         UILogic.actualizarFeedbackConfig();
+                        actualizarEstadoBotonIgnorarTF();
                     });
                 }
 
@@ -7713,7 +7785,8 @@ Generado por Sistema Horarios
                         iniciarCambioHoras, detenerCambio, mostrarconfig, alternarFechaActual, verificarBloqueoCredito,
                         toggleCredito, init, toggleFormulario, setBloqueoEdicionGrupo, toggleBloqueoEdicionGrupo, cerrarEdicionGrupo,
                         mostrarExportar, cerrarExportar, ejecutarExportacion, toggleCamposRangoExport, aplicarFeedbackRegistro,
-                        iniciarTimerAutoCierreBotones, cancelarTimerAutoCierreBotones
+                        iniciarTimerAutoCierreBotones, cancelarTimerAutoCierreBotones,
+                        toggleIgnorarTiempoFuera, actualizarEstadoBotonIgnorarTF
                     };
 
                     // === LISTENERS E INTERACTIVIDAD ===
@@ -7856,6 +7929,8 @@ Generado por Sistema Horarios
                     const config = D.cargarConfiguracion();
                     const temaOscuro = config.temaOscuro;
                     D.setVistaActual(config.vistaActual);
+                    D.setIgnorarTiempoFuera(config.ignorarTiempoFuera || false);
+                    UILogic.actualizarEstadoBotonIgnorarTF();
 
                     const perfilActual = PerfilManager.obtenerDatosPerfil();
                     let diasRaw = perfilActual.diasHabiles;
@@ -7883,6 +7958,8 @@ Generado por Sistema Horarios
                         const estadoActual = HistoryManager.getCurrentState();
                         if (estadoActual && estadoActual.length > 0) {
                             D.registros().splice(0, D.registros().length, ...estadoActual);
+                            // Recalcular en memoria según el flag actual (sin modificar el historial)
+                            D.recalcularTotalesEnMemoria();
                             console.log('✓ Registros restaurados desde historial');
                         }
                     } else {
@@ -8530,7 +8607,8 @@ Generado por Sistema Horarios
                     iniciarCambioHoras, detenerCambio, mostrarconfig, alternarFechaActual, verificarBloqueoCredito,
                     toggleCredito, setBloqueoEdicionGrupo, toggleBloqueoEdicionGrupo, cerrarEdicionGrupo,
                     mostrarExportar, cerrarExportar, ejecutarExportacion, toggleCamposRangoExport, aplicarFeedbackRegistro,
-                    iniciarTimerAutoCierreBotones, cancelarTimerAutoCierreBotones
+                    iniciarTimerAutoCierreBotones, cancelarTimerAutoCierreBotones,
+                    toggleIgnorarTiempoFuera, actualizarEstadoBotonIgnorarTF
                 };
 
             })(SecurityAndUtils, DataManagement);
@@ -8563,14 +8641,12 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.35
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.36
     // ====================================================================
     
      - CAMBIOS:
-    1) Se agrega stat-item tiempo total
-    2) modificacion del grid de "semana pasada"
-    3) al tocar el boton importar o restaurar, abre directamente el selector de archivo
-
+    1) 
+    
 
      - BUGS MENORES CONOCIDOS:
      1) al tener un registro con entrada y luego agregar una salida, deshacer la accion
