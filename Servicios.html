@@ -3164,7 +3164,7 @@
 
                     return `
                         <div class="perfil-item ${esActivo ? 'activo' : ''}" 
-                             style="border: 2px solid ${esActivo ? 'var(--c-blue)' : 'var(--border)'}; 
+                             style="border: 1px solid ${esActivo ? 'var(--c-green)' : 'var(--border)'}; 
                                     border-radius: var(--radius); 
                                     padding: 1rem; 
                                     background: var(--bg-card);
@@ -3176,7 +3176,7 @@
                             <div style="flex: 1;">
                                 <div style="font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
                                     ${this.escaparHTML(perfil.nombre)}
-                                    ${esActivo ? '<span style="color: var(--c-blue); font-size: 0.9rem;">● Activo</span>' : ''}
+                                    ${esActivo ? '<span style="color: var(--c-green); font-size: 0.9rem;">● Activo</span>' : ''}
                                 </div>
                                 <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
                                     ${cantidadServicios} servicio${cantidadServicios !== 1 ? 's' : ''}
