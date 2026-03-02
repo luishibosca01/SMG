@@ -367,6 +367,7 @@
             border: 1px solid transparent;
             border-left: 4px solid transparent;
             transition: all 0.3s ease;
+            min-height: 14rem;
         }
 
         #stats-card.timer-running {
@@ -5876,7 +5877,7 @@
                             }
 
                             if (esDiaDeDescanso) {
-                                if (statsEl) statsEl.textContent = "😴";
+                                if (statsEl) statsEl.textContent = "🌞";
                                 if (mensajeEl) {
                                     // Solo ocultar si NO hay objetivo de horas
                                     if (horasDiarias === 0) {
@@ -8645,7 +8646,7 @@ Generado por Sistema Horarios
     // ====================================================================
     
      - CAMBIOS:
-    1) 
+    1) Se agrega opcion para ignorar el calculo de tiempo fuera
     
 
      - BUGS MENORES CONOCIDOS:
