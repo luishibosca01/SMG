@@ -367,6 +367,7 @@
             border: 1px solid transparent;
             border-left: 4px solid transparent;
             transition: all 0.3s ease;
+            min-height: 14rem;
         }
 
         #stats-card.timer-running {
@@ -1579,7 +1580,7 @@
                     </svg>
                     Ajustes
                 </span>
-                <span class="version-text">LUSHIBOSCA-7.36</span>
+                <span class="version-text">LUSHIBOSCA-7.37</span>
             </h3>
             <div class="form-group">
                 <label>Horas Diarias</label>
@@ -2754,7 +2755,7 @@
                         emoji: '🏠',
                         label: 'Licencia',
                         labelPlural: 'Licencias',
-                        descripcion: 'Dia libre',
+                        descripcion: 'Día libre',
                         color: 'purple',
                         contabiliza: true
                     },
@@ -3097,35 +3098,6 @@
                 }
 
                 function setGrupoEnEdicion(val) { grupoEnEdicion = val; }
-
-                async function cargarConVerificacion() {
-                    try {
-                        const stored = localStorage.getItem('registros');
-                        if (!stored) return [];
-                        const data = JSON.parse(stored);
-
-                        if (data.hash) {
-                            const hashCalculado = await S.calcularHashSHA256(data.registros);
-
-                            // comparación segura contra timing attacks
-                            if (!S.constantTimeCompare(hashCalculado, data.hash)) {
-                                console.warn('⚠️ Integridad comprometida');
-                                UILogic.mostrarToast('Advertencia de integridad', 'warning');
-                                const continuar = confirm('⚠️ Los datos pueden haber sido modificados.\n\n¿Deseas cargarlos de todos modos?');
-                                if (!continuar) {
-                                    localStorage.removeItem('registros');
-                                    return [];
-                                }
-                            }
-                        }
-                        return (data.registros || []).filter(S.validarRegistroSeguro);
-                    } catch (e) {
-                        console.error('Error cargando:', e);
-                        return [];
-                    }
-                }
-
-
 
                 async function registrarDiaEspecial(fecha, tipo) {
                     // Verificar si ya existe un registro para hoy
@@ -4505,7 +4477,6 @@
                     setEditandoId: (id) => editandoId = id,
                     vistaActual: () => vistaActual,
                     setVistaActual: (v) => vistaActual = v,
-                    cargarConVerificacion,
                     cargarConfiguracion,
                     calcularHoras,
                     calcularHorasFeriadoEnRango,
@@ -5227,6 +5198,81 @@
                     const hTiempoFuera = Math.floor(tiempoFueraTotalMinutos / 60);
                     const mTiempoFuera = tiempoFueraTotalMinutos % 60;
 
+                    // CALCULAR SEMANA PASADA (siempre, independiente de si hay registros del mes)
+                    const hoy = new Date();
+                    hoy.setHours(0, 0, 0, 0);
+
+                    const diaSemana = hoy.getDay();
+                    const offsetLunesActual = diaSemana === 0 ? -6 : 1 - diaSemana;
+
+                    const lunesActual = new Date(hoy);
+                    lunesActual.setDate(hoy.getDate() + offsetLunesActual);
+
+                    const lunesPasado = new Date(lunesActual);
+                    lunesPasado.setDate(lunesActual.getDate() - 7);
+
+                    const domingoPasado = new Date(lunesActual);
+                    domingoPasado.setDate(lunesActual.getDate() - 1);
+
+                    const inicioSemanaPasada = `${lunesPasado.getFullYear()}-${String(lunesPasado.getMonth() + 1).padStart(2, '0')}-${String(lunesPasado.getDate()).padStart(2, '0')}`;
+                    const finSemanaPasada = `${domingoPasado.getFullYear()}-${String(domingoPasado.getMonth() + 1).padStart(2, '0')}-${String(domingoPasado.getDate()).padStart(2, '0')}`;
+
+                    const todosRegistrosSemanaPasada = D.registros().filter(r =>
+                        r.fecha >= inicioSemanaPasada && r.fecha <= finSemanaPasada
+                    );
+
+                    const normalesSemanaPasada = todosRegistrosSemanaPasada.filter(r => {
+                        const esEspecial = TiposRegistro.esRegistroEspecial(r.entrada, r.salida);
+                        return r.entrada && r.salida && !esEspecial;
+                    });
+
+                    const especialesSemanaPasada = todosRegistrosSemanaPasada.filter(r =>
+                        TiposRegistro.esRegistroEspecial(r.entrada, r.salida)
+                    );
+
+                    const especialesPorTipo = {};
+                    especialesSemanaPasada.forEach(r => {
+                        const tipo = TiposRegistro.obtenerTipoPorCodigo(r.entrada, r.salida);
+                        if (tipo) {
+                            if (!especialesPorTipo[tipo.labelPlural]) {
+                                especialesPorTipo[tipo.labelPlural] = 0;
+                            }
+                            especialesPorTipo[tipo.labelPlural]++;
+                        }
+                    });
+
+                    const horasDiariasObjetivo = D.horasDiarias();
+                    let totalSemanaPasada = normalesSemanaPasada.reduce((sum, r) => sum + r.total, 0);
+
+                    especialesSemanaPasada.forEach(r => {
+                        const tipo = TiposRegistro.obtenerTipoPorCodigo(r.entrada, r.salida);
+                        if (tipo && tipo.id === 'remoto') {
+                            totalSemanaPasada += horasDiariasObjetivo;
+                        }
+                    });
+
+                    let hSemanaPasada = Math.floor(totalSemanaPasada);
+                    let mSemanaPasada = Math.round((totalSemanaPasada - hSemanaPasada) * 60);
+                    if (mSemanaPasada === 60) { hSemanaPasada++; mSemanaPasada = 0; }
+
+                    let textoSemanaPasada = todosRegistrosSemanaPasada.length > 0
+                        ? `${hSemanaPasada}h ${mSemanaPasada}m`
+                        : '--:--';
+
+                    if (todosRegistrosSemanaPasada.length > 0 && Object.keys(especialesPorTipo).length > 0) {
+                        const detalles = Object.entries(especialesPorTipo)
+                            .map(([tipoPlural, cant]) => {
+                                const tipoObj = TiposRegistro.obtenerTodosLosTipos().find(t =>
+                                    t.labelPlural.toLowerCase() === tipoPlural.toLowerCase()
+                                );
+                                const label = (cant === 1 && tipoObj) ? tipoObj.label : tipoPlural;
+                                const diasTexto = cant === 1 ? 'dia de' : 'dias de';
+                                return `${cant} ${diasTexto} ${label.toLowerCase()}`;
+                            })
+                            .join(', ');
+                        textoSemanaPasada += ` [${detalles}]`;
+                    }
+
                     // Filtrar solo registros válidos para promedios (excluir registros especiales)
                     const registrosValidos = registrosMes.filter(r =>
                         r.entrada && r.salida &&
@@ -5241,7 +5287,7 @@
                             promedioDiario: '--:--',
                             tiempoFueraTotal: `--:--`,
                             tiempoTotal: '0h 0m',
-                            semanaPasada: '--:--',
+                            semanaPasada: textoSemanaPasada,
                             feriados: feriados,
                             ausencias: ausencias,
                             vacaciones: vacaciones,
@@ -5281,89 +5327,6 @@
                     let mPromedio = Math.round((promedioDiario - hPromedio) * 60);
                     if (mPromedio === 60) { hPromedio++; mPromedio = 0; }
 
-                    // CALCULAR SEMANA PASADA
-                    const hoy = new Date();
-                    hoy.setHours(0, 0, 0, 0); // Normalizar a medianoche
-
-                    const diaSemana = hoy.getDay(); // 0=Dom, 1=Lun...
-                    const offsetLunesActual = diaSemana === 0 ? -6 : 1 - diaSemana;
-
-                    // Lunes de esta semana
-                    const lunesActual = new Date(hoy);
-                    lunesActual.setDate(hoy.getDate() + offsetLunesActual);
-
-                    // Lunes de semana pasada (restar 7 días al lunes actual)
-                    const lunesPasado = new Date(lunesActual);
-                    lunesPasado.setDate(lunesActual.getDate() - 7);
-
-                    // Domingo de semana pasada (restar 1 día al lunes actual)
-                    const domingoPasado = new Date(lunesActual);
-                    domingoPasado.setDate(lunesActual.getDate() - 1);
-
-                    // Formatear a YYYY-MM-DD
-                    const inicioSemanaPasada = `${lunesPasado.getFullYear()}-${String(lunesPasado.getMonth() + 1).padStart(2, '0')}-${String(lunesPasado.getDate()).padStart(2, '0')}`;
-                    const finSemanaPasada = `${domingoPasado.getFullYear()}-${String(domingoPasado.getMonth() + 1).padStart(2, '0')}-${String(domingoPasado.getDate()).padStart(2, '0')}`;
-
-                    // Filtrar TODOS los registros de semana pasada
-                    const todosRegistrosSemanaPasada = D.registros().filter(r =>
-                        r.fecha >= inicioSemanaPasada && r.fecha <= finSemanaPasada
-                    );
-
-                    // Separar normales de especiales
-                    const normalesSemanaPasada = todosRegistrosSemanaPasada.filter(r => {
-                        const esEspecial = TiposRegistro.esRegistroEspecial(r.entrada, r.salida);
-                        return r.entrada && r.salida && !esEspecial;
-                    });
-
-                    const especialesSemanaPasada = todosRegistrosSemanaPasada.filter(r =>
-                        TiposRegistro.esRegistroEspecial(r.entrada, r.salida)
-                    );
-
-                    // Contar tipos especiales
-                    const especialesPorTipo = {};
-                    especialesSemanaPasada.forEach(r => {
-                        const tipo = TiposRegistro.obtenerTipoPorCodigo(r.entrada, r.salida);
-                        if (tipo) {
-                            if (!especialesPorTipo[tipo.labelPlural]) {
-                                especialesPorTipo[tipo.labelPlural] = 0;
-                            }
-                            especialesPorTipo[tipo.labelPlural]++;
-                        }
-                    });
-
-                    // Sumar horas trabajadas (normales + remotos como objetivo diario)
-                    const horasDiariasObjetivo = D.horasDiarias();
-                    let totalSemanaPasada = normalesSemanaPasada.reduce((sum, r) => sum + r.total, 0);
-
-                    // Agregar horas de días remotos (equivalente al objetivo diario)
-                    especialesSemanaPasada.forEach(r => {
-                        const tipo = TiposRegistro.obtenerTipoPorCodigo(r.entrada, r.salida);
-                        if (tipo && tipo.id === 'remoto') {
-                            totalSemanaPasada += horasDiariasObjetivo;
-                        }
-                    });
-                    let hSemanaPasada = Math.floor(totalSemanaPasada);
-                    let mSemanaPasada = Math.round((totalSemanaPasada - hSemanaPasada) * 60);
-                    if (mSemanaPasada === 60) { hSemanaPasada++; mSemanaPasada = 0; }
-
-                    // Construir texto con detalles
-                    let textoSemanaPasada = `${hSemanaPasada}h ${mSemanaPasada}m`;
-
-                    if (Object.keys(especialesPorTipo).length > 0) {
-                        const detalles = Object.entries(especialesPorTipo)
-                            .map(([tipoPlural, cant]) => {
-                                // Buscar el tipo original para obtener tanto singular como plural
-                                const tipoObj = TiposRegistro.obtenerTodosLosTipos().find(t =>
-                                    t.labelPlural.toLowerCase() === tipoPlural.toLowerCase()
-                                );
-
-                                const label = (cant === 1 && tipoObj) ? tipoObj.label : tipoPlural;
-                                const diasTexto = cant === 1 ? 'dia de' : 'dias de';
-                                return `${cant} ${diasTexto} ${label.toLowerCase()}`;
-                            })
-                            .join(', ');
-                        textoSemanaPasada += ` [${detalles}]`;
-                    }
                     let hTotal = Math.floor(totalHoras);
                     let mTotal = Math.round((totalHoras - hTotal) * 60);
                     if (mTotal === 60) { hTotal++; mTotal = 0; }
@@ -5391,12 +5354,10 @@
                 function actualizarEstadisticas(mesAnio = null) {
                     const selectMes = $('select-mes-stats');
 
-                    // Si no se especifica mes, usar el seleccionado (o el actual como fallback)
                     if (!mesAnio && selectMes) {
                         mesAnio = selectMes.value;
                     }
 
-                    // Si el mes seleccionado ya no tiene registros, resetear al actual
                     if (mesAnio && selectMes) {
                         const [año, mes] = mesAnio.split('-').map(Number);
                         const registrosDelMes = D.registros().filter(r => {
@@ -5405,7 +5366,6 @@
                         });
 
                         if (registrosDelMes.length === 0) {
-                            // El mes seleccionado ya no tiene registros, volver al actual
                             const hoy = new Date();
                             mesAnio = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
                             if (selectMes) selectMes.value = mesAnio;
@@ -5435,11 +5395,18 @@
                     if (elSalida) elSalida.textContent = stats.salidaPromedio;
                     if (elDias) elDias.textContent = stats.diasTrabajados;
                     if (elPromedio) elPromedio.textContent = stats.promedioDiario;
-                    if (elSemanaPasada) elSemanaPasada.textContent = stats.semanaPasada;
+                    if (elSemanaPasada) {
+                        const statItemSP = elSemanaPasada.closest('.stat-item');
+                        if (stats.semanaPasada === '--:--') {
+                            if (statItemSP) statItemSP.style.display = 'none';
+                        } else {
+                            if (statItemSP) statItemSP.style.display = '';
+                            elSemanaPasada.textContent = stats.semanaPasada;
+                        }
+                    }
                     if (elTiempoFueraTotal) elTiempoFueraTotal.textContent = stats.tiempoFueraTotal;
                     if (elTiempoTotal) elTiempoTotal.textContent = stats.tiempoTotal;
 
-                    // Ocultar/Mostrar items según valor
                     const toggleStatItem = (element, value) => {
                         if (!element) return;
                         const statItem = element.closest('.stat-item');
@@ -5463,7 +5430,6 @@
                     toggleStatItem(elParos, stats.paros);
                     toggleStatItem(elRemotos, stats.remotos);
                     toggleStatItem(elCapacitaciones, stats.capacitaciones);
-
                 }
 
                 function actualizarUI(idNuevo = null, soloReloj = false) {
@@ -5876,7 +5842,7 @@
                             }
 
                             if (esDiaDeDescanso) {
-                                if (statsEl) statsEl.textContent = "😴";
+                                if (statsEl) statsEl.textContent = "🌞";
                                 if (mensajeEl) {
                                     // Solo ocultar si NO hay objetivo de horas
                                     if (horasDiarias === 0) {
@@ -5908,7 +5874,7 @@
                                     const [hE, mE] = regHoy.entrada.split(':').map(Number);
                                     minutosTotal = (hE * 60) + mE + (objetivoDiario * 60);
 
-                                    if (regHoy.tiempoFuera) {
+                                    if (regHoy.tiempoFuera && !D.getIgnorarTiempoFuera()) {
                                         const [hF, mF] = regHoy.tiempoFuera.split(':').map(Number);
                                         minutosTotal += (hF * 60) + mF;
                                     }
@@ -5917,7 +5883,7 @@
                                     const storageKey = `breakStartTime_${perfilId}`;
                                     const inicioBreak = localStorage.getItem(storageKey);
 
-                                    if (inicioBreak) {
+                                    if (inicioBreak && !D.getIgnorarTiempoFuera()) {
                                         const ahora = Date.now();
                                         const minutosEnCurso = Math.floor((ahora - parseInt(inicioBreak)) / 60000);
                                         if (minutosEnCurso > 0) minutosTotal += minutosEnCurso;
@@ -5934,7 +5900,7 @@
 
                             if (mostrarEstimacion) {
                                 // ===================================================
-                                // 🔹 VERIFICAR SI HOY ES DÍA LABORAL
+                                //         VERIFICAR SI HOY ES DÍA LABORAL
                                 // ===================================================
                                 const diaActual = new Date().getDay(); // 0=Domingo, 1=Lunes...
                                 const esLaborable = diasHabilesConfig.includes(diaActual);
@@ -7766,7 +7732,7 @@ Generado por Sistema Horarios
                         borrarPeriodoDirecto: D.borrarPeriodoDirecto,
                         editarGrupo: D.editarGrupo,
                         guardarEdicionGrupo: D.guardarEdicionGrupo,
-                        eliminarGrupoActual: D.eliminarGrupoActual,
+                        eliminarGrupoActual: D.eliminarGrupoActual
                     };
                     window.HistoryManager = { undo: D.undoAction, redo: D.redoAction };
                     window.PWAInstaller = { instalarApp: PWAInstaller.instalarApp };
@@ -7779,8 +7745,7 @@ Generado por Sistema Horarios
                         limpiarCampo, obtenerFechaHoy, mostrarFiltros, poblarSelectorMeses, actualizarBotonLote,
                         cerrarFiltros, registrarLoteDesdeCard, cambiarMesStats, generarReporte, toggleHistorico, toggleStats,
                         sumarMinutosAHora, toggleTimerBreakMain, actualizarEstadoBotonTimerMain, toggleBloqueoEdicion, setBloqueoEdicion,
-                        actualizarFeedbackConfig, poblarSelectorMeses, abrirSelectorPerfiles, actualizarBotonLote,
-                        cerrarSelectorPerfiles, abrirEditorPerfil, cerrarEditorPerfil, guardarEdicionPerfil, toggleModoLote,
+                        actualizarFeedbackConfig, abrirSelectorPerfiles, cerrarSelectorPerfiles, abrirEditorPerfil, cerrarEditorPerfil, guardarEdicionPerfil, toggleModoLote,
                         eliminarPerfilDesdeEditor, crearPerfilDesdeSelector, renderizarListaPerfiles, ejecutarAccionRegistro,
                         iniciarCambioHoras, detenerCambio, mostrarconfig, alternarFechaActual, verificarBloqueoCredito,
                         toggleCredito, init, toggleFormulario, setBloqueoEdicionGrupo, toggleBloqueoEdicionGrupo, cerrarEdicionGrupo,
@@ -7958,12 +7923,12 @@ Generado por Sistema Horarios
                         const estadoActual = HistoryManager.getCurrentState();
                         if (estadoActual && estadoActual.length > 0) {
                             D.registros().splice(0, D.registros().length, ...estadoActual);
-                            // Recalcular en memoria según el flag actual (sin modificar el historial)
-                            D.recalcularTotalesEnMemoria();
                             console.log('✓ Registros restaurados desde historial');
                         }
-                    } else {
-                        // Si no hay historial válido, guardar el estado inicial
+                    }
+                    // Siempre recalcular al cargar para reflejar el flag actual (cubre historial y sin historial)
+                    D.recalcularTotalesEnMemoria();
+                    if (!historialCargado) {
                         HistoryManager.saveState(D.registros());
                         console.log('✓ Nuevo historial inicializado');
                     }
@@ -8641,12 +8606,16 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.36
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.37
     // ====================================================================
     
      - CAMBIOS:
-    1) 
-
+    1) Se corrige el bug de semana pasada, ahora se muestra correctamente, independientemente de si
+    hay registros o no
+    2) Se corrige bug potencial en el bloque CARGAR CONFIGURACIÓN
+    3) Se corrige bug en salida estima cuando ignorar tiempo fuera esta habilitado, la funcion no tenia 
+    en cuenta el flag
+    
 
      - BUGS MENORES CONOCIDOS:
      1) al tener un registro con entrada y luego agregar una salida, deshacer la accion
@@ -8656,12 +8625,9 @@ Generado por Sistema Horarios
      el flujo correcto seria borrar - registrar luego de ejecutar la accion
      3) pulsar deliberadamente undo y redo de forma reiterada mas de 20 veces aproximadamente,
      la interfaz deja de mostrar los cambios hasta que se actualiza la pagina
-     4) en la tarjeta de estadisticas, la semana pasada se muestra solamente, si existen
-     registros regulares en la semana actual, si hay registros especiales, el item semana pasada 
-     no muestra datos
-
+     
      - IDEAS DESCARTADAS/REVISION:
-     1) Registro especial "ausencia sin justificar" a revisar
+     1) 
      
 
     -->
