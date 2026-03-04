@@ -42,7 +42,7 @@
             --c-green: rgba(76, 172, 140, 0.8);
             --c-red: rgba(172, 90, 76, 0.8);
             --c-purple: rgba(129, 76, 172, 0.8);
-            --c-gold: rgba(172, 155, 76, 0.8);
+            --c-gold: rgba(172, 131, 76, 0.8);
             --c-white: #ffffff;
             --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -861,31 +861,6 @@
             font-size: 0.8rem;
         }
 
-        /* Colores de estado — servicios y facturas comparten la misma paleta */
-        .estado-vencido,
-        .estado-urgente,
-        .factura-estado-vencido {
-            background: var(--c-red);
-        }
-
-        .estado-proximo,
-        .factura-estado-pendiente {
-            background: var(--c-gold);
-        }
-
-        .estado-pagado,
-        .factura-estado-pagado {
-            background: var(--c-green);
-        }
-
-        .estado-lejano {
-            background: var(--c-blue);
-        }
-
-        .estado-sin-facturas-mes {
-            background: var(--c-purple);
-        }
-
         /* ============================================================
            FACTURAS LISTA
         ============================================================ */
@@ -974,6 +949,18 @@
             transition: opacity var(--transition-base);
         }
 
+        .resumen-monto.resumen-blur .resumen-valor,
+        .resumen-monto.resumen-blur .resumen-valor-usd {
+            filter: blur(8px);
+            user-select: none;
+            transition: filter 0.3s ease;
+        }
+
+        .resumen-monto .resumen-valor,
+        .resumen-monto .resumen-valor-usd {
+            transition: filter 0.3s ease;
+        }
+
         .resumen-monto .resumen-valor,
         .resumen-valor-usd {
             font-size: 1.8rem;
@@ -1023,22 +1010,34 @@
             transition: width var(--transition-base) ease, background var(--transition-base) ease;
         }
 
-        /* Color de la barra según estado */
+        /* Color de la barra según estado y estados en general*/
         .card.borde-vencido .resumen-progreso-barra,
-        .card.borde-urgente .resumen-progreso-barra {
+        .card.borde-urgente .resumen-progreso-barra,
+        .estado-vencido,
+        .estado-urgente,
+        .factura-estado-vencido {
             background: var(--c-red);
         }
 
-        .card.borde-proximo .resumen-progreso-barra {
+        .card.borde-proximo .resumen-progreso-barra,
+        .estado-proximo,
+        .factura-estado-pendiente {
             background: var(--c-gold);
         }
 
-        .card.borde-lejano .resumen-progreso-barra {
+        .card.borde-lejano .resumen-progreso-barra,
+        .estado-lejano {
             background: var(--c-blue);
         }
 
-        .card.borde-pagado .resumen-progreso-barra {
+        .card.borde-pagado .resumen-progreso-barra,
+        .estado-pagado,
+        .factura-estado-pagado {
             background: var(--c-green);
+        }
+
+        .estado-sin-facturas-mes {
+            background: var(--c-purple);
         }
 
         /* ============================================================
@@ -1277,7 +1276,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            min-width: 300px;
+            min-width: 200px;
             max-width: 90%;
             padding: 1rem 1.5rem;
             border-radius: var(--radius);
@@ -2279,7 +2278,7 @@
             </div>
             <div id="categorias-lista"
                 style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; min-height: 2rem;"></div>
-            
+
             <div class="form-actions2">
                 <button type="button" onclick="app.cerrarModalCategorias()">
                     <svg class="icon">
@@ -2883,6 +2882,7 @@
                 this.STORAGE_KEY = 'gestion_servicios_data';
                 this.THEME_KEY = 'gestion_servicios_theme';
                 this.mostrandoPagadoMes = localStorage.getItem('resumen-mostrar-pagado') === 'true';
+                this.resumenDesblurado = false; // Siempre empieza blureado al cargar
                 this.datosResumen = { pendiente: 0, pagadoMes: 0, totalPeriodo: 0 };
                 this.serviciosCollapseState = 'expanded'; // 'expanded', 'semi-collapsed', 'collapsed'
 
@@ -3930,14 +3930,14 @@
                                     prioridad = 1;
                                     colorBorde = 'borde-urgente';
                                 }
-                            } else if (diasRestantes <= 6) {
-                                // Próximo (3-7 días)
+                            } else if (diasRestantes <= 5) {
+                                // Próximo (3-5 días)
                                 if (prioridad > 2) {
                                     prioridad = 2;
                                     colorBorde = 'borde-proximo';
                                 }
                             } else {
-                                // Lejano (más de 7 días)
+                                // Lejano (más de 6 días)
                                 if (prioridad > 3) {
                                     prioridad = 3;
                                     colorBorde = 'borde-lejano';
@@ -4011,6 +4011,10 @@
     `;
                 document.getElementById('resumen-mes').innerHTML = resumenHTML;
                 localStorage.setItem('resumen-mostrar-pagado', 'false');
+                if (!this.resumenDesblurado) {
+                    const el = document.getElementById('resumen-toggle');
+                    if (el) el.classList.add('resumen-blur');
+                }
                 this.ultimoEstadoResumen = estadoActual;
 
                 const cardResumen = document.getElementById('resumen-mes').closest('.card');
@@ -4074,6 +4078,10 @@
     `;
                 document.getElementById('resumen-mes').innerHTML = resumenHTML;
                 localStorage.setItem('resumen-mostrar-pagado', 'true');
+                if (!this.resumenDesblurado) {
+                    const el = document.getElementById('resumen-toggle');
+                    if (el) el.classList.add('resumen-blur');
+                }
                 this.ultimoEstadoResumen = estadoActual;
 
                 const cardResumen = document.getElementById('resumen-mes').closest('.card');
@@ -4086,25 +4094,34 @@
             toggleResumen() {
                 const resumenActual = document.getElementById('resumen-toggle');
 
-                if (resumenActual) {
-                    // Aplicar animación de salida
-                    resumenActual.style.animation = 'slideUpFade 0.2s ease-out forwards';
+                // Si está blureado, desblurear y no cambiar vista
+                if (!this.resumenDesblurado) {
+                    this.resumenDesblurado = true;
+                    if (resumenActual) resumenActual.classList.remove('resumen-blur');
+                    return;
+                }
 
-                    // Después de la animación, cambiar el contenido
+                // Ya desblurado: toggle normal de vista
+                if (resumenActual) {
+                    resumenActual.style.animation = 'slideUpFade 0.2s ease-out forwards';
                     setTimeout(() => {
                         if (this.mostrandoPagadoMes) {
                             this.mostrarPendienteEnResumen();
                         } else {
                             this.mostrarPagadoEnResumen();
                         }
+                        // Mantener desblurado tras el cambio de vista
+                        const nuevo = document.getElementById('resumen-toggle');
+                        if (nuevo) nuevo.classList.remove('resumen-blur');
                     }, 190);
                 } else {
-                    // Si no hay elemento actual, mostrar directamente
                     if (this.mostrandoPagadoMes) {
                         this.mostrarPendienteEnResumen();
                     } else {
                         this.mostrarPagadoEnResumen();
                     }
+                    const nuevo = document.getElementById('resumen-toggle');
+                    if (nuevo) nuevo.classList.remove('resumen-blur');
                 }
             }
 
@@ -4947,10 +4964,10 @@
                         } else if (diasRestantes === 1) {
                             estado = 'Vence mañana';
                             claseEstado = 'urgente';
-                        } else if (diasRestantes <= 3) {
+                        } else if (diasRestantes <= 2) {
                             estado = `Vence en ${diasRestantes} días`;
                             claseEstado = 'urgente';
-                        } else if (diasRestantes <= 6) {
+                        } else if (diasRestantes <= 5) {
                             estado = `Vence en ${diasRestantes} días`;
                             claseEstado = 'proximo';
                         } else {
@@ -5639,7 +5656,7 @@
                     this.abrirModal(this._modalServicioOrigen);
                     this._modalServicioOrigen = null;
                 }
-            } 
+            }
 
             _actualizarBtnSort() {
                 const btn = document.getElementById('btn-sort');
@@ -7273,7 +7290,7 @@
                         const moneda = factura.moneda || 'ars';
                         const estadoBadge = factura.pagada
                             ? `<span style="font-size:0.75rem; background:var(--c-green); color:#fff; padding:0.1rem 0.6rem; border-radius:20px;">Pagada ${factura.fechaPago ? this.formatearFecha(factura.fechaPago) : ''}</span>`
-                            : `<span style="font-size:0.75rem; background:var(--c-red); color:#fff; padding:0.1rem 0.6rem; border-radius:20px;">Pendiente</span>`;
+                            : `<span style="font-size:0.75rem; background:var(--c-gold); color:#fff; padding:0.1rem 0.6rem; border-radius:20px;">Pendiente</span>`;
                         return `
                         <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:var(--radius); padding:0.75rem 1rem;">
                             <div style="font-weight:600; margin-bottom:0.25rem;">${this.escaparHTML(servicio.nombre)}</div>
@@ -7368,7 +7385,7 @@
     // ====================================================================
     
      - CAMBIOS
-     1) 
+     1) Se agrega blur al cargar la pagina
 
 
      - BUGS CONOCIDOS:
