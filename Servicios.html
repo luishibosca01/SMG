@@ -13,7 +13,7 @@
                  style-src 'self' 'unsafe-inline'; 
                  img-src 'self' data: https:; 
                  font-src 'self' data:; 
-                 connect-src 'self'; 
+                 connect-src 'self' https://dolarapi.com;
                  object-src 'none'; 
                  base-uri 'self'; 
                  form-action 'self'; 
@@ -301,11 +301,6 @@
         .icon-btn:not(.activo-usd)[id*="moneda"] {
             color: var(--c-red) !important;
             border-color: var(--c-red) !important;
-        }
-
-        #btn-sort.filtro-activo {
-            color: var(--c-red);
-            border: 1px solid var(--c-red);
         }
 
         /* Botones de header transparentes */
@@ -945,7 +940,7 @@
             flex-direction: column;
             border-radius: var(--radius);
             cursor: pointer;
-            min-height: 10rem;
+            min-height: 11rem;
             transition: opacity var(--transition-base);
         }
 
@@ -986,6 +981,88 @@
 
         .resumen-footer {
             margin-top: auto;
+        }
+
+        .info-resumen-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .info-resumen-grupo-titulo {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-resumen-fila {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            font-size: 0.88rem;
+            padding: 0.3rem 0;
+        }
+
+        .info-resumen-fila-izq {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .info-resumen-nombre {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .info-resumen-badge {
+            flex-shrink: 0;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+        }
+
+        .badge-pagada-mes {
+            background: rgba(76, 172, 140, 0.2);
+            color: var(--c-green);
+        }
+
+        .badge-pagada-antes {
+            background: rgba(172, 155, 76, 0.2);
+            color: var(--c-gold);
+        }
+
+        .badge-pagada-credito {
+            background: rgba(76, 114, 172, 0.2);
+            color: var(--c-blue);
+        }
+
+        .badge-pendiente {
+            background: rgba(172, 90, 76, 0.2);
+            color: var(--c-red);
+        }
+
+        .badge-vencida {
+            background: rgba(80, 80, 80, 0.2);
+            color: var(--text-muted);
+        }
+
+        .badge-pagada-otro-mes {
+            background: rgba(129, 76, 172, 0.2);
+            color: var(--c-purple);
+        }
+
+        .info-resumen-monto {
+            flex-shrink: 0;
+            font-weight: 600;
+            font-size: 0.88rem;
         }
 
         .resumen-fecha {
@@ -1276,8 +1353,8 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            min-width: 200px;
-            max-width: 90%;
+            min-width: 300px;
+            max-width: 100%;
             padding: 1rem 1.5rem;
             border-radius: var(--radius);
             background: var(--bg-card);
@@ -1315,11 +1392,11 @@
         .menu-ajustes {
             position: fixed;
             top: 0;
-            right: -280px;
+            right: -300px;
             z-index: 120;
             display: flex;
             flex-direction: column;
-            width: 280px;
+            width: 300px;
             height: 100dvh;
             padding: 1rem;
             background: var(--bg-card);
@@ -1394,9 +1471,19 @@
             text-align: center;
         }
 
-        #ingresos-indicator {
+        #ingresos-indicator,
+        #blur-indicator {
             margin-left: auto;
             padding-right: 1rem;
+        }
+
+        .dolar-widget-valor {
+            font-weight: 600;
+            color: var(--c-green);
+        }
+
+        .dolar-widget-hora {
+            color: var(--text-muted);
         }
 
         /* ============================================================
@@ -1643,6 +1730,10 @@
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" class="icon-line" stroke-width="2"
                 stroke="currentColor" fill="none"></path>
         </symbol>
+        <symbol id="icon-eye" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" class="icon-line" stroke="currentColor"></path>
+            <circle cx="12" cy="12" r="3" class="icon-line" stroke="currentColor"></circle>
+        </symbol>
         <symbol id="icon-clock" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
             <polyline points="12 7 12 12 15 15" fill="none" stroke="currentColor" stroke-width="2"
@@ -1884,18 +1975,46 @@
                     <span>Categorías</span>
                 </div>
             </div>
-            <div class="menu-item" id="menu-toggle-ingresos">
+            <div class="menu-item menu-item-parent" id="menu-dolar">
                 <svg class="icon">
                     <use href="#icon-dollar" />
                 </svg>
-                <span>Ingresos</span>
-                <span id="ingresos-indicator"></span>
+                <span>Dólar</span>
+                <span class="dolar-widget-hora" id="dolar-hora">-</span>
+                <svg class="icon menu-chevron" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor"></polyline>
+                </svg>
+            </div>
+            <div id="opciones-dolar" class="menu-submenu">
+                <div class="menu-item" style="cursor:default; justify-content:space-between;">
+                    <span style="color:var(--text-muted);">Oficial</span>
+                    <span class="dolar-widget-valor" id="dolar-oficial">-</span>
+                </div>
+                <div class="menu-item" style="cursor:default; justify-content:space-between;">
+                    <span style="color:var(--text-muted);">MEP</span>
+                    <span class="dolar-widget-valor" id="dolar-mep">-</span>
+                </div>
             </div>
             <div class="menu-item" id="menu-categorias">
                 <svg class="icon">
                     <use href="#icon-categorias" />
                 </svg>
                 <span>Categorías</span>
+            </div>
+
+            <div class="menu-item" id="menu-toggle-blur">
+                <svg class="icon">
+                    <use href="#icon-eye" />
+                </svg>
+                <span>Privacidad</span>
+                <span id="blur-indicator"></span>
+            </div>
+            <div class="menu-item" id="menu-toggle-ingresos">
+                <svg class="icon">
+                    <use href="#icon-dollar" />
+                </svg>
+                <span>Ingresos</span>
+                <span id="ingresos-indicator"></span>
             </div>
             <div class="menu-item" id="menu-informacion">
                 <svg class="icon">
@@ -1911,7 +2030,7 @@
                 </svg>
                 Cerrar menú
             </button>
-            <div class="menu-version">Lushibosca 0.81</div> <!-- DeltaF -->
+            <div class="menu-version">Lushibosca 0.84</div> <!-- DeltaF -->
         </div>
     </div>
 
@@ -2131,6 +2250,24 @@
         </div>
     </div>
 
+    <!-- Modal Info Resumen Mes -->
+    <div class="modal" id="modal-info-resumen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Composición mes actual</h3>                
+            </div>
+            <div id="modal-info-resumen-body" style="display:flex; flex-direction:column; gap:1rem;">
+            </div>
+            <div class="form-actions" style="margin-top:1rem;">
+                <button onclick="app.cerrarModal('modal-info-resumen')">
+                    <svg class="icon">
+                        <use href="#icon-cancel" />
+                    </svg> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Agregar Servicio -->
     <div class="modal" id="modal-agregar-servicio">
         <div class="modal-content">
@@ -2239,17 +2376,7 @@
                 <select id="select-vista">
                     <option value="todo">Servicios</option>
                     <option value="categorias">Servicios / Categorías</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Filtrar</label>
-                <select id="select-filtro-estado">
-                    <option value="">Sin filtro</option>
-                    <option value="pendiente">Pendientes</option>
-                    <option value="vencido">Vencidos</option>
-                    <option value="pagado">Pagados</option>
-                    <option value="sin-facturas-mes">Sin facturas este mes</option>
-                    <option value="sin-facturas">Sin facturas</option>
+                    <option value="estados">Servicios / Estado</option>
                 </select>
             </div>
             <div class="form-actions">
@@ -2865,8 +2992,11 @@
                     this._catColapsadas = {};
                 }
 
-                this._agrupacionActiva = localStorage.getItem('cat-agrupacion') !== 'off';
-                this.filtroEstado = '';
+                this._agrupacionActiva = localStorage.getItem('cat-agrupacion') === 'on';
+                this._vistaEstados = localStorage.getItem('vista-estados') === 'true';
+                if (!this._agrupacionActiva && !this._vistaEstados) {
+                    // si ninguna está activa, estado por defecto
+                }
                 // Modo calculadora - NUEVO
                 this.modoCalculadora = false;
                 this.modoCalculadoraTipo = 'pendientes';
@@ -2883,6 +3013,7 @@
                 this.THEME_KEY = 'gestion_servicios_theme';
                 this.mostrandoPagadoMes = localStorage.getItem('resumen-mostrar-pagado') === 'true';
                 this.resumenDesblurado = false; // Siempre empieza blureado al cargar
+                this.blurHabilitado = localStorage.getItem('blur-montos') === 'true';
                 this.datosResumen = { pendiente: 0, pagadoMes: 0, totalPeriodo: 0 };
                 this.serviciosCollapseState = 'expanded'; // 'expanded', 'semi-collapsed', 'collapsed'
 
@@ -2926,6 +3057,7 @@
                 this.renderServicios();
                 this.setupEventListeners();
                 this.actualizarBotonesHistorial();
+                this.cargarCotizacionDolar();
 
                 // Inicializar indicador de ingresos
                 if (localStorage.getItem(this.INGRESOS_KEY) === null) {
@@ -2936,6 +3068,8 @@
                 if (indicator) {
                     indicator.textContent = ingresosHabilitado ? 'SI' : 'NO';
                 }
+                const blurIndicator = document.getElementById('blur-indicator');
+                if (blurIndicator) blurIndicator.textContent = this.blurHabilitado ? 'SI' : 'NO';
 
                 // Restaurar estado de estadísticas colapsadas
                 const estadisticasColapsadas = localStorage.getItem('estadisticas-collapsed') === 'true';
@@ -2957,27 +3091,15 @@
 
                 // Botón ordenar
                 document.getElementById('btn-sort').addEventListener('click', () => {
-                    // Si hay filtro activo, tocarlo limpia el filtro
-                    if (this.filtroEstado) {
-                        this.filtroEstado = '';
-                        this._actualizarBtnSort();
-                        this.renderServicios();
-                        this.mostrarToast('Filtro eliminado', 'info');
-                        return;
-                    }
                     const select = document.getElementById('select-orden');
                     if (select) select.value = this.ordenActual;
                     const selectVista = document.getElementById('select-vista');
-                    if (selectVista) selectVista.value = this._agrupacionActiva ? 'categorias' : 'todo';
-                    const selectFiltro = document.getElementById('select-filtro-estado');
-                    if (selectFiltro) selectFiltro.value = this.filtroEstado;
+                    if (selectVista) {
+                        if (this._vistaEstados) selectVista.value = 'estados';
+                        else if (this._agrupacionActiva) selectVista.value = 'categorias';
+                        else selectVista.value = 'todo';
+                    }
                     this.abrirModal('modal-ordenar');
-                });
-
-                document.getElementById('select-filtro-estado').addEventListener('change', (e) => {
-                    this.filtroEstado = e.target.value;
-                    this._actualizarBtnSort();
-                    this.renderServicios();
                 });
 
                 document.getElementById('select-orden').addEventListener('change', () => {
@@ -2985,12 +3107,12 @@
                 });
 
                 document.getElementById('select-vista').addEventListener('change', (e) => {
-                    const activar = e.target.value === 'categorias';
-                    if (activar !== this._agrupacionActiva) {
-                        this._agrupacionActiva = activar;
-                        localStorage.setItem('cat-agrupacion', activar ? 'on' : 'off');
-                        this.renderServicios();
-                    }
+                    const val = e.target.value;
+                    this._vistaEstados = val === 'estados';
+                    this._agrupacionActiva = val === 'categorias';
+                    localStorage.setItem('cat-agrupacion', this._agrupacionActiva ? 'on' : 'off');
+                    localStorage.setItem('vista-estados', this._vistaEstados ? 'true' : 'false');
+                    this.renderServicios();
                 });
 
                 // Listeners para sincronizar botón toggle de monto con el input
@@ -3428,7 +3550,9 @@
                                 if (!esMesActual && !esMesSiguiente && !esMesPasado) return;
                             } else if (this.modoCalculadoraTipo === 'pagados') {
                                 if (!factura.pagada) return;
-                                if (!esMesActual) return; // Solo mes en curso
+                                const fechaPago = factura.fechaPago ? new Date(factura.fechaPago + 'T00:00:00') : null;
+                                const esPagadaEsteMes = fechaPago && fechaPago.getMonth() === mesActual && fechaPago.getFullYear() === anioActual;
+                                if (!esMesActual && !esPagadaEsteMes) return;
                             }
 
                             if ((factura.moneda || 'ars') === 'usd') {
@@ -3554,12 +3678,14 @@
                 document.getElementById('menu-importar-reemplazar').addEventListener('click', () => this.importarDatos('reemplazar'));
                 document.getElementById('menu-importar-combinar').addEventListener('click', () => this.importarDatos('combinar'));
                 document.getElementById('menu-limpiar').addEventListener('click', () => this.mostrarOpcionesBorrar());
+                document.getElementById('menu-dolar').addEventListener('click', () => this.toggleMenuDolar());
                 document.getElementById('menu-borrar-todo').addEventListener('click', () => this.limpiarDatos('todo'));
                 document.getElementById('menu-borrar-servicios').addEventListener('click', () => this.limpiarDatos('servicios'));
                 document.getElementById('menu-borrar-facturas').addEventListener('click', () => this.limpiarDatos('facturas'));
                 document.getElementById('menu-borrar-ingresos').addEventListener('click', () => this.limpiarDatos('ingresos'));
                 document.getElementById('menu-borrar-categorias').addEventListener('click', () => this.limpiarDatos('categorias'));
                 document.getElementById('menu-toggle-ingresos').addEventListener('click', () => this.toggleIngresos());
+                document.getElementById('menu-toggle-blur').addEventListener('click', () => this.toggleBlur());
 
                 // Menú agregar
                 document.getElementById('menu-agregar-overlay').addEventListener('click', () => this.cerrarMenuAgregar());
@@ -3826,6 +3952,8 @@
                 let totalPagadoMesARS = 0, totalPagadoMesUSD = 0;
                 let totalPagadoDelMesActualARS = 0, totalPagadoDelMesActualUSD = 0;
                 let totalFacturasMesActualARS = 0, totalFacturasMesActualUSD = 0;
+                let cantidadPagadasVencenEsteMes = 0;
+                let cantidadPendientesEsteMes = 0;
 
                 this.servicios.filter(s => s.id !== this.SERVICIO_INGRESOS_ID).forEach(servicio => {
                     servicio.facturas.forEach(factura => {
@@ -3843,6 +3971,8 @@
                             const pagadaEsteMes = factura.pagada && factura.fechaPago &&
                                 (() => { const fp = new Date(factura.fechaPago + 'T00:00:00'); return fp.getMonth() === mesActual && fp.getFullYear() === añoActual; })();
                             const contarEnTotal = !factura.pagada || pagadaEsteMes;
+                            if (factura.pagada) cantidadPagadasVencenEsteMes++;
+                            if (!factura.pagada) cantidadPendientesEsteMes++;
                             if (moneda === 'usd') {
                                 if (!excluir && contarEnTotal) totalFacturasMesActualUSD += factura.monto;
                                 if (!factura.pagada && !excluir) { totalAPagarUSD += factura.monto; }
@@ -3873,6 +4003,8 @@
                     pagadoDelMesActualUSD: totalPagadoDelMesActualUSD,
                     totalPeriodoARS: totalFacturasMesActualARS,
                     totalPeriodoUSD: totalFacturasMesActualUSD,
+                    cantidadPagadasVencenEsteMes,
+                    cantidadPendientesEsteMes,
                     // Compatibilidad legacy (usa ARS para la barra de progreso)
                     pendiente: totalAPagarARS + totalAPagarUSD,
                     pagadoMes: totalPagadoMesARS,
@@ -3968,6 +4100,7 @@
                 const totalUSD = this.datosResumen.totalPeriodoUSD || 0;
                 const pendienteARS = this.datosResumen.pendienteARS || 0;
                 const pendienteUSD = this.datosResumen.pendienteUSD || 0;
+                const cantidadPendientesEsteMes = this.datosResumen.cantidadPendientesEsteMes || 0;
 
                 const pagadoDelMesARS = this.datosResumen.pagadoMesARS || 0;
                 const porcentajePagado = totalARS > 0 ? Math.min((pagadoDelMesARS / totalARS) * 100, 100) : (pendienteUSD === 0 ? 100 : 0);
@@ -3998,20 +4131,25 @@
 
                 const resumenHTML = `
         <div class="resumen-monto" id="resumen-toggle" style="${animacion}">
-            <div class="resumen-titulo"><svg class="icon"><use href="#icon-deuda" /></svg> Resumen de Deuda</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="resumen-titulo"><svg class="icon"><use href="#icon-deuda" /></svg> Resumen de Deuda</div>
+                <button class="icon-btn transparent" style="width:32px;height:32px;" onclick="event.stopPropagation(); app.abrirModalInfoResumen()">
+                    <svg viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="1.5" fill="currentColor" stroke="none"/></svg>
+                </button>
+            </div>
             ${(hayARS && hayUSD) ? valorMostrar : `<div class="resumen-valor">${valorMostrar}</div>`}
             <div class="resumen-footer">                
                 <div class="resumen-progreso">
                     <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
                 </div>
-                <div class="resumen-label">Pendiente de pago</div>
+                <div class="resumen-label">Pendiente${cantidadPendientesEsteMes > 0 ? ` (${cantidadPendientesEsteMes})` : ''}</div>
                 <div class="resumen-fecha">${fechaFormateada}</div>
             </div>
         </div>
     `;
                 document.getElementById('resumen-mes').innerHTML = resumenHTML;
                 localStorage.setItem('resumen-mostrar-pagado', 'false');
-                if (!this.resumenDesblurado) {
+                if (this.blurHabilitado && !this.resumenDesblurado && (hayARS || hayUSD)) {
                     const el = document.getElementById('resumen-toggle');
                     if (el) el.classList.add('resumen-blur');
                 }
@@ -4037,6 +4175,7 @@
                 const pagadoMesARS = this.datosResumen.pagadoMesARS || 0;
                 const pagadoMesUSD = this.datosResumen.pagadoMesUSD || 0;
                 const pagadoDelMesActualARS = this.datosResumen.pagadoDelMesActualARS || 0;
+                const cantidadPagadasVencenEsteMes = this.datosResumen.cantidadPagadasVencenEsteMes || 0;
 
                 const porcentajePagado = totalARS > 0
                     ? Math.min((pagadoMesARS / totalARS) * 100, 100)
@@ -4054,7 +4193,9 @@
                 const hayARS = pagadoMesARS > 0;
 
                 let valorMostrar;
-                if (hayARS && hayUSD) {
+                if (!hayARS && !hayUSD) {
+                    valorMostrar = '<span style="font-size: 2rem;">Sin pagos</span>';
+                } else if (hayARS && hayUSD) {
                     valorMostrar = `<div class="resumen-valor">${this.formatearMoneda(pagadoMesARS, 'ars')}</div>
                         <div class="resumen-valor-usd">${this.formatearMoneda(pagadoMesUSD, 'usd')}</div>`;
                 } else if (hayUSD) {
@@ -4065,20 +4206,25 @@
 
                 const resumenHTML = `
         <div class="resumen-monto" id="resumen-toggle" style="${animacion}">
-            <div class="resumen-titulo"><svg class="icon"><use href="#icon-pagado" /></svg> Resumen de Pagos</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="resumen-titulo"><svg class="icon"><use href="#icon-pagado" /></svg> Resumen de Pagos</div>
+                <button class="icon-btn transparent" style="width:32px;height:32px;" onclick="event.stopPropagation(); app.abrirModalInfoResumen()">
+                    <svg viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="1.5" fill="currentColor" stroke="none"/></svg>
+                </button>
+            </div>
             ${(hayARS && hayUSD) ? valorMostrar : `<div class="resumen-valor">${valorMostrar}</div>`}
             <div class="resumen-footer">                
                 <div class="resumen-progreso">
                     <div class="resumen-progreso-barra" style="width: ${porcentajePagado}%"></div>
                 </div>
-                <div class="resumen-label">Pagado este mes</div>
+                <div class="resumen-label">Pagado${cantidadPagadasVencenEsteMes > 0 ? ` (${cantidadPagadasVencenEsteMes})` : ''}</div>
                 <div class="resumen-fecha">${fechaFormateada}</div>
             </div>
         </div>
     `;
                 document.getElementById('resumen-mes').innerHTML = resumenHTML;
                 localStorage.setItem('resumen-mostrar-pagado', 'true');
-                if (!this.resumenDesblurado) {
+                if (this.blurHabilitado && !this.resumenDesblurado && (hayARS || hayUSD)) {
                     const el = document.getElementById('resumen-toggle');
                     if (el) el.classList.add('resumen-blur');
                 }
@@ -4091,15 +4237,103 @@
                 }
             }
 
+            abrirModalInfoResumen() {
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const mesActual = hoy.getMonth();
+                const anioActual = hoy.getFullYear();
+
+                // Grupos de facturas
+                const vencenEsteMes = []; // facturas cuyo vencimiento es este mes
+                const pagadasOtroMes = []; // pagadas este mes pero vencían otro mes
+
+                this.servicios.filter(s => s.id !== this.SERVICIO_INGRESOS_ID).forEach(servicio => {
+                    servicio.facturas.forEach(factura => {
+                        if (factura.monto < 0) return;
+
+                        const fechaVenc = new Date(factura.fecha + 'T00:00:00');
+                        const venceEsteMes = fechaVenc.getMonth() === mesActual && fechaVenc.getFullYear() === anioActual;
+
+                        const pagadaEsteMes = factura.pagada && factura.fechaPago && (() => {
+                            const fp = new Date(factura.fechaPago + 'T00:00:00');
+                            return fp.getMonth() === mesActual && fp.getFullYear() === anioActual;
+                        })();
+
+                        if (venceEsteMes) {
+                            let estado, badgeClass;
+                            if (factura.conCredito) {
+                                estado = 'Con crédito'; badgeClass = 'badge-pagada-credito';
+                            } else if (factura.pagada && pagadaEsteMes) {
+                                estado = 'Pagada este mes'; badgeClass = 'badge-pagada-mes';
+                            } else if (factura.pagada && !pagadaEsteMes) {
+                                const mesPago = new Date(factura.fechaPago + 'T00:00:00').toLocaleDateString('es-AR', { month: 'long' });
+                                estado = `Pagada en ${mesPago}`; badgeClass = 'badge-pagada-antes';
+                            } else if (!factura.pagada && fechaVenc < hoy) {
+                                estado = 'Vencida'; badgeClass = 'badge-vencida';
+                            } else {
+                                estado = 'Pendiente'; badgeClass = 'badge-pendiente';
+                            }
+                            vencenEsteMes.push({ servicio: servicio.nombre, factura, estado, badgeClass });
+                        } else if (pagadaEsteMes) {
+                            const mesNombre = fechaVenc.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+                            pagadasOtroMes.push({ servicio: servicio.nombre, factura, mesVenc: mesNombre });
+                        }
+                    });
+                });
+
+                const renderFila = ({ servicio, factura, estado, badgeClass }) => `
+                    <div class="info-resumen-fila">
+                        <div class="info-resumen-fila-izq">
+                            <span class="info-resumen-nombre">${servicio}</span>
+                            <span class="info-resumen-badge ${badgeClass}">${estado}</span>
+                        </div>
+                        <span class="info-resumen-monto">${this.formatearMoneda(factura.monto, factura.moneda || 'ars')}</span>
+                    </div>`;
+
+                const renderFilaOtroMes = ({ servicio, factura, mesVenc }) => `
+                    <div class="info-resumen-fila">
+                        <div class="info-resumen-fila-izq">
+                            <span class="info-resumen-nombre">${servicio}</span>
+                            <span class="info-resumen-badge badge-pagada-otro-mes">Venció ${mesVenc}</span>
+                        </div>
+                        <span class="info-resumen-monto">${this.formatearMoneda(factura.monto, factura.moneda || 'ars')}</span>
+                    </div>`;
+
+                let html = '';
+
+                if (vencenEsteMes.length > 0) {
+                    html += `<div class="info-resumen-grupo">
+                        <div class="info-resumen-grupo-titulo">Vencen este mes</div>
+                        ${vencenEsteMes.map(renderFila).join('')}
+                    </div>`;
+                }
+
+                if (pagadasOtroMes.length > 0) {
+                    html += `<div class="info-resumen-grupo">
+                        <div class="info-resumen-grupo-titulo">Pagadas este mes (otro vencimiento)</div>
+                        ${pagadasOtroMes.map(renderFilaOtroMes).join('')}
+                    </div>`;
+                }
+
+                if (!html) {
+                    html = '<div style="color: var(--text-muted); text-align:center; padding: 1rem;">Sin movimientos este mes</div>';
+                }
+
+                document.getElementById('modal-info-resumen-body').innerHTML = html;
+                this.abrirModal('modal-info-resumen');
+            }
+
             toggleResumen() {
                 const resumenActual = document.getElementById('resumen-toggle');
 
                 // Si está blureado, desblurear y no cambiar vista
-                if (!this.resumenDesblurado) {
+                const estaBlureado = resumenActual && resumenActual.classList.contains('resumen-blur');
+                if (!this.resumenDesblurado && estaBlureado) {
                     this.resumenDesblurado = true;
-                    if (resumenActual) resumenActual.classList.remove('resumen-blur');
+                    resumenActual.classList.remove('resumen-blur');
                     return;
                 }
+                if (!this.resumenDesblurado) this.resumenDesblurado = true;
 
                 // Ya desblurado: toggle normal de vista
                 if (resumenActual) {
@@ -4293,7 +4527,7 @@
                         }
 
                         ingresosHTML = `
-    <div class="calculador-resultado-item">
+    <div class="calculador-resultado-item" style="cursor:pointer;" onclick="app.abrirDebugEstadisticas('ingresos')">
         <span class="estadistica-label">Ingresos</span>
         <span class="estadistica-valor">${ingMontoHTML}</span>
     </div>
@@ -4990,7 +5224,10 @@
                             const moneda = facturaAnualVigente.moneda || 'ars';
                             montoTexto = this.formatearMoneda(facturaAnualVigente.monto, moneda);
                             fechaTexto = this.formatearFecha(facturaAnualVigente.fecha);
-                            estado = 'Pago anual';
+                            const fechaPagoAnual = facturaAnualVigente.fechaPago
+                                ? this.formatearFecha(facturaAnualVigente.fechaPago)
+                                : 'Sin fecha';
+                            estado = `Pagado ${fechaPagoAnual} · Anual`;
                             claseEstado = 'pagado';
                         } else {
                             estado = 'Sin facturas de este mes';
@@ -5079,7 +5316,38 @@
                 let html = '';
 
                 // Si solo hay una categoría (o ninguna), no mostrar encabezado de grupo
-                if (catKeys.length <= 1 || !this._agrupacionActiva) {
+                if (this._vistaEstados) {
+                    const grupos = [
+                        { key: 'vencido', label: 'Vencidos', clases: ['vencido'] },
+                        { key: 'urgente', label: 'Urgentes', clases: ['urgente'] },
+                        { key: 'proximo', label: 'Próximos', clases: ['proximo'] },
+                        { key: 'lejano', label: 'Lejanos', clases: ['lejano'] },
+                        { key: 'sin-facturas-mes', label: 'Sin facturas este mes', clases: ['sin-facturas-mes'] },
+                        { key: 'pagado', label: 'Pagados', clases: ['pagado'] },
+                        { key: 'sin-facturas', label: 'Sin facturas', clases: ['sin-facturas'] },
+                    ];
+                    grupos.forEach(grupo => {
+                        const items = serviciosOrdenados.filter(s => grupo.clases.includes(this.calcularEstadoServicio(s).claseEstado));
+                        if (items.length === 0) return;
+                        const collapsed = this._catColapsadas[`__estado_${grupo.key}`] ? 'collapsed' : '';
+                        html += `
+        <div class="servicios-grupo-cat" data-cat="__estado_${grupo.key}">
+            <div class="servicios-grupo-cat-header" onclick="app.toggleGrupoCat(this)"
+                onpointerdown="app._lpStart(event,this)" onpointerup="app._lpCancel()" onpointerleave="app._lpCancel()" oncontextmenu="event.preventDefault()">
+                <div class="servicios-grupo-cat-header-info">
+                    <span class="servicios-grupo-cat-texto">${grupo.label}</span>
+                    <span class="servicios-grupo-cat-contador">(${items.length})</span>
+                </div>
+                <svg class="icon servicios-grupo-cat-chevron ${collapsed}" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor"></polyline>
+                </svg>
+            </div>
+            <div class="servicios-grupo-cat-contenido ${collapsed}">
+                ${items.map(generarItemServicio).join('')}
+            </div>
+        </div>`;
+                    });
+                } else if (catKeys.length <= 1 || !this._agrupacionActiva) {
                     html = serviciosOrdenados.map(generarItemServicio).join('');
                 } else {
                     catKeys.forEach(cat => {
@@ -5114,12 +5382,14 @@
                 onpointerdown="app._lpStart(event,this)" onpointerup="app._lpCancel()" onpointerleave="app._lpCancel()" oncontextmenu="event.preventDefault()">
                 <div class="servicios-grupo-cat-header-info">
                     <span class="servicios-grupo-cat-texto">${this.escaparHTML(catLabel)}</span>
-                    <span class="servicios-grupo-cat-contador">${cantidad} ${cantidad !== 1 ? 'servicios' : 'servicio'}</span>
-                    ${alertaIconHTML}
+                    <span class="servicios-grupo-cat-contador">(${cantidad})</span>
                 </div>
-                <svg class="icon servicios-grupo-cat-chevron ${collapsed}" viewBox="0 0 24 24">
-                    <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor"></polyline>
-                </svg>
+                <div style="display:flex; align-items:center; gap:0.25rem;">
+                    ${alertaIconHTML}
+                    <svg class="icon servicios-grupo-cat-chevron ${collapsed}" viewBox="0 0 24 24">
+                        <polyline points="6 9 12 15 18 9" class="icon-line" stroke="currentColor"></polyline>
+                    </svg>
+                </div>
             </div>
             <div class="servicios-grupo-cat-contenido ${collapsed}">
                 ${itemsHTML}
@@ -5224,18 +5494,6 @@
                         servicio.nombre.toLowerCase().includes(this.terminoBusqueda)
                     );
                 }
-
-                // Filtro por estado
-                if (this.filtroEstado) {
-                    resultado = resultado.filter(servicio => {
-                        const { claseEstado } = this.calcularEstadoServicio(servicio);
-                        if (this.filtroEstado === 'pendiente') {
-                            return ['urgente', 'proximo', 'lejano'].includes(claseEstado);
-                        }
-                        return claseEstado === this.filtroEstado;
-                    });
-                }
-
                 return resultado;
             }
 
@@ -5302,7 +5560,7 @@
                             // PRIORIDAD 5: PAGADAS normales
                             if (pagadaA && !anualVigenteA && (anualVigenteB || !pagadaB)) return -1;
                             if (pagadaB && !anualVigenteB && (anualVigenteA || !pagadaA)) return 1;
-                            if (pagadaA && pagadaA && fechaA && fechaB) return fechaA - fechaB;
+                            if (pagadaA && pagadaB && fechaA && fechaB) return fechaA - fechaB;
 
                             // PRIORIDAD 6: PAGADAS ANUALES VIGENTES → al final
                             return 0;
@@ -5577,7 +5835,7 @@
             agruparPorAno(items) {
                 const itemsPorAno = {};
                 items.forEach(item => {
-                    const ano = new Date(item.fecha).getFullYear();
+                    const ano = new Date(item.fecha + 'T00:00:00').getFullYear();
                     if (!itemsPorAno[ano]) {
                         itemsPorAno[ano] = [];
                     }
@@ -5655,18 +5913,6 @@
                 if (this._modalServicioOrigen) {
                     this.abrirModal(this._modalServicioOrigen);
                     this._modalServicioOrigen = null;
-                }
-            }
-
-            _actualizarBtnSort() {
-                const btn = document.getElementById('btn-sort');
-                if (!btn) return;
-                if (this.filtroEstado) {
-                    btn.classList.add('filtro-activo');
-                    btn.title = 'Filtro activo — toca para limpiar';
-                } else {
-                    btn.classList.remove('filtro-activo');
-                    btn.title = 'Opciones de vista';
                 }
             }
 
@@ -6525,9 +6771,10 @@
                 const padre = document.getElementById('menu-importar');
                 const abriendo = !opciones.classList.contains('open');
 
-                // Cerrar el otro submenú si está abierto
                 document.getElementById('opciones-borrar').classList.remove('open');
                 document.getElementById('menu-limpiar').classList.remove('open');
+                document.getElementById('opciones-dolar').classList.remove('open');
+                document.getElementById('menu-dolar').classList.remove('open');
 
                 opciones.classList.toggle('open', abriendo);
                 padre.classList.toggle('open', abriendo);
@@ -6701,7 +6948,23 @@
                 const padre = document.getElementById('menu-limpiar');
                 const abriendo = !opciones.classList.contains('open');
 
-                // Cerrar el otro submenú si está abierto
+                document.getElementById('opciones-importacion').classList.remove('open');
+                document.getElementById('menu-importar').classList.remove('open');
+                document.getElementById('opciones-dolar').classList.remove('open');
+                document.getElementById('menu-dolar').classList.remove('open');
+
+                opciones.classList.toggle('open', abriendo);
+                padre.classList.toggle('open', abriendo);
+            }
+
+            toggleMenuDolar() {
+                const opciones = document.getElementById('opciones-dolar');
+                const padre = document.getElementById('menu-dolar');
+                const abriendo = !opciones.classList.contains('open');
+
+                // Cerrar otros submenús
+                document.getElementById('opciones-borrar').classList.remove('open');
+                document.getElementById('menu-limpiar').classList.remove('open');
                 document.getElementById('opciones-importacion').classList.remove('open');
                 document.getElementById('menu-importar').classList.remove('open');
 
@@ -6782,6 +7045,33 @@
                 this._actualizarIconoTema(esDark);
             }
 
+            async cargarCotizacionDolar() {
+                try {
+                    const res = await fetch('https://dolarapi.com/v1/dolares');
+                    if (!res.ok) throw new Error('Error al obtener cotización');
+                    const data = await res.json();
+
+                    const oficial = data.find(d => d.casa === 'oficial');
+                    const mep = data.find(d => d.casa === 'bolsa');
+
+                    const fmt = (v) => v != null ? `$${Number(v).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '-';
+
+                    const elOficial = document.getElementById('dolar-oficial');
+                    const elMep = document.getElementById('dolar-mep');
+                    const elHora = document.getElementById('dolar-hora');
+
+                    if (elOficial) elOficial.textContent = oficial ? fmt(oficial.venta) : '-';
+                    if (elMep) elMep.textContent = mep ? fmt(mep.venta) : '-';
+                    if (elHora) {
+                        const ahora = new Date();
+                        elHora.textContent = ahora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    }
+                } catch (e) {
+                    const elHora = document.getElementById('dolar-hora');
+                    if (elHora) elHora.textContent = 'sin conexión';
+                }
+            }
+
             toggleTema() {
                 document.body.classList.toggle('dark-mode');
                 const esDark = document.body.classList.contains('dark-mode');
@@ -6794,6 +7084,29 @@
             _actualizarIconoTema(esDark) {
                 const use = document.getElementById('icon-tema-use');
                 if (use) use.setAttribute('href', esDark ? '#icon-sun' : '#icon-moon');
+            }
+
+            toggleBlur() {
+                this.blurHabilitado = !this.blurHabilitado;
+                localStorage.setItem('blur-montos', this.blurHabilitado.toString());
+
+                const indicator = document.getElementById('blur-indicator');
+                if (indicator) indicator.textContent = this.blurHabilitado ? 'SI' : 'NO';
+
+                // Si se deshabilita, desblurear inmediatamente
+                if (!this.blurHabilitado) {
+                    this.resumenDesblurado = true;
+                    const el = document.getElementById('resumen-toggle');
+                    if (el) el.classList.remove('resumen-blur');
+                } else {
+                    // Si se habilita, volver a blurear
+                    this.resumenDesblurado = false;
+                    const el = document.getElementById('resumen-toggle');
+                    if (el) el.classList.add('resumen-blur');
+                }
+
+                this.mostrarToast(`Privacidad ${this.blurHabilitado ? 'habilitado' : 'deshabilitado'}`, 'success');
+                this.cerrarMenuAjustes();
             }
 
             toggleIngresos() {
@@ -6879,8 +7192,10 @@
                 // Cerrar submenús animados
                 document.getElementById('opciones-importacion')?.classList.remove('open');
                 document.getElementById('opciones-borrar')?.classList.remove('open');
+                document.getElementById('opciones-dolar')?.classList.remove('open');
                 document.getElementById('menu-importar')?.classList.remove('open');
                 document.getElementById('menu-limpiar')?.classList.remove('open');
+                document.getElementById('menu-dolar')?.classList.remove('open');
 
                 // Restaurar scroll del body
                 document.body.classList.remove('modal-open');
@@ -7240,7 +7555,7 @@
                         switch (tipo) {
                             case 'facturas':
                                 // Igual que cantidadFacturasMes: del mes, positivas, no ingresos
-                                incluir = esDelMes && !esServicioIngresos && factura.monto > 0;
+                                incluir = esDelMes && !esServicioIngresos && factura.monto >= 0;
                                 break;
 
                             case 'pendientes':
@@ -7257,7 +7572,7 @@
 
                             case 'pagadas':
                                 // Igual que cantidadPagadas: pagada, fechaPago en el mes seleccionado
-                                if (factura.pagada && factura.monto > 0 && factura.fechaPago && !esServicioIngresos) {
+                                if (factura.pagada && factura.monto >= 0 && factura.fechaPago && !esServicioIngresos) {
                                     const fp = new Date(factura.fechaPago + 'T00:00:00');
                                     incluir = fp.getMonth() === mesSeleccionado && fp.getFullYear() === añoSeleccionado;
                                 }
@@ -7381,11 +7696,11 @@
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA DeltaF VERSION 0.81
+    //                 NOTAS SISTEMA DeltaF VERSION 0.84
     // ====================================================================
     
      - CAMBIOS
-     1) Se agrega blur al cargar la pagina
+     1) Se agrega item cotizacion dolar en el menu ajustes
 
 
      - BUGS CONOCIDOS:
