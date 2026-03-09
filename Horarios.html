@@ -1674,7 +1674,7 @@
                         </svg>
                         Ajustes
                     </span>
-                    <span class="version-text">LUSHIBOSCA-7.49</span>
+                    <span class="version-text">LUSHIBOSCA-7.52</span>
                 </h3>
             </div>
             <div class="modal-config-body custom-scroll">
@@ -1739,18 +1739,6 @@
                         <span>Ignorar calculo de Tiempo Fuera</span>
                         <span id="hint-ignorar-tf" style="font-size:0.9rem;">No</span>
                     </button>
-                </div>
-                <div class="form-group">
-                    <label>Agregar Nuevo Perfil</label>
-                    <div class="input-with-btn">
-                        <input type="text" id="nombre-nuevo-perfil-selector" placeholder="Nombre del perfil..."
-                            maxlength="30" />
-                        <button class="time-btn" onclick="UILogic.crearPerfilDesdeSelector()" title="Crear perfil">
-                            <svg class="icon">
-                                <use href="#icon-plus" />
-                            </svg>
-                        </button>
-                    </div>
                 </div>
                 <div class="config-actions">
                     <label>Registros</label>
@@ -2004,9 +1992,19 @@
                     Perfiles
                 </span>
             </h3>
-            <div id="lista-perfiles-botones" class="perfil-list-container">
+            <div id="lista-perfiles-botones" class="perfil-list-container"></div>
+            <div class="form-group" style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                <label>Agregar perfil</label>
+                <div class="input-with-btn">
+                    <input type="text" id="nombre-nuevo-perfil-selector" placeholder="Nombre del perfil..."
+                        maxlength="30" />
+                    <button class="time-btn" onclick="UILogic.crearPerfilDesdeSelector()" title="Crear perfil">
+                        <svg class="icon">
+                            <use href="#icon-plus" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-
             <div class="btn-group">
                 <button class="btn-edit" onclick="UILogic.mostrarconfig()" style="flex: 1;">
                     <svg class="icon">
@@ -2234,7 +2232,6 @@
                     MAX_STRING_LENGTH: 100,
                     MAX_JSON_SIZE: 4 * 1024 * 1024,
                     SCHEMA_VERSION: 3,
-                    MAX_OPERATIONS_PER_MINUTE: 30
                 };
 
                 const REGEX_PATTERNS = {
@@ -2242,23 +2239,6 @@
                     HORA: /^([01]\d|2[0-3]):([0-5]\d)$/,
                     ID: /^[a-zA-Z0-9-_]{10,100}$/
                 };
-
-                class RateLimiter {
-                    constructor(maxOps, windowMs) {
-                        this.maxOps = maxOps;
-                        this.windowMs = windowMs;
-                        this.operations = [];
-                    }
-                    canProceed() {
-                        const now = Date.now();
-                        this.operations = this.operations.filter(time => now - time < this.windowMs);
-                        if (this.operations.length >= this.maxOps) return false;
-                        this.operations.push(now);
-                        return true;
-                    }
-                }
-
-                const saveLimiter = new RateLimiter(SECURITY_LIMITS.MAX_OPERATIONS_PER_MINUTE, 60000);
 
                 function sanitizeString(str, maxLength = SECURITY_LIMITS.MAX_STRING_LENGTH) {
                     if (typeof str !== 'string') return '';
@@ -2374,7 +2354,6 @@
                 return {
                     SECURITY_LIMITS,
                     REGEX_PATTERNS,
-                    saveLimiter,
                     sanitizeString,
                     validarFechaSegura,
                     validarHoraSegura,
@@ -2492,7 +2471,13 @@
 
                     guardarDatosPerfilActual();
                     perfilActual = nuevoId;
-                    localStorage.setItem('perfilActivo', perfilActual);
+                    try {
+                        localStorage.setItem('perfilActivo', perfilActual);
+                    } catch (e) {
+                        console.error('Error al guardar perfil activo:', e);
+                        mostrarToast('Error al guardar: almacenamiento lleno', 'error');
+                        return;
+                    }
                     location.reload();
                 }
 
@@ -2500,9 +2485,11 @@
 
                 function obtenerDatosPerfil() { return perfiles[perfilActual]; }
 
+                function obtenerTodosPerfiles() { return perfiles; }
+
                 return {
                     inicializar, cambiarPerfil, guardarDatosPerfilActual, cargarDatosPerfilActual,
-                    obtenerPerfilActual, obtenerDatosPerfil, obtenerListaPerfiles
+                    obtenerPerfilActual, obtenerDatosPerfil, obtenerListaPerfiles, obtenerTodosPerfiles
                 };
 
             })(SecurityAndUtils);
@@ -2569,7 +2556,15 @@
                     abrir(modalIdAbrir, callbackAbrir);
                 }
 
-                return { abrir, cerrar, alternar };
+                function cerrarTodos() {
+                    document.querySelectorAll('.modal.show').forEach(modal => {
+                        modal.classList.remove('show');
+                        modal.removeEventListener('click', handleOutsideClick);
+                    });
+                    document.body.classList.remove('modal-open');
+                }
+
+                return { abrir, cerrar, alternar, cerrarTodos };
             })();
 
             // ====================================================================
@@ -3790,11 +3785,11 @@
                         UILogic.actualizarEstadoBotonIgnorarTF();
                         UILogic.actualizarUI();
                         UILogic.mostrarToast('Perfil restablecido a valores por defecto', 'success');
-                        UILogic.cerrarConfig();
+                        ModalManager.cerrarTodos();
                     }
                 }
 
-                function exportarJSON() {
+                async function exportarJSON() {
                     //  Generar fecha local en formato YYYY-MM-DD HH:MM:SS
                     const ahora = new Date();
                     const año = ahora.getFullYear();
@@ -3810,8 +3805,10 @@
                         registros,
                         diasHabiles,
                         horasDiarias,
-                        fecha: fechaLocal, // Fecha local sin conversión UTC
-                        version: S.SECURITY_LIMITS.SCHEMA_VERSION
+                        fecha: fechaLocal,
+                        version: S.SECURITY_LIMITS.SCHEMA_VERSION,
+                        hash: await S.calcularHashSHA256(registros),
+                        timestamp: Date.now()
                     };
 
                     try {
@@ -3827,7 +3824,6 @@
                         }
                         const nombreSafe = nombrePerfil.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ'\-_ ]/g, '').trim().replace(/\s+/g, '_');
 
-                        //  Usar también fecha local para el nombre del archivo
                         const fechaHoy = `${año}-${mes}-${dia}`;
 
                         a.download = `Horarios_${nombreSafe}_${fechaHoy}.json`;
@@ -3837,6 +3833,7 @@
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
                         UILogic.mostrarToast('Datos exportados', 'success');
+                        ModalManager.cerrarTodos();
                     } catch (e) {
                         console.error(e);
                         UILogic.mostrarToast('Error al exportar', 'error');
@@ -3863,7 +3860,7 @@
                     }
 
                     const reader = new FileReader();
-                    reader.onload = (e) => {
+                    reader.onload = async (e) => {
                         try {
                             // Validar que el contenido no esté vacío
                             const contenido = e.target.result;
@@ -3917,6 +3914,12 @@
                                 return;
                             }
 
+                            // Advertir si el schema es de una versión futura
+                            if (data.version && data.version > S.SECURITY_LIMITS.SCHEMA_VERSION) {
+                                console.warn(`⚠️ Archivo exportado con schema v${data.version}, app en v${S.SECURITY_LIMITS.SCHEMA_VERSION}`);
+                                UILogic.mostrarToast(`Archivo de versión más nueva (v${data.version}). Algunos datos pueden no importarse correctamente.`, 'warning');
+                            }
+
                             // NUEVA VALIDACIÓN: rangoExportado
                             if (data.rangoExportado !== undefined) {
                                 // Sanitizar y validar formato
@@ -3943,6 +3946,19 @@
                                         }
                                     }
                                 }
+                            }
+
+                            // Verificar integridad del hash
+                            if (data.hash) {
+                                const hashCalculado = await S.calcularHashSHA256(data.registros);
+                                if (hashCalculado !== data.hash) {
+                                    UILogic.mostrarToast('⚠️ El archivo puede estar corrupto o modificado', 'warning');
+                                    const continuar = confirm('El hash de integridad no coincide.\n\nEl archivo puede haber sido modificado o corrompido.\n\n¿Importar de todas formas?');
+                                    if (!continuar) return;
+                                }
+                            } else {
+                                const continuar = confirm('⚠️ Este archivo no tiene verificación de integridad.\n\nPuede ser un backup antiguo, o haber sido modificado externamente.\n\n¿Importar de todas formas?');
+                                if (!continuar) return;
                             }
 
                             // Validar límite de registros antes de procesar
@@ -4098,7 +4114,6 @@
 
                         UILogic.mostrarToast(mensajeExito, 'success');
                         UILogic.cerrarImportar();
-                        UILogic.cerrarConfig();
                         $('file-import').value = '';
                     }
                 }
@@ -7214,7 +7229,7 @@ Generado por Sistema Horarios
                         return;
                     }
 
-                    const perfiles = JSON.parse(localStorage.getItem('perfiles') || '{}');
+                    const perfiles = window.PerfilManager ? PerfilManager.obtenerTodosPerfiles() : {};
 
                     //  VALIDACIÓN DE NOMBRE DUPLICADO (case-insensitive)
                     const nombreNormalizado = nombre.toLowerCase().trim();
@@ -7240,7 +7255,14 @@ Generado por Sistema Horarios
                         horasDiarias: 7
                     };
 
-                    localStorage.setItem('perfiles', JSON.stringify(perfiles));
+                    try {
+                        localStorage.setItem('perfiles', JSON.stringify(perfiles));
+                    } catch (e) {
+                        console.error('Error al guardar perfil:', e);
+                        delete perfiles[id]; // revertir
+                        mostrarToast('Error al guardar: almacenamiento lleno', 'error');
+                        return;
+                    }
 
                     // FORZAR ACTUALIZACIÓN DEL PERFILMANAGER
                     if (window.PerfilManager) {
@@ -7290,7 +7312,7 @@ Generado por Sistema Horarios
 
                 function abrirEditorPerfil(perfilId) {
                     perfilEnEdicion = perfilId;
-                    const perfiles = JSON.parse(localStorage.getItem('perfiles') || '{}');
+                    const perfiles = window.PerfilManager ? PerfilManager.obtenerTodosPerfiles() : {};
                     const perfil = perfiles[perfilId];
 
                     if (!perfil) {
@@ -7340,7 +7362,7 @@ Generado por Sistema Horarios
                         return;
                     }
 
-                    const perfiles = JSON.parse(localStorage.getItem('perfiles') || '{}');
+                    const perfiles = window.PerfilManager ? PerfilManager.obtenerTodosPerfiles() : {};
 
                     if (!perfiles[perfilEnEdicion]) {
                         mostrarToast('Perfil no encontrado', 'error');
@@ -7366,8 +7388,16 @@ Generado por Sistema Horarios
                         return;
                     }
 
+                    const nombreAnterior = perfiles[perfilEnEdicion].nombre;
                     perfiles[perfilEnEdicion].nombre = nuevoNombre;
-                    localStorage.setItem('perfiles', JSON.stringify(perfiles));
+                    try {
+                        localStorage.setItem('perfiles', JSON.stringify(perfiles));
+                    } catch (e) {
+                        console.error('Error al guardar perfil:', e);
+                        perfiles[perfilEnEdicion].nombre = nombreAnterior; // revertir
+                        mostrarToast('Error al guardar: almacenamiento lleno', 'error');
+                        return;
+                    }
 
                     const perfilActual = window.PerfilManager.obtenerPerfilActual();
                     if (perfilEnEdicion === perfilActual) {
@@ -7389,7 +7419,7 @@ Generado por Sistema Horarios
                         return;
                     }
 
-                    const perfiles = JSON.parse(localStorage.getItem('perfiles') || '{}');
+                    const perfiles = window.PerfilManager ? PerfilManager.obtenerTodosPerfiles() : {};
                     const perfil = perfiles[perfilEnEdicion];
 
                     if (!perfil) {
@@ -7399,51 +7429,28 @@ Generado por Sistema Horarios
 
                     const confirmacion = window.confirm(`¿Estás seguro de que quieres eliminar el perfil "${perfil.nombre}"? Esta acción no se puede deshacer.`);
 
-                    if (!confirmacion) return;
-
-                    // Preguntar por Backup
-                    const deseaBackup = window.confirm(`Descargar copia de registros del perfil "${perfil.nombre}" antes de eliminar?`);
-
-                    if (deseaBackup) {
-                        // Exportar datos del perfil antes de eliminar
-                        const perfilActualTemp = window.PerfilManager.obtenerPerfilActual();
-
-                        // Si no es el perfil actual, cambiar temporalmente para exportar
-                        if (perfilEnEdicion !== perfilActualTemp) {
-                            // Guardar datos del perfil a eliminar
-                            const datosExportar = {
-                                registros: perfil.registros,
-                                diasHabiles: perfil.diasHabiles,
-                                horasDiarias: perfil.horasDiarias,
-                                fecha: new Date().toISOString(),
-                                version: 3
-                            };
-
-                            const blob = new Blob([JSON.stringify(datosExportar, null, 2)], { type: 'application/json' });
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = `backup_${perfil.nombre}_${new Date().toISOString().split('T')[0]}.json`;
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                            URL.revokeObjectURL(url);
-                        } else {
-                            // Si es el perfil actual, usar la función normal
-                            D.exportarJSON();
-                        }
-
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                    }
+                    if (!confirmacion) return;                    
 
                     // Eliminar el perfil
                     delete perfiles[perfilEnEdicion];
-                    localStorage.setItem('perfiles', JSON.stringify(perfiles));
+                    try {
+                        localStorage.setItem('perfiles', JSON.stringify(perfiles));
+                    } catch (e) {
+                        console.error('Error al eliminar perfil:', e);
+                        mostrarToast('Error al guardar: almacenamiento lleno', 'error');
+                        return;
+                    }
 
                     // Si era el perfil actual, cambiar a default
                     const perfilActual = window.PerfilManager.obtenerPerfilActual();
                     if (perfilEnEdicion === perfilActual) {
-                        localStorage.setItem('perfilActivo', 'default');
+                        try {
+                            localStorage.setItem('perfilActivo', 'default');
+                        } catch (e) {
+                            console.error('Error al guardar perfil activo:', e);
+                            mostrarToast('Error al guardar: almacenamiento lleno', 'error');
+                            return;
+                        }
                         mostrarToast('Perfil eliminado. Recargando...', 'success');
                         setTimeout(() => location.reload(), 1000);
                     } else {
@@ -8008,8 +8015,9 @@ Generado por Sistema Horarios
                         horasDiarias: D.horasDiarias(),
                         fecha: fechaLocal,
                         version: S.SECURITY_LIMITS.SCHEMA_VERSION,
+                        hash: await S.calcularHashSHA256(registrosFiltrados),
+                        timestamp: Date.now(),
                         rangoExportado: esMes ? `Mes ${desde}` : `${desde} a ${hasta}`
-
                     };
 
                     if (data.rangoExportado) {
@@ -9001,7 +9009,7 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.49
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.52
     // ====================================================================
     
      - CAMBIOS:
