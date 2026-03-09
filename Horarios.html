@@ -6950,8 +6950,11 @@ Generado por Sistema Horarios
                         }
                     }
 
-                    const horas = Math.floor(totalMinutos / 60);
-                    const mins = Math.round(totalMinutos % 60);
+                    let horas = Math.floor(totalMinutos / 60);
+                    let mins = Math.round(totalMinutos % 60);
+
+                    // Capear a 23:59
+                    if (horas > 23) { horas = 23; mins = 59; }
 
                     // Formatear a HH:MM
                     return `${String(horas).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
@@ -7429,7 +7432,7 @@ Generado por Sistema Horarios
 
                     const confirmacion = window.confirm(`¿Estás seguro de que quieres eliminar el perfil "${perfil.nombre}"? Esta acción no se puede deshacer.`);
 
-                    if (!confirmacion) return;                    
+                    if (!confirmacion) return;
 
                     // Eliminar el perfil
                     delete perfiles[perfilEnEdicion];
