@@ -1705,7 +1705,7 @@
                         </svg>
                         Ajustes
                     </span>
-                    <span class="version-text">LUSHIBOSCA-7.59</span>
+                    <span class="version-text">LUSHIBOSCA-7.62</span>
                 </h3>
             </div>
             <div class="modal-config-body custom-scroll">
@@ -1829,7 +1829,7 @@
                     <label>Personal Access Token</label>
                     <div class="input-with-btn">
                         <input type="password" id="gist-token" placeholder="ghp_xxxxxxxxxxxx" maxlength="100"
-                            autocomplete="off" />
+                            oninput="UILogic.actualizarEstadoBotonesGist()" autocomplete="off" />
                         <button class="time-btn" id="btn-toggle-token" onclick="UILogic.toggleVerToken()"
                             title="Mostrar/ocultar token">
                             <svg class="icon">
@@ -1842,7 +1842,7 @@
                     <label>Gist ID</label>
                     <div class="input-with-btn">
                         <input type="text" id="gist-id" placeholder="Dejar vacío para crear uno nuevo" maxlength="40"
-                            autocomplete="off" />
+                            autocomplete="off" oninput="UILogic.actualizarEstadoBotonesGist()" />
                         <button class="time-btn" onclick="UILogic.abrirGistEnBrowser()" title="Abrir en GitHub">
                             <svg class="icon">
                                 <use href="#icon-help" />
@@ -1868,10 +1868,16 @@
                 </div>
                 <div class="form-group" style="margin-top:0.5rem">
                     <label>Automatización</label>
-                    <button id="btn-toggle-gist-backup" onclick="UILogic.toggleGistBackup()">
-                        <span id="label-gist-backup">Sin automatizar</span>
-                        <span id="hint-gist-backup">—</span>
-                    </button>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button id="btn-toggle-gist-backup" onclick="UILogic.toggleGistBackup()" style="flex:1">
+                            <span id="label-gist-backup">Sin automatizar</span>
+                            <span id="hint-gist-backup">—</span>
+                        </button>
+                        <button id="btn-toggle-gist-merge" onclick="UILogic.toggleGistMerge()"
+                            style="flex:1; border:1px solid var(--border); color:var(--text-muted); font-weight:600; transition: background 0.2s, color 0.2s, border-color 0.2s;">
+                            <span id="hint-gist-merge">Reemplazar</span>
+                        </button>
+                    </div>
                     <div id="gist-rango-horario"
                         style="display:none; margin-top:0.5rem; gap:0.5rem; align-items:center;">
                         <span style="font-size:0.85rem; color:var(--text-muted)">Desde</span>
@@ -1900,6 +1906,49 @@
                         Volver
                     </button>
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-gist-merge">
+        <div class="modal-content">
+            <div class="modal-config-header">
+                <h3 style="margin-bottom:0.5rem">
+                    <span class="modal-title-block">
+                        <svg class="icon">
+                            <use href="#icon-cloud-download" />
+                        </svg>
+                        Resumen de datos
+                    </span>
+                </h3>
+            </div>
+            <div class="modal-config-body custom-scroll">
+                <div id="gist-merge-resumen" style="font-size:0.9rem; color:var(--text-muted); line-height:1.8;"></div>
+            </div>
+            <div class="modal-config-footer">
+                <div class="btn-group">
+                    <button class="btn-backup" id="btn-gist-merge-combinar" onclick="UILogic.gistMergeAplicar('merge')">
+                        <svg class="icon">
+                            <use href="#icon-combine" />
+                        </svg>
+                        Combinar
+                    </button>
+                    <button class="btn-export" id="btn-gist-merge-reemplazar"
+                        onclick="UILogic.gistMergeAplicar('replace')">
+                        <svg class="icon">
+                            <use href="#icon-replace-swap" />
+                        </svg>
+                        Reemplazar
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button class="btn-delete" onclick="UILogic.gistMergeCancelar()">
+                        <svg class="icon">
+                            <use href="#icon-cancelar" />
+                        </svg>
+                        Cancelar
+                    </button>
                 </div>
             </div>
         </div>
@@ -2584,7 +2633,11 @@
                         ...(actual.gistAutoSync != null && { gistAutoSync: actual.gistAutoSync }),
                         ...(actual.gistRangoDesde && { gistRangoDesde: actual.gistRangoDesde }),
                         ...(actual.gistRangoHasta && { gistRangoHasta: actual.gistRangoHasta }),
-                        ...(actual.gistAutoSyncFecha && { gistAutoSyncFecha: actual.gistAutoSyncFecha })
+                        ...(actual.gistSyncFecha_subir && { gistSyncFecha_subir: actual.gistSyncFecha_subir }),
+                        ...(actual.gistSyncCount_subir != null && { gistSyncCount_subir: actual.gistSyncCount_subir }),
+                        ...(actual.gistSyncFecha_bajar && { gistSyncFecha_bajar: actual.gistSyncFecha_bajar }),
+                        ...(actual.gistSyncCount_bajar != null && { gistSyncCount_bajar: actual.gistSyncCount_bajar }),
+                        ...(actual.gistMergeBehavior && { gistMergeBehavior: actual.gistMergeBehavior })
                     };
                     guardarPerfiles();
                 }
@@ -3934,7 +3987,11 @@
                             delete perfil.gistAutoSync;
                             delete perfil.gistRangoDesde;
                             delete perfil.gistRangoHasta;
-                            delete perfil.gistAutoSyncFecha;
+                            delete perfil.gistSyncFecha_subir;
+                            delete perfil.gistSyncCount_subir;
+                            delete perfil.gistSyncFecha_bajar;
+                            delete perfil.gistSyncCount_bajar;
+                            delete perfil.gistMergeBehavior;
                         }
                     }
 
@@ -4653,6 +4710,21 @@
                 }
 
                 // 0 = sin automatizar, 1 = restaurar al inicio, 2 = respaldo automático
+                function getMergeBehavior() {
+                    const perfil = window.PerfilManager ? PerfilManager.obtenerDatosPerfil() : null;
+                    return perfil?.gistMergeBehavior || 'replace';
+                }
+
+                function setMergeBehavior(valor) {
+                    if (window.PerfilManager) {
+                        const perfil = PerfilManager.obtenerDatosPerfil();
+                        if (perfil) {
+                            perfil.gistMergeBehavior = valor;
+                            PerfilManager.guardarPerfiles();
+                        }
+                    }
+                }
+
                 function getAutoSync() {
                     const perfil = window.PerfilManager ? PerfilManager.obtenerDatosPerfil() : null;
                     const val = perfil?.gistAutoSync;
@@ -4691,47 +4763,62 @@
                     }
                 }
 
-                function getAutoSyncFecha() {
-                    const perfil = window.PerfilManager ? PerfilManager.obtenerDatosPerfil() : null;
-                    return perfil?.gistAutoSyncFecha || null;
+                function _claveHoraActual() {
+                    const ahora = new Date();
+                    return `${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,'0')}-${String(ahora.getDate()).padStart(2,'0')} ${String(ahora.getHours()).padStart(2,'0')}`;
                 }
 
-                function setAutoSyncFecha(fecha) {
+                // tipo: 'subir' | 'bajar', limite: max intentos por hora
+                function getSyncCount(tipo) {
+                    const perfil = window.PerfilManager ? PerfilManager.obtenerDatosPerfil() : null;
+                    const key = `gistSyncCount_${tipo}`;
+                    const keyFecha = `gistSyncFecha_${tipo}`;
+                    if (!perfil?.[keyFecha] || perfil[keyFecha] !== _claveHoraActual()) return 0;
+                    return perfil?.[key] || 0;
+                }
+
+                function marcarSync(tipo) {
                     if (window.PerfilManager) {
                         const perfil = PerfilManager.obtenerDatosPerfil();
                         if (perfil) {
-                            perfil.gistAutoSyncFecha = fecha;
+                            const key = `gistSyncCount_${tipo}`;
+                            const keyFecha = `gistSyncFecha_${tipo}`;
+                            const clave = _claveHoraActual();
+                            const esNuevaHora = perfil[keyFecha] !== clave;
+                            perfil[keyFecha] = clave;
+                            perfil[key] = esNuevaHora ? 1 : (perfil[key] || 0) + 1;
                             PerfilManager.guardarPerfiles();
                         }
                     }
+                }
+
+                function superaLimite(tipo, limite) {
+                    return getSyncCount(tipo) >= limite;
                 }
 
                 function dentroDelRangoHorario() {
                     const { desde, hasta } = getRangoHorario();
                     const ahora = new Date();
                     const horaActual = String(ahora.getHours()).padStart(2, '0') + ':' + String(ahora.getMinutes()).padStart(2, '0');
-                    return horaActual >= desde && horaActual <= hasta;
+                    // Si desde <= hasta: rango normal (ej. 09:00 - 17:00)
+                    // Si desde > hasta: rango cruza medianoche (ej. 21:00 - 01:00)
+                    if (desde <= hasta) {
+                        return horaActual >= desde && horaActual <= hasta;
+                    } else {
+                        return horaActual >= desde || horaActual <= hasta;
+                    }
                 }
 
-                function yaSubioHoy() {
-                    const fecha = getAutoSyncFecha();
-                    if (!fecha) return false;
-                    const ahora = new Date();
-                    // Formato guardado: "YYYY-MM-DD HH"
-                    const claveActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')} ${String(ahora.getHours()).padStart(2, '0')}`;
-                    return fecha === claveActual;
-                }
 
-                function marcarSubidaHoy() {
-                    const ahora = new Date();
-                    const claveActual = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')} ${String(ahora.getHours()).padStart(2, '0')}`;
-                    setAutoSyncFecha(claveActual);
-                }
 
                 function saveCredentials(token, gistId) {
                     try {
                         // Token: global
-                        if (token) localStorage.setItem(KEY_TOKEN, S.sanitizeString(token.trim()));
+                        if (token) {
+                            localStorage.setItem(KEY_TOKEN, S.sanitizeString(token.trim()));
+                        } else {
+                            localStorage.removeItem(KEY_TOKEN);
+                        }
                         // Gist ID: en el perfil activo — guardarPerfiles() directamente
                         // para no depender de window.DataManagement (que puede no existir aún)
                         if (window.PerfilManager) {
@@ -4849,7 +4936,7 @@
                     return data;
                 }
 
-                return { getToken, getGistId, getLastSync, getAutoSync, setAutoSync, getRangoHorario, setRangoHorario, yaSubioHoy, marcarSubidaHoy, dentroDelRangoHorario, saveCredentials, esGistIdValido, subir, bajar };
+                return { getToken, getGistId, getLastSync, getMergeBehavior, setMergeBehavior, getAutoSync, setAutoSync, getRangoHorario, setRangoHorario, getSyncCount, marcarSync, superaLimite, dentroDelRangoHorario, saveCredentials, esGistIdValido, subir, bajar };
 
             })(SecurityAndUtils);
 
@@ -6761,6 +6848,9 @@
                     const selectAnio = $('select-anio-stats');
                     if (!selectAnio) return;
 
+                    // Guardar año seleccionado actual
+                    const anioActualmenteSeleccionado = selectAnio.value;
+
                     const aniosUnicos = new Set();
                     D.registros().forEach(r => aniosUnicos.add(r.fecha.substring(0, 4)));
                     const aniosOrdenados = Array.from(aniosUnicos).sort().reverse();
@@ -6775,7 +6865,16 @@
                     }
 
                     const anioActual = String(new Date().getFullYear());
-                    const anioASeleccionar = aniosOrdenados.includes(anioActual) ? anioActual : aniosOrdenados[0];
+
+                    // Si había un año seleccionado y aún existe, mantenerlo
+                    let anioASeleccionar;
+                    if (anioActualmenteSeleccionado && aniosOrdenados.includes(anioActualmenteSeleccionado)) {
+                        anioASeleccionar = anioActualmenteSeleccionado;
+                    } else if (aniosOrdenados.includes(anioActual)) {
+                        anioASeleccionar = anioActual;
+                    } else {
+                        anioASeleccionar = aniosOrdenados[0];
+                    }
 
                     aniosOrdenados.forEach(anio => {
                         const opt = document.createElement('option');
@@ -7378,7 +7477,8 @@ Generado por Sistema Horarios
                             const contexto = vistaActual === 'semana' ? 'Esta Semana' : 'Hoy';
 
                             if (titulo) {
-                                titulo.innerHTML = `${icono} ${contexto} - <svg class="icon"><use href="#icon-exit"/></svg> Tiempo fuera`;
+                                titulo.innerHTML = `${icono} ${contexto} - <svg class="icon"><use href="#icon-exit"/></svg> Tiempo fuera <span id="break-counter" style="font-size:0.8em; font-weight:500; color:var(--c-red); margin-left:0.3em;"></span>`;
+                                _iniciarContadorBreak(storageKey);
                             }
                         }
 
@@ -7390,6 +7490,38 @@ Generado por Sistema Horarios
                         icon.setAttribute('href', '#icon-exit');
 
                         if (card) card.classList.remove('timer-running');
+                        _detenerContadorBreak();
+                    }
+                }
+
+                // --- Contador visual de tiempo fuera en curso ---
+                let _breakCounterInterval = null;
+
+                function _iniciarContadorBreak(storageKey) {
+                    _detenerContadorBreak();
+                    function _actualizarContador() {
+                        const el = document.getElementById('break-counter');
+                        if (!el) { _detenerContadorBreak(); return; }
+                        const start = parseInt(localStorage.getItem(storageKey));
+                        if (isNaN(start)) { el.textContent = ''; _detenerContadorBreak(); return; }
+                        const totalSeg = Math.floor((Date.now() - start) / 1000);
+                        const mins = Math.floor(totalSeg / 60);
+                        const horas = Math.floor(mins / 60);
+                        const minsResto = mins % 60;
+                        if (horas > 0) {
+                            el.textContent = `${horas}h ${minsResto}m`;
+                        } else {
+                            el.textContent = `${mins}m`;
+                        }
+                    }
+                    _actualizarContador();
+                    _breakCounterInterval = setInterval(_actualizarContador, 1000);
+                }
+
+                function _detenerContadorBreak() {
+                    if (_breakCounterInterval) {
+                        clearInterval(_breakCounterInterval);
+                        _breakCounterInterval = null;
                     }
                 }
 
@@ -8461,6 +8593,31 @@ Generado por Sistema Horarios
                     let _gistModalPadre = null;
                     let _gistAutoSyncTemp = null;
 
+                    function actualizarEstadoBotonesGist() {
+                        const token = document.getElementById('gist-token')?.value.trim() || '';
+                        const gistId = document.getElementById('gist-id')?.value.trim() || '';
+                        const ambosCompletos = token !== '' && gistId !== '';
+
+                        // Subir y Bajar: requieren ambos completos
+                        ['btn-gist-subir', 'btn-gist-bajar', 'btn-toggle-gist-backup'].forEach(id => {
+                            const btn = document.getElementById(id);
+                            if (!btn) return;
+                            btn.disabled = !ambosCompletos;
+                            btn.style.opacity = ambosCompletos ? '1' : '0.4';
+                            btn.style.cursor = ambosCompletos ? '' : 'not-allowed';
+                        });
+
+                        // Comportamiento (merge): requiere ambos completos Y que esté en modo Restaurar (estado 1)
+                        const btnMerge = document.getElementById('btn-toggle-gist-merge');
+                        if (btnMerge) {
+                            const estadoBackup = parseInt(_gistAutoSyncTemp ?? GistSync.getAutoSync());
+                            const habilitarMerge = ambosCompletos && estadoBackup === 1;
+                            btnMerge.disabled = !habilitarMerge;
+                            btnMerge.style.opacity = habilitarMerge ? '1' : '0.4';
+                            btnMerge.style.cursor = habilitarMerge ? '' : 'not-allowed';
+                        }
+                    }
+
                     function abrirModalGist() {
                         // Recordar qué modal está abierto para volver al cerrar
                         const modalAbierto = document.querySelector('.modal.show');
@@ -8487,6 +8644,8 @@ Generado por Sistema Horarios
                         _gistAutoSyncTemp = GistSync.getAutoSync();
                         gistSetStatus('');
                         actualizarBotonGistBackup();
+                        actualizarBotonGistMerge();
+                        actualizarEstadoBotonesGist();
                         ModalManager.cerrarTodos();
                         ModalManager.abrir('modal-gist');
                     }
@@ -8548,10 +8707,85 @@ Generado por Sistema Horarios
                         actualizarBotonesHistorico();
                     }
 
+                    async function gistMergeAplicar(modo, modoAutomatico = false) {
+                        if (!_gistMergeData) return;
+                        const { registrosNormalizados, soloEnGist, data } = _gistMergeData;
+                        _gistMergeData = null;
+
+                        let registrosFinales;
+                        let mensajeExito;
+
+                        if (modo === 'merge') {
+                            if (soloEnGist.length === 0) {
+                                ModalManager.cerrar('modal-gist-merge');
+                                gistSetStatus('Sin días nuevos para agregar', 'ok');
+                                mostrarToast('Sin días nuevos para agregar', 'info');
+                                return;
+                            }
+                            if (D.registros().length + soloEnGist.length > S.SECURITY_LIMITS.MAX_REGISTROS) {
+                                mostrarToast(`Límite alcanzado`, 'error');
+                                return;
+                            }
+                            registrosFinales = [...D.registros(), ...soloEnGist];
+                            mensajeExito = soloEnGist.length === 1 ? 'Se agregó 1 día del Gist' : `Se agregaron ${soloEnGist.length} días del Gist`;
+                        } else {
+                            registrosFinales = registrosNormalizados;
+                            mensajeExito = `${registrosNormalizados.length} registros restaurados desde Gist`;
+                            if (Array.isArray(data.diasHabiles)) {
+                                const diasValidos = data.diasHabiles.filter(d => Number.isInteger(d) && d >= 0 && d <= 6);
+                                if (diasValidos.length > 0) D.setDiasHabiles(diasValidos);
+                            }
+                            if (data.horasDiarias != null) {
+                                const hd = parseFloat(data.horasDiarias);
+                                if (Number.isFinite(hd) && hd >= 0 && hd <= 24) D.setHorasDiarias(hd);
+                            }
+                        }
+
+                        D.registros().splice(0, D.registros().length, ...registrosFinales);
+                        D.registros().sort((a, b) => {
+                            if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
+                            return (b.entrada || '').localeCompare(a.entrada || '');
+                        });
+                        HistoryManager.saveState(D.registros());
+
+                        await D.guardarYActualizar();
+                        actualizarUI();
+
+                        if (!modoAutomatico) ModalManager.cerrar('modal-gist-merge');
+                        const lastSyncEl = document.getElementById('gist-ultima-sync');
+                        if (lastSyncEl) lastSyncEl.textContent = `Última sync: ${GistSync.getLastSync()}`;
+                        gistSetStatus(`✓ ${mensajeExito}`, 'ok');
+                        mostrarToast(mensajeExito, 'success');
+
+                        const btn = document.getElementById('btn-gist-bajar');
+                        if (btn) btn.disabled = false;
+                    }
+
+                    function gistMergeCancelar() {
+                        _gistMergeData = null;
+                        ModalManager.cerrar('modal-gist-merge');
+                        const btn = document.getElementById('btn-gist-bajar');
+                        if (btn) btn.disabled = false;
+                        gistSetStatus('Cancelado', '');
+                    }
+
+                    function toggleGistMerge() {
+                        const actual = GistSync.getMergeBehavior();
+                        GistSync.setMergeBehavior(actual === 'merge' ? 'replace' : 'merge');
+                        actualizarBotonGistMerge();
+                    }
+
+                    function actualizarBotonGistMerge() {
+                        const hint = document.getElementById('hint-gist-merge');
+                        const esMerge = GistSync.getMergeBehavior() === 'merge';
+                        if (hint) hint.textContent = esMerge ? 'Combinar' : 'Reemplazar';
+                    }
+
                     function toggleGistBackup() {
                         const actual = parseInt(_gistAutoSyncTemp ?? GistSync.getAutoSync());
                         _gistAutoSyncTemp = (actual + 1) % 3;
                         actualizarBotonGistBackup();
+                        actualizarEstadoBotonesGist();
                     }
 
                     function actualizarBotonGistBackup() {
@@ -8645,7 +8879,9 @@ Generado por Sistema Horarios
                         }
                     }
 
-                    async function gistBajar() {
+                    let _gistMergeData = null;
+
+                    async function gistBajar(modoAutomatico = false) {
                         const tokenInput = document.getElementById('gist-token');
                         const gistIdInput = document.getElementById('gist-id');
                         const modalAbierto = document.getElementById('modal-gist')?.classList.contains('show');
@@ -8704,35 +8940,36 @@ Generado por Sistema Horarios
                                 r.total = t?.total || 0;
                             });
 
-                            // Aplicar datos
-                            D.registros().splice(0, D.registros().length, ...registrosNormalizados);
+                            // Análisis: comparar Gist vs local
+                            const fechasLocales = new Set(D.registros().map(r => r.fecha));
+                            const soloEnGist = registrosNormalizados.filter(r => !fechasLocales.has(r.fecha));
+                            const enAmbos = registrosNormalizados.filter(r => fechasLocales.has(r.fecha));
+                            const soloLocal = D.registros().filter(r => !registrosNormalizados.some(g => g.fecha === r.fecha));
 
-                            // Validar y aplicar diasHabiles
-                            if (Array.isArray(data.diasHabiles)) {
-                                const diasValidos = data.diasHabiles.filter(d => Number.isInteger(d) && d >= 0 && d <= 6);
-                                if (diasValidos.length > 0) D.setDiasHabiles(diasValidos);
+                            // Guardar datos para que gistMergeAplicar los use
+                            _gistMergeData = { registrosNormalizados, soloEnGist, data };
+
+                            if (modoAutomatico) {
+                                // En automático: usar el toggle configurado sin preguntar
+                                await gistMergeAplicar(GistSync.getMergeBehavior(), true);
+                            } else {
+                                // Manual: mostrar modal de análisis
+                                const resumenEl = document.getElementById('gist-merge-resumen');
+                                if (resumenEl) {
+                                    resumenEl.innerHTML =
+                                        `<div style="margin-bottom:0.75rem">` +
+                                        `<div><svg class="icon"><use href="#icon-cloud"/></svg> En Gist <strong style="color:var(--c-green)">${soloEnGist.length}</strong> registro${soloEnGist.length !== 1 ? 's' : ''} nuevos</div>` +
+                                        `<div><svg class="icon"><use href="#icon-combine"/></svg> En ambos <strong>${enAmbos.length}</strong> registro${enAmbos.length !== 1 ? 's' : ''} (por fecha)</div>` +
+                                        `<div><svg class="icon"><use href="#icon-save"/></svg> Local <strong>${soloLocal.length}</strong> registro${soloLocal.length !== 1 ? 's' : ''} no subidos</div>` +
+                                        `</div>` +
+                                        `<div style="font-size:0.8rem; color:var(--text-muted)">` +
+                                        `<strong>Combinar</strong>: agrega ${soloEnGist.length} nuevo(s), mantiene los locales<br>` +
+                                        `<strong>Reemplazar</strong>: usa los ${registrosNormalizados.length} registros del Gist` +
+                                        `</div>`;
+                                }
+                                ModalManager.cerrar('modal-gist');
+                                ModalManager.abrir('modal-gist-merge');
                             }
-
-                            // Validar y aplicar horasDiarias
-                            if (data.horasDiarias != null) {
-                                const hd = parseFloat(data.horasDiarias);
-                                if (Number.isFinite(hd) && hd >= 0 && hd <= 24) D.setHorasDiarias(hd);
-                            }
-
-                            // Ordenar e integrar con HistoryManager
-                            D.registros().sort((a, b) => {
-                                if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
-                                return (b.entrada || '').localeCompare(a.entrada || '');
-                            });
-                            HistoryManager.saveState(D.registros());
-
-                            await D.guardarYActualizar();
-                            actualizarUI();
-
-                            const lastSyncEl = document.getElementById('gist-ultima-sync');
-                            if (lastSyncEl) lastSyncEl.textContent = `Última sync: ${GistSync.getLastSync()}`;
-                            gistSetStatus(`✓ ${registrosNormalizados.length} registros importados`, 'ok');
-                            mostrarToast('Datos Restaurados desde Gist', 'success');
                         } catch (e) {
                             console.error('Gist bajar error:', e);
                             gistSetStatus(`Error: ${e.message}`, 'error');
@@ -8755,8 +8992,9 @@ Generado por Sistema Horarios
                         toggleCredito, init, toggleFormulario, setBloqueoEdicionGrupo, toggleBloqueoEdicionGrupo, cerrarEdicionGrupo,
                         mostrarExportar, cerrarExportar, ejecutarExportacion, toggleCamposRangoExport, aplicarFeedbackRegistro,
                         iniciarTimerAutoCierreBotones, cancelarTimerAutoCierreBotones, toggleIgnorarTiempoFuera, actualizarEstadoBotonIgnorarTF,
-                        togglePeriodoStats, cambiarAnioStats, toggleFondoCard, setFondoCard,
-                        abrirModalGist, cerrarModalGist, guardarConfigGist, toggleVerToken, abrirGistEnBrowser, gistSubir, gistBajar, actualizarBotonesHistorico, toggleGistBackup
+                        togglePeriodoStats, cambiarAnioStats, toggleFondoCard, setFondoCard, toggleGistMerge, actualizarEstadoBotonesGist,
+                        abrirModalGist, cerrarModalGist, guardarConfigGist, toggleVerToken, abrirGistEnBrowser, gistSubir, gistBajar,
+                        gistMergeAplicar, gistMergeCancelar, actualizarBotonesHistorico, toggleGistBackup,
                     };
 
                     // === LISTENERS E INTERACTIVIDAD ===
@@ -9004,21 +9242,19 @@ Generado por Sistema Horarios
                     const _tieneCredenciales = GistSync.getToken() && GistSync.esGistIdValido(GistSync.getGistId());
                     if (_tieneCredenciales) {
                         if (_autoSyncEstado === 1) {
-                            // Estado 1: restaurar al inicio si está en rango
-                            if (GistSync.dentroDelRangoHorario()) {
-                                setTimeout(() => gistBajar(), 2000);
+                            // Estado 1: restaurar al inicio si está en rango — máx 2 bajas por hora
+                            if (GistSync.dentroDelRangoHorario() && !GistSync.superaLimite('bajar', 2)) {
+                                setTimeout(async () => {
+                                    await gistBajar(true);
+                                    GistSync.marcarSync('bajar');
+                                }, 2000);
                             }
                         } else if (_autoSyncEstado === 2) {
-                            // Estado 2: respaldo automático si está en rango y no subió hoy
-                            if (GistSync.dentroDelRangoHorario() && !GistSync.yaSubioHoy()) {
+                            // Estado 2: respaldo automático — máx 1 subida por hora
+                            if (GistSync.dentroDelRangoHorario() && !GistSync.superaLimite('subir', 1)) {
                                 setTimeout(async () => {
-                                    try {
-                                        await GistSync.subir(D.registros(), D.diasHabiles(), D.horasDiarias());
-                                        GistSync.marcarSubidaHoy();
-                                        mostrarToast('Respaldo automático realizado', 'success');
-                                    } catch (e) {
-                                        console.warn('Error en respaldo automático:', e);
-                                    }
+                                    await gistSubir();
+                                    GistSync.marcarSync('subir');
                                 }, 2000);
                             }
                         }
@@ -9684,11 +9920,16 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.59
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 7.62
     // ====================================================================
     
      - CAMBIOS:
-    1) 
+    1) Se agrega contador al tiempo fuera
+    2) Se corrige bug al actualizar la ui si estaba selecioonado un año que no es el actual, se volvia al 
+    predeterminado
+    3) Se bloquean los botones de gist si no hay token ni id
+    4) Se agrega limite a la bajada de gist, max 2 X hora
+    5) se unifican funciones en el modulo de gist
 
      - BUGS MENORES CONOCIDOS:
      1) al tener un registro con entrada y luego agregar una salida, deshacer la accion
