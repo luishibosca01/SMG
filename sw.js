@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smg-v1';
+const CACHE_NAME = 'smg-v2';
 const urlsToCache = [
   './',
   './index.html',
