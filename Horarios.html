@@ -38,6 +38,7 @@
             --c-red: rgba(172, 90, 76, 0.8);
             --c-purple: rgba(129, 76, 172, 0.8);
             --c-gold: rgba(172, 155, 76, 0.8);
+            --c-orange: rgba(210, 120, 50, 0.8);
             --c-gray-btn: #dde3ea;
             --c-white: #ffffff;
             --hover: #989ca0;
@@ -441,6 +442,10 @@
             border-left-color: var(--c-gold) !important;
         }
 
+        .stats-card.border-orange {
+            border-left-color: var(--c-orange) !important;
+        }
+
         .stats-card.border-transparent {
             border-left-color: transparent !important;
         }
@@ -480,6 +485,10 @@
 
         .progress-fill.gold {
             background: var(--c-gold) !important;
+        }
+
+        .progress-fill.orange {
+            background: var(--c-orange) !important;
         }
 
         .progress-fill.shimmer::after {
@@ -554,10 +563,10 @@
         }
 
         .registro-total.red-text,
-        .calendario-dia.dia-incompleto,
         .registro-total.red-text-bg,
         .toast.error,
         .toast.warning,
+        .calendario-dia.dia-incompleto,
         .calendario-dia.dia-especial-red {
             background: var(--c-red);
         }
@@ -567,6 +576,12 @@
             background: var(--c-purple);
         }
 
+        .registro-total.orange-text,
+        .calendario-dia.dia-especial-orange {
+            background: var(--c-orange);
+        }
+
+        .calendario-dia.dia-sin-salida,
         .registro-total.gold-text,
         .calendario-dia.dia-especial-gold,
         .registro-total.yellow-text {
@@ -701,6 +716,18 @@
             }
         }
 
+        @keyframes calPopupIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         @keyframes llamarAtencion {
             0% {
                 transform: scale(1, 1);
@@ -824,7 +851,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 500;
             cursor: default;
             position: relative;
@@ -853,7 +880,7 @@
         /* --- Popup quick-view calendario --- */
         .cal-popup {
             position: fixed;
-            z-index: 200;
+            z-index: 90;
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -865,7 +892,9 @@
             flex-direction: column;
             gap: 0.4rem;
             pointer-events: all;
-            animation: slideDownFade 0.15s ease;
+            transform: translateY(24px) scale(0.96);
+            opacity: 0;
+            animation: calPopupIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
         .cal-popup-fecha {
@@ -932,7 +961,7 @@
         }
 
         .calendario-titulo {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-main);
             text-transform: capitalize;
@@ -1042,13 +1071,12 @@
             border-radius: var(--radius);
             padding: 0.25rem 0.75rem;
             color: var(--text-main);
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             cursor: pointer;
-            transition: border-color 0.2s;
+            transition: border-color 0.5s;
             width: auto;
             max-width: 160px;
         }
@@ -1155,6 +1183,11 @@
         }
 
         .fade-out {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        #form-stats.fade-out {
             opacity: 0;
             transform: translateY(-10px);
         }
@@ -1269,6 +1302,13 @@
         /* --- Hovers de botones --- */
         @media (hover: hover) and (pointer: fine) {
 
+            #btn-toggle-fondo:hover:not(:disabled),
+            #btn-toggle-gist-backup:hover:not(:disabled),
+            #btn-toggle-gist-merge:hover:not(:disabled),
+            #btn-toggle-ignorar-tf:hover:not(:disabled),
+            #btn-toggle-hover-popup:hover:not(:disabled),
+            #btn-toggle-persistir-tarjetas:hover:not(:disabled),
+            #btn-reporte:hover:not(:disabled),
             .icon-btn:hover:not(:disabled),
             .time-btn:hover:not(:disabled),
             .btn-increment:hover:not(:disabled),
@@ -1278,16 +1318,22 @@
             .btn-export:hover:not(:disabled),
             .btn-backup:hover:not(:disabled),
             .btn-edit:hover:not(:disabled),
-            #btn-toggle-fondo:hover:not(:disabled),
-            #btn-toggle-gist-backup:hover:not(:disabled),
-            #btn-toggle-gist-merge:hover:not(:disabled),
-            #btn-toggle-ignorar-tf:hover:not(:disabled),
             .registro-item:hover,
             .header-profile-btn:hover,
             .btn-perfil-select:hover,
             .day-checkbox:hover span,
             .btn-perfil-edit:hover {
                 border: 1px solid var(--hover);
+            }
+
+            .calendario-dia:not(.vacio):not(.dia-sin-registro) {
+                transition: filter 0.3s ease;
+            }
+
+            .calendario-dia:not(.vacio):not(.dia-sin-registro):hover {
+                filter: brightness(1.2);
+                z-index: 2;
+                position: relative;
             }
 
             .calendario-nav button:hover:not(:disabled) {
@@ -1328,6 +1374,17 @@
 
             .week-selector {
                 gap: 5px;
+            }
+
+            #modal-config .modal-content {
+                max-width: 800px;
+            }
+
+            #modal-config .modal-config-cols {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0 1.5rem;
+                align-items: start;
             }
         }
     </style>
@@ -1522,13 +1579,11 @@
                 </svg>
             </button>
             <button class="header-profile-btn" onclick="UILogic.abrirSelectorPerfiles()">
+                <span id="nombre-perfil-header">Cargando...</span>
                 <svg class="icon">
                     <use href="#icon-briefcase" />
                 </svg>
-                <span id="nombre-perfil-header">Cargando...</span>
-                <svg class="icon" style="font-size: 0.8em; margin-left: 2px;">
-                    <use href="#icon-chevron-down" />
-                </svg>
+
             </button>
         </div>
     </div>
@@ -1869,142 +1924,163 @@
                         </svg>
                         Ajustes
                     </span>
-                    <span class="version-text">LUSHIBOSCA-8.16</span>
+                    <span class="version-text">LUSHIBOSCA-8.24</span>
                 </h3>
             </div>
             <div class="modal-config-body custom-scroll">
-                <div class="form-group">
-                    <label>Horas Diarias</label>
-                    <div class="input-number-group">
-                        <input type="number" id="config-horas-diarias" min="0" max="24" step="0.5" readonly />
-                        <button class="btn-increment" onmousedown="UILogic.iniciarCambioHoras(0.5)"
-                            onmouseup="UILogic.detenerCambio()" onmouseleave="UILogic.detenerCambio()"
-                            ontouchstart="event.preventDefault(); UILogic.iniciarCambioHoras(0.5)"
-                            ontouchend="event.preventDefault(); UILogic.detenerCambio()">+</button>
-                        <button class="btn-increment" onmousedown="UILogic.iniciarCambioHoras(-0.5)"
-                            onmouseup="UILogic.detenerCambio()" onmouseleave="UILogic.detenerCambio()"
-                            ontouchstart="event.preventDefault(); UILogic.iniciarCambioHoras(-0.5)"
-                            ontouchend="event.preventDefault(); UILogic.detenerCambio()">−</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Días Laborales</label>
-                    <div class="week-selector">
-                        <label class="day-checkbox">
-                            <input type="checkbox" name="dia-habil" value="1">
-                            <span>Lu</span>
-                        </label>
-                        <label class="day-checkbox">
-                            <input type="checkbox" name="dia-habil" value="2">
-                            <span>Ma</span>
-                        </label>
-                        <label class="day-checkbox">
-                            <input type="checkbox" name="dia-habil" value="3">
-                            <span>Mi</span>
-                        </label>
-                        <label class="day-checkbox">
-                            <input type="checkbox" name="dia-habil" value="4">
-                            <span>Ju</span>
-                        </label>
-                        <label class="day-checkbox">
-                            <input type="checkbox" name="dia-habil" value="5">
-                            <span>Vi</span>
-                        </label>
-                        <label class="day-checkbox">
-                            <input type="checkbox" name="dia-habil" value="6">
-                            <span>Sa</span>
-                        </label>
-                        <label class="day-checkbox">
-                            <input type="checkbox" name="dia-habil" value="0"> <span>Do</span>
-                        </label>
-                    </div>
-                    <div id="config-total-feedback" class="config-hint-text">(Total semanal: --hs)</div>
-                </div>
-                <div class="form-group">
-                    <label>Mostrar / Ordenar Tarjetas</label>
-                    <div style="display:flex;flex-direction:column;gap:0.4rem;" id="lista-orden-cards">
-                        <div class="orden-card-item" id="orden-item-registrar">
-                            <button id="btn-toggle-card-registrar" class="drag-handle" data-card="registrar"
-                                onclick="UILogic.toggleVisibilidadCard('registrar')" style="flex:1;">
+                <div class="modal-config-cols">
+
+                    <!-- COLUMNA IZQUIERDA -->
+                    <div>
+                        <div class="form-group">
+                            <label>Horas Diarias</label>
+                            <div class="input-number-group">
+                                <input type="number" id="config-horas-diarias" min="0" max="24" step="0.5" readonly />
+                                <button class="btn-increment" onmousedown="UILogic.iniciarCambioHoras(0.5)"
+                                    onmouseup="UILogic.detenerCambio()" onmouseleave="UILogic.detenerCambio()"
+                                    ontouchstart="event.preventDefault(); UILogic.iniciarCambioHoras(0.5)"
+                                    ontouchend="event.preventDefault(); UILogic.detenerCambio()">+</button>
+                                <button class="btn-increment" onmousedown="UILogic.iniciarCambioHoras(-0.5)"
+                                    onmouseup="UILogic.detenerCambio()" onmouseleave="UILogic.detenerCambio()"
+                                    ontouchstart="event.preventDefault(); UILogic.iniciarCambioHoras(-0.5)"
+                                    ontouchend="event.preventDefault(); UILogic.detenerCambio()">−</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Días Laborales</label>
+                            <div class="week-selector">
+                                <label class="day-checkbox">
+                                    <input type="checkbox" name="dia-habil" value="1">
+                                    <span>Lu</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" name="dia-habil" value="2">
+                                    <span>Ma</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" name="dia-habil" value="3">
+                                    <span>Mi</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" name="dia-habil" value="4">
+                                    <span>Ju</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" name="dia-habil" value="5">
+                                    <span>Vi</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" name="dia-habil" value="6">
+                                    <span>Sa</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" name="dia-habil" value="0"> <span>Do</span>
+                                </label>
+                            </div>
+                            <div id="config-total-feedback" class="config-hint-text">(Total semanal: --hs)</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Fondo del dashboard</label>
+                            <button id="btn-toggle-fondo" onclick="UILogic.toggleFondoCard()">
+                                <svg class="icon">
+                                    <use href="#icon-landscape" />
+                                </svg>
+                                <span id="hint-fondo-label">Golden Gate</span>
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label>Tiempo Fuera</label>
+                            <button id="btn-toggle-ignorar-tf" onclick="UILogic.toggleIgnorarTiempoFuera()">
+                                <svg class="icon">
+                                    <use href="#icon-exit" />
+                                </svg>
+                                <span>Ignorar calculo TF</span>
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label>Calendario</label>
+                            <button id="btn-toggle-hover-popup" onclick="UILogic.toggleHoverPopupCalendario()">
+                                <svg class="icon">
+                                    <use href="#icon-calendar-simple" />
+                                </svg>
+                                <span>Popup al pasar mouse (PC)</span>
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado de Tarjetas</label>
+                            <button id="btn-toggle-persistir-tarjetas" onclick="UILogic.togglePersistirTarjetas()">
                                 <svg class="icon">
                                     <use href="#icon-save" />
                                 </svg>
-                                <span>Registrar</span>
-                            </button>
-                        </div>
-                        <div class="orden-card-item" id="orden-item-estadisticas">
-                            <button id="btn-toggle-card-estadisticas" class="drag-handle" data-card="estadisticas"
-                                onclick="UILogic.toggleVisibilidadCard('estadisticas')" style="flex:1;">
-                                <svg class="icon">
-                                    <use href="#icon-stats" />
-                                </svg>
-                                <span>Estadísticas</span>
-                            </button>
-                        </div>
-                        <div class="orden-card-item" id="orden-item-historico">
-                            <button id="btn-toggle-card-historico" class="drag-handle" data-card="historico"
-                                onclick="UILogic.toggleVisibilidadCard('historico')" style="flex:1;">
-                                <svg class="icon">
-                                    <use href="#icon-list" />
-                                </svg>
-                                <span>Histórico</span>
+                                <span>Recordar estado</span>
                             </button>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Estado de Tarjetas</label>
-                    <button id="btn-toggle-persistir-tarjetas" onclick="UILogic.togglePersistirTarjetas()">
-                        <svg class="icon">
-                            <use href="#icon-save" />
-                        </svg>
-                        <span>Recordar estado</span>
-                    </button>
-                </div>
-                <div class="form-group">
-                    <label>Tiempo Fuera</label>
-                    <button id="btn-toggle-ignorar-tf" onclick="UILogic.toggleIgnorarTiempoFuera()">
-                        <svg class="icon">
-                            <use href="#icon-exit" />
-                        </svg>
-                        <span>Ignorar calculo TF</span>
-                    </button>
-                </div>
-                <div class="form-group">
-                    <label>Fondo de Estado</label>
-                    <button id="btn-toggle-fondo" onclick="UILogic.toggleFondoCard()">
-                        <svg class="icon">
-                            <use href="#icon-landscape" />
-                        </svg>
-                        <span id="hint-fondo-label">Golden Gate</span>
-                    </button>
-                </div>
-                <div class="config-actions">
-                    <label>Registros y Sincronización</label>
-                    <button class="btn-edit" onclick="UILogic.abrirModalGist()">
-                        <svg class="icon">
-                            <use href="#icon-cloud" />
-                        </svg>
-                        GitHub Gist
-                    </button>
-                    <button class="btn-backup" onclick="UILogic.mostrarImportar()">
-                        <svg class="icon">
-                            <use href="#icon-upload" />
-                        </svg>
-                        Restaurar
-                    </button>
-                    <button class="btn-export" onclick="UILogic.mostrarExportar()">
-                        <svg class="icon">
-                            <use href="#icon-download" />
-                        </svg>
-                        Respaldar
-                    </button>
-                    <button class="btn-delete" onclick="DataManagement.borrarTodoHistorial()">
-                        <svg class="icon">
-                            <use href="#icon-trash" />
-                        </svg>
-                        Restablecer
-                    </button>
+
+                    <!-- COLUMNA DERECHA -->
+                    <div>
+                        <div class="form-group">
+                            <label>Tarjetas</label>
+                            <div style="display:flex;flex-direction:column;gap:0.4rem;" id="lista-orden-cards">
+                                <div class="orden-card-item" id="orden-item-registrar">
+                                    <button id="btn-toggle-card-registrar" class="drag-handle" data-card="registrar"
+                                        onclick="UILogic.toggleVisibilidadCard('registrar')" style="flex:1;">
+                                        <svg class="icon">
+                                            <use href="#icon-save" />
+                                        </svg>
+                                        <span>Registrar</span>
+                                    </button>
+                                </div>
+                                <div class="orden-card-item" id="orden-item-estadisticas">
+                                    <button id="btn-toggle-card-estadisticas" class="drag-handle"
+                                        data-card="estadisticas" onclick="UILogic.toggleVisibilidadCard('estadisticas')"
+                                        style="flex:1;">
+                                        <svg class="icon">
+                                            <use href="#icon-stats" />
+                                        </svg>
+                                        <span>Estadísticas</span>
+                                    </button>
+                                </div>
+                                <div class="orden-card-item" id="orden-item-historico">
+                                    <button id="btn-toggle-card-historico" class="drag-handle" data-card="historico"
+                                        onclick="UILogic.toggleVisibilidadCard('historico')" style="flex:1;">
+                                        <svg class="icon">
+                                            <use href="#icon-list" />
+                                        </svg>
+                                        <span>Histórico</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-actions">
+                            <label>Datos</label>
+                            <button class="btn-edit" onclick="UILogic.abrirModalGist()">
+                                <svg class="icon">
+                                    <use href="#icon-cloud" />
+                                </svg>
+                                GitHub Gist
+                            </button>
+                            <button class="btn-backup" onclick="UILogic.mostrarImportar()">
+                                <svg class="icon">
+                                    <use href="#icon-upload" />
+                                </svg>
+                                Restaurar
+                            </button>
+                            <button class="btn-export" onclick="UILogic.mostrarExportar()">
+                                <svg class="icon">
+                                    <use href="#icon-download" />
+                                </svg>
+                                Respaldar
+                            </button>
+                            <button class="btn-delete" onclick="DataManagement.borrarTodoHistorial()">
+                                <svg class="icon">
+                                    <use href="#icon-trash" />
+                                </svg>
+                                Restablecer
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div><!-- /modal-config-body -->
             <div class="modal-config-footer">
@@ -2086,6 +2162,20 @@
                             </svg>
                             <span id="hint-gist-merge">Reemplazar</span>
                         </button>
+                    </div>
+                    <div id="gist-limite-sync"
+                        style="max-height:0; overflow:hidden; transition:max-height 0.3s ease, opacity 0.3s ease; opacity:0; margin-top:0.5rem;">
+                        <div class="form-group" style="margin-bottom:0.5rem">
+                            <label id="gist-limite-label">Límite por hora</label>
+                            <div class="input-number-group">
+                                <input type="number" id="gist-limite-valor" min="0" max="99" step="1" readonly />
+                                <button class="btn-increment" onclick="UILogic.cambiarLimiteSync(1)">+</button>
+                                <button class="btn-increment" onclick="UILogic.cambiarLimiteSync(-1)">−</button>
+                                <button class="btn-increment" id="btn-limite-siempre"
+                                    onclick="UILogic.toggleLimiteSiempre()" title="Sin límite"
+                                    style="min-width:100px; font-size:0.8rem;">Sin limite</button>
+                            </div>
+                        </div>
                     </div>
                     <div id="gist-rango-horario"
                         style="max-height:0; overflow:hidden; transition:max-height 0.3s ease, opacity 0.3s ease; opacity:0; margin-top:0.5rem; gap:0.5rem; align-items:center; display:flex;">
@@ -2765,6 +2855,10 @@
                     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                 }
 
+                function parsearFechaLocal(fechaStr) {
+                    return new Date(fechaStr.replace(/-/g, '/') + ' 00:00:00');
+                }
+
                 return {
                     SECURITY_LIMITS,
                     REGEX_PATTERNS,
@@ -2775,7 +2869,8 @@
                     calcularHashSHA256,
                     validarRegistroSeguro,
                     fechaLocalISO,
-                    formatearFechaLocal
+                    formatearFechaLocal,
+                    parsearFechaLocal
                 };
             })();
 
@@ -3247,7 +3342,7 @@
                         label: 'Vacaciones',
                         labelPlural: 'Vacaciones',
                         descripcion: 'Vacaciones',
-                        color: 'gold',
+                        color: 'orange',
                         contabiliza: true
                     },
                     ASUETO: {
@@ -3419,8 +3514,8 @@
                     // 3. VALIDACIÓN DE RANGO RAZONABLE (2 AÑOS)
                     // ============================================
                     const hoy = new Date();
-                    const fechaInicioObj = new Date(nuevaDesde.replace(/-/g, '/') + ' 00:00:00');
-                    const fechaFinObj = new Date(nuevaHasta.replace(/-/g, '/') + ' 00:00:00');
+                    const fechaInicioObj = S.parsearFechaLocal(nuevaDesde);
+                    const fechaFinObj = S.parsearFechaLocal(nuevaHasta);
 
                     // Permitir hasta 2 años en el futuro
                     const dosPasado = new Date(hoy);
@@ -3480,8 +3575,8 @@
                     // 7. GENERAR LISTA DE FECHAS NUEVAS
                     // ============================================
                     const fechasNuevas = [];
-                    let checkFecha = new Date(nuevaDesde.replace(/-/g, '/') + ' 00:00:00');
-                    const checkFin = new Date(nuevaHasta.replace(/-/g, '/') + ' 00:00:00');
+                    let checkFecha = S.parsearFechaLocal(nuevaDesde);
+                    const checkFin = S.parsearFechaLocal(nuevaHasta);
 
                     while (checkFecha <= checkFin) {
                         const y = checkFecha.getFullYear();
@@ -3745,7 +3840,7 @@
                                 return; // Saltar este registro
                             }
 
-                            const fechaObj = new Date(r.fecha.replace(/-/g, '/') + ' 00:00:00');
+                            const fechaObj = S.parsearFechaLocal(r.fecha);
                             const diaSemana = fechaObj.getDay();
 
                             if (diasHabilesConfig.includes(diaSemana)) {
@@ -4515,24 +4610,45 @@
                                 const fechasExistentes = new Set(registros.map(r => r.fecha));
                                 const nuevos = registrosImportados.filter(imp => !fechasExistentes.has(imp.fecha));
 
-                                if (nuevos.length === 0) {
-                                    UILogic.mostrarToast('No hay días nuevos para agregar', 'info');
+                                // Registros que existen en ambos pero el importado complementa al local
+                                const complementarios = registrosImportados.filter(imp => {
+                                    if (!fechasExistentes.has(imp.fecha)) return false;
+                                    const local = registros.find(r => r.fecha === imp.fecha);
+                                    if (!local) return false;
+                                    // El importado aporta salida que el local no tiene
+                                    const aportaSalida = !local.salida && imp.salida;
+                                    // El importado aporta tiempoFuera que el local no tiene
+                                    const aportaTF = !local.tiempoFuera && imp.tiempoFuera;
+                                    return aportaSalida || aportaTF;
+                                });
+
+                                if (nuevos.length === 0 && complementarios.length === 0) {
+                                    UILogic.mostrarToast('No hay días nuevos ni datos para completar', 'info');
                                     return;
                                 }
 
-                                // Validar que no se exceda el límite total
                                 if (registros.length + nuevos.length > S.SECURITY_LIMITS.MAX_REGISTROS) {
                                     UILogic.mostrarToast(`Límite alcanzado. Solo se pueden agregar ${S.SECURITY_LIMITS.MAX_REGISTROS - registros.length} registros más`, 'error');
                                     return;
                                 }
 
+                                // Aplicar complementarios: actualizar campos faltantes en local
+                                complementarios.forEach(imp => {
+                                    const local = registros.find(r => r.fecha === imp.fecha);
+                                    if (!local) return;
+                                    if (!local.salida && imp.salida) local.salida = imp.salida;
+                                    if (!local.tiempoFuera && imp.tiempoFuera) local.tiempoFuera = imp.tiempoFuera;
+                                    // Recalcular total
+                                    const t = calcularHoras(local.entrada, local.salida, local.tiempoFuera || null, local.credito || null);
+                                    if (t) { local.horas = t.horas; local.minutos = t.minutos; local.total = t.total; }
+                                });
+
                                 registros = registros.concat(nuevos);
 
-                                const mensaje = nuevos.length === 1
-                                    ? 'Se agregó 1 día'
-                                    : `Se agregaron ${nuevos.length} días`;
-
-                                finalizarImportacionAndSave(mensaje);
+                                const partes = [];
+                                if (nuevos.length > 0) partes.push(`${nuevos.length} día${nuevos.length !== 1 ? 's' : ''} nuevo${nuevos.length !== 1 ? 's' : ''}`);
+                                if (complementarios.length > 0) partes.push(`${complementarios.length} registro${complementarios.length !== 1 ? 's' : ''} completado${complementarios.length !== 1 ? 's' : ''}`);
+                                finalizarImportacionAndSave(`Combinado: ${partes.join(', ')}`);
                             }
 
                         } catch (err) {
@@ -4623,8 +4739,8 @@
                     const registrosRango = registros.filter(r => r.fecha >= inicioSemana && r.fecha <= fechaHoy);
                     const registrosMap = new Map(registrosRango.map(r => [r.fecha, r]));
 
-                    let fechaIteracion = new Date(inicioSemana.replace(/-/g, '/') + ' 00:00:00');
-                    let fechaLimite = new Date(fechaHoy.replace(/-/g, '/') + ' 00:00:00');
+                    let fechaIteracion = S.parsearFechaLocal(inicioSemana);
+                    let fechaLimite = S.parsearFechaLocal(fechaHoy);
 
                     while (fechaIteracion <= fechaLimite) {
                         const y = fechaIteracion.getFullYear();
@@ -4733,8 +4849,8 @@
                     const entrada = tipoConfig.codigo;
                     const salida = tipoConfig.codigo;
 
-                    let fechaActual = new Date(desde.replace(/-/g, '/') + ' 00:00:00');
-                    const fechaFin = new Date(hasta.replace(/-/g, '/') + ' 00:00:00');
+                    let fechaActual = S.parsearFechaLocal(desde);
+                    const fechaFin = S.parsearFechaLocal(hasta);
                     const fechasARegistrar = [];
 
                     while (fechaActual <= fechaFin) {
@@ -5041,6 +5157,7 @@
                 }
 
                 function marcarSync(tipo) {
+                    if (getSyncLimite(tipo) === 0) return; // modo siempre: no acumular
                     if (window.PerfilManager) {
                         const perfil = PerfilManager.obtenerDatosPerfil();
                         if (perfil) {
@@ -5055,7 +5172,31 @@
                     }
                 }
 
-                function superaLimite(tipo, limite) {
+                function getSyncLimite(tipo) {
+                    const key = `gistSyncLimite_${tipo}`;
+                    const val = parseInt(localStorage.getItem(key));
+                    if (tipo === 'bajar') return isNaN(val) ? 2 : val;
+                    if (tipo === 'subir') return isNaN(val) ? 1 : val;
+                    return 2;
+                }
+
+                function setSyncLimite(tipo, valor) {
+                    const anteriorLimite = getSyncLimite(tipo);
+                    try { localStorage.setItem(`gistSyncLimite_${tipo}`, valor); } catch (e) { }
+                    // Si se pasa de "siempre" (0) a numérico, resetear el contador
+                    if (anteriorLimite === 0 && valor > 0 && window.PerfilManager) {
+                        const perfil = PerfilManager.obtenerDatosPerfil();
+                        if (perfil) {
+                            perfil[`gistSyncCount_${tipo}`] = 0;
+                            perfil[`gistSyncFecha_${tipo}`] = null;
+                            PerfilManager.guardarPerfiles();
+                        }
+                    }
+                }
+
+                function superaLimite(tipo) {
+                    const limite = getSyncLimite(tipo);
+                    if (limite === 0) return false; // 0 = siempre
                     return getSyncCount(tipo) >= limite;
                 }
 
@@ -5197,7 +5338,7 @@
                     return data;
                 }
 
-                return { getToken, getGistId, getLastSync, getMergeBehavior, setMergeBehavior, getAutoSync, setAutoSync, getRangoHorario, setRangoHorario, getSyncCount, marcarSync, superaLimite, dentroDelRangoHorario, saveCredentials, esGistIdValido, subir, bajar };
+                return { getToken, getGistId, getLastSync, getMergeBehavior, setMergeBehavior, getAutoSync, setAutoSync, getRangoHorario, setRangoHorario, getSyncCount, marcarSync, superaLimite, getSyncLimite, setSyncLimite, dentroDelRangoHorario, saveCredentials, esGistIdValido, subir, bajar };
 
             })(SecurityAndUtils);
 
@@ -5218,6 +5359,26 @@
                 let timerAutoCierreBotones = null;
                 let modoEstadisticas = 'mensual'; // 'mensual' | 'anual'
                 let _modalAbiertoDesdeLista = false;
+
+                function registrarSwipe(el, callback, { minX = 50, maxY = 80 } = {}) {
+                    if (!el || el.dataset.swipeInit) return;
+                    el.dataset.swipeInit = '1';
+                    let _x = null, _y = null;
+                    el.addEventListener('touchstart', e => {
+                        if (e.touches.length !== 1) return;
+                        _x = e.touches[0].clientX;
+                        _y = e.touches[0].clientY;
+                    }, { passive: true });
+                    el.addEventListener('touchend', e => {
+                        if (_x === null) return;
+                        const dx = e.changedTouches[0].clientX - _x;
+                        const dy = e.changedTouches[0].clientY - _y;
+                        _x = null; _y = null;
+                        if (Math.abs(dy) > maxY) return;
+                        if (Math.abs(dx) < minX) return;
+                        callback(dx < 0 ? 1 : -1);
+                    }, { passive: true });
+                }
 
                 // FUNCIÓN DEBOUNCE REUTILIZABLE
                 function debounce(func, wait) {
@@ -5339,7 +5500,7 @@
                 }
 
                 function obtenerLunesSemana(fecha) {
-                    const date = new Date(fecha.replace(/-/g, '/') + ' 00:00:00');
+                    const date = S.parsearFechaLocal(fecha);
                     const dia = date.getDay();
                     const offset = dia === 0 ? -6 : 1 - dia;
                     const lunes = new Date(date);
@@ -5434,8 +5595,8 @@
 
                 // Función auxiliar para verificar si una fecha es consecutiva a otra
                 function esFechaConsecutiva(fechaActual, fechaSiguiente) {
-                    const actual = new Date(fechaActual.replace(/-/g, '/') + ' 00:00:00');
-                    const siguiente = new Date(fechaSiguiente.replace(/-/g, '/') + ' 00:00:00');
+                    const actual = S.parsearFechaLocal(fechaActual);
+                    const siguiente = S.parsearFechaLocal(fechaSiguiente);
                     actual.setDate(actual.getDate() - 1);
                     return S.formatearFechaLocal(actual) === fechaSiguiente;
                 }
@@ -5820,7 +5981,8 @@
                     horasEl.textContent = rangoFechas;
 
                     const totalEl = document.createElement('div');
-                    totalEl.className = 'registro-total purple-text';
+                    const colorClase = tipoConfig ? `${tipoConfig.color}-text` : 'purple-text';
+                    totalEl.className = `registro-total ${colorClase}`;
                     totalEl.textContent = 'Justificado';
 
                     info.appendChild(fechaEl);
@@ -6086,6 +6248,7 @@
                         red: 'rgba(172,90,76,0.12)',
                         purple: 'rgba(140,80,200,0.12)',
                         gold: 'rgba(172,155,76,0.12)',
+                        orange: 'rgba(210, 120, 50, 0.12)',
                     };
 
                     const colores = {
@@ -6324,7 +6487,7 @@
                         const card = document.getElementById('stats-card');
                         if (card) {
                             // Limpiar clases previas
-                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-transparent');
+                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-orange', 'border-transparent');
 
                             if (horasDiarias === 0) {
                                 // Sin objetivo configurado
@@ -6399,7 +6562,7 @@
 
                                 const card = document.getElementById('stats-card');
                                 if (card) {
-                                    card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-gold', 'border-transparent');
+                                    card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-gold', 'border-orange', 'border-transparent');
                                     card.classList.add(`border-${tipoEspecialHoy.color}`);
                                 }
                                 actualizarFondoCard('especial', tipoEspecialHoy.color);
@@ -6437,7 +6600,7 @@
                                         //  Borde transparente
                                         const card = document.getElementById('stats-card');
                                         if (card) {
-                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple');
+                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-orange');
                                             card.classList.add('border-transparent');
                                         }
                                     } else {
@@ -6447,7 +6610,7 @@
                                         // Borde verde o rojo
                                         const card = document.getElementById('stats-card');
                                         if (card) {
-                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-transparent');
+                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-orange', 'border-transparent');
                                             card.classList.add(tiempoTranscurrido >= objetivoDiario ? 'border-green' : 'border-red');
                                         }
 
@@ -6465,7 +6628,7 @@
                                         // Borde transparente
                                         const card = document.getElementById('stats-card');
                                         if (card) {
-                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple');
+                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-orange');
                                             card.classList.add('border-transparent');
                                         }
                                     } else {
@@ -6480,7 +6643,7 @@
                                         // Borde verde o azul
                                         const card = document.getElementById('stats-card');
                                         if (card) {
-                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-transparent');
+                                            card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-orange', 'border-transparent');
                                             card.classList.add(objetivoCumplido ? 'border-green' : 'border-blue');
                                         }
 
@@ -6524,7 +6687,7 @@
                             //  Borde transparente si no hay registro
                             const card = document.getElementById('stats-card');
                             if (card) {
-                                card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple');
+                                card.classList.remove('border-blue', 'border-green', 'border-red', 'border-purple', 'border-orange');
                                 card.classList.add('border-transparent');
                             }
 
@@ -6849,6 +7012,18 @@
 
                 function actualizarEstadoBotonIgnorarTF() {
                     _setBtnActivo('btn-toggle-ignorar-tf', D.getIgnorarTiempoFuera());
+                }
+
+                function toggleHoverPopupCalendario() {
+                    const actual = localStorage.getItem('hoverPopupCalendario') !== 'false';
+                    const nuevo = !actual;
+                    try { localStorage.setItem('hoverPopupCalendario', nuevo); } catch (e) { }
+                    actualizarEstadoBotonHoverPopup();
+                    mostrarToast(nuevo ? 'Popup al pasar mouse activado' : 'Popup al pasar mouse desactivado', 'info');
+                }
+
+                function actualizarEstadoBotonHoverPopup() {
+                    _setBtnActivo('btn-toggle-hover-popup', localStorage.getItem('hoverPopupCalendario') !== 'false');
                 }
 
                 function togglePersistirTarjetas() {
@@ -7244,7 +7419,7 @@
                     setTimeout(() => {
                         actualizarEstadisticasSemana(select.value);
                         formStats.classList.remove('fade-out');
-                    }, 200);
+                    }, 300);
                 }
 
                 function cambiarAnioStats() {
@@ -7256,18 +7431,18 @@
                     setTimeout(() => {
                         actualizarEstadisticasAnio(anioSeleccionado);
                         formStats.classList.remove('fade-out');
-                    }, 200);
+                    }, 300);
                 }
 
-                function togglePeriodoStats() {
+                function togglePeriodoStats(direccion = 1) {
                     const selectMes = $('select-mes-stats');
                     const selectAnio = $('select-anio-stats');
                     const label = $('label-periodo-toggle');
                     const formStats = $('form-stats');
 
-                    if (modoEstadisticas === 'mensual') modoEstadisticas = 'anual';
-                    else if (modoEstadisticas === 'anual') modoEstadisticas = 'semanal';
-                    else modoEstadisticas = 'mensual';
+                    const orden = ['mensual', 'anual', 'semanal'];
+                    const idx = orden.indexOf(modoEstadisticas);
+                    modoEstadisticas = orden[(idx + direccion + orden.length) % orden.length];
                     try { localStorage.setItem('modoEstadisticas', modoEstadisticas); } catch (e) { }
 
                     const selectSemana = $('select-semana-stats');
@@ -7290,7 +7465,7 @@
                             poblarSelectorMeses();
                         }
                         formStats.classList.remove('fade-out');
-                    }, 200);
+                    }, 300);
                 }
 
                 function poblarSelectorMeses() {
@@ -7596,7 +7771,7 @@ REPORTE DE HORAS TRABAJADAS
                                 let minutosSem = Math.round((totalSemanal - horasSem) * 60);
                                 if (minutosSem === 60) { horasSem++; minutosSem = 0; }
 
-                                const fechaLunes = new Date(lunes.replace(/-/g, '/') + ' 00:00:00');
+                                const fechaLunes = S.parsearFechaLocal(lunes);
                                 const fechaDomingo = new Date(fechaLunes);
                                 fechaDomingo.setDate(fechaLunes.getDate() + 6);
                                 const domingo = S.formatearFechaLocal(fechaDomingo);
@@ -8561,8 +8736,8 @@ Generado por Sistema Horarios
                     }
 
                     // 3. Calcular días totales en el rango
-                    const fechaInicio = new Date(desde.replace(/-/g, '/') + ' 00:00:00');
-                    const fechaFin = new Date(hasta.replace(/-/g, '/') + ' 00:00:00');
+                    const fechaInicio = S.parsearFechaLocal(desde);
+                    const fechaFin = S.parsearFechaLocal(hasta);
                     const diffTime = Math.abs(fechaFin - fechaInicio);
                     const diasTotales = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
@@ -8851,39 +9026,21 @@ Generado por Sistema Horarios
 
                     let _gistModalPadre = null;
                     let _gistAutoSyncTemp = null;
+                    let _gistLimitesTemp = null;
+                    let _gistLimitesOrig = null;
 
                     function actualizarEstadoBotonesGist() {
                         const token = document.getElementById('gist-token')?.value.trim() || '';
                         const gistId = document.getElementById('gist-id')?.value.trim() || '';
                         const soloToken = token !== '';
-                        const ambosCompletos = token !== '' && gistId.length > 10;
+                        const ambosCompletos = soloToken && gistId.length > 10;
 
-                        // Subir: solo requiere token (el ID se genera solo si está vacío)
-                        const btnSubir = document.getElementById('btn-gist-subir');
-                        if (btnSubir) {
-                            btnSubir.disabled = !soloToken;
-                            btnSubir.style.opacity = soloToken ? '1' : '0.4';
-                            btnSubir.style.cursor = soloToken ? '' : 'not-allowed';
-                        }
+                        _setBtnDisabled('btn-gist-subir', !soloToken);
+                        _setBtnDisabled('btn-gist-bajar', !ambosCompletos);
+                        _setBtnDisabled('btn-toggle-gist-backup', !ambosCompletos);
 
-                        // Bajar y Automatización: requieren ambos
-                        ['btn-gist-bajar', 'btn-toggle-gist-backup'].forEach(id => {
-                            const btn = document.getElementById(id);
-                            if (!btn) return;
-                            btn.disabled = !ambosCompletos;
-                            btn.style.opacity = ambosCompletos ? '1' : '0.4';
-                            btn.style.cursor = ambosCompletos ? '' : 'not-allowed';
-                        });
-
-                        // Comportamiento (merge): requiere ambos completos Y que esté en modo Restaurar (estado 1)
-                        const btnMerge = document.getElementById('btn-toggle-gist-merge');
-                        if (btnMerge) {
-                            const estadoBackup = parseInt(_gistAutoSyncTemp ?? GistSync.getAutoSync());
-                            const habilitarMerge = ambosCompletos && estadoBackup === 1;
-                            btnMerge.disabled = !habilitarMerge;
-                            btnMerge.style.opacity = habilitarMerge ? '1' : '0.4';
-                            btnMerge.style.cursor = habilitarMerge ? '' : 'not-allowed';
-                        }
+                        const estadoBackup = parseInt(_gistAutoSyncTemp ?? GistSync.getAutoSync());
+                        _setBtnDisabled('btn-toggle-gist-merge', !(ambosCompletos && estadoBackup === 1));
                     }
 
                     function abrirModalGist() {
@@ -8916,6 +9073,26 @@ Generado por Sistema Horarios
                         actualizarEstadoBotonesGist();
                         ModalManager.cerrarTodos();
                         ModalManager.abrir('modal-gist');
+                        _gistLimitesTemp = null;
+                        _actualizarCampoLimite();
+                        _gistLimitesOrig = { bajar: GistSync.getSyncLimite('bajar'), subir: GistSync.getSyncLimite('subir') };
+                    }
+
+                    function _gistGuardarCredencialesSiModalAbierto() {
+                        if (document.getElementById('modal-gist')?.classList.contains('show')) {
+                            GistSync.saveCredentials(
+                                document.getElementById('gist-token')?.value.trim() || '',
+                                document.getElementById('gist-id')?.value.trim() || ''
+                            );
+                        }
+                    }
+
+                    function _setBtnDisabled(id, disabled) {
+                        const btn = document.getElementById(id);
+                        if (!btn) return;
+                        btn.disabled = disabled;
+                        btn.style.opacity = disabled ? '0.4' : '1';
+                        btn.style.cursor = disabled ? 'not-allowed' : '';
                     }
 
                     function actualizarBotonesHistorico() {
@@ -8951,54 +9128,76 @@ Generado por Sistema Horarios
                         const hasta = document.getElementById('gist-rango-hasta')?.value || '00:00';
 
                         const rango = GistSync.getRangoHorario();
+                        const limitesCambiaron = _gistLimitesOrig !== null && (
+                            _gistLimitesOrig.bajar !== GistSync.getSyncLimite('bajar') ||
+                            _gistLimitesOrig.subir !== GistSync.getSyncLimite('subir')
+                        );
                         const huboCambios = token !== GistSync.getToken()
                             || gistId !== GistSync.getGistId()
                             || desde !== rango.desde
                             || hasta !== rango.hasta
-                            || (_gistAutoSyncTemp !== null && _gistAutoSyncTemp !== GistSync.getAutoSync());
+                            || limitesCambiaron
+                            || (_gistAutoSyncTemp !== null && _gistAutoSyncTemp !== GistSync.getAutoSync())
+                            || (_gistLimitesTemp !== null);
 
                         if (_gistAutoSyncTemp !== null) GistSync.setAutoSync(_gistAutoSyncTemp);
+                        if (_gistLimitesTemp !== null) {
+                            GistSync.setSyncLimite('bajar', _gistLimitesTemp.bajar);
+                            GistSync.setSyncLimite('subir', _gistLimitesTemp.subir);
+                        }
                         GistSync.saveCredentials(token, gistId);
                         GistSync.setRangoHorario(desde, hasta);
                         mostrarToast(huboCambios ? 'Configuración guardada' : 'Sin cambios', huboCambios ? 'success' : 'info');
                         _gistAutoSyncTemp = null;
+                        _gistLimitesTemp = null;
                         _gistModalPadre = null;
+                        _gistLimitesOrig = null;
                         ModalManager.cerrar('modal-gist');
                         actualizarBotonesHistorico();
                     }
 
                     function cerrarModalGist() {
                         _gistAutoSyncTemp = null;
+                        _gistLimitesTemp = null;
+                        _gistLimitesOrig = null;
                         ModalManager.cerrar('modal-gist');
                         if (_gistModalPadre) ModalManager.abrir(_gistModalPadre);
                         _gistModalPadre = null;
                         actualizarBotonesHistorico();
                     }
 
-                    async function gistMergeAplicar(modo, modoAutomatico = false) {
-                        if (!_gistMergeData) return;
-                        const { registrosNormalizados, soloEnGist, data } = _gistMergeData;
-                        _gistMergeData = null;
-
-                        let registrosFinales;
-                        let mensajeExito;
+                    function _calcularRegistrosMerge(modo, mergeData) {
+                        const { registrosNormalizados, soloEnGist, complementarios = [], data } = mergeData;
 
                         if (modo === 'merge') {
-                            if (soloEnGist.length === 0) {
-                                ModalManager.cerrar('modal-gist-merge');
-                                gistSetStatus('Sin días nuevos para agregar', 'ok');
-                                mostrarToast('Sin días nuevos para agregar', 'info');
-                                return;
+                            if (soloEnGist.length === 0 && complementarios.length === 0) {
+                                return { vacio: true };
                             }
                             if (D.registros().length + soloEnGist.length > S.SECURITY_LIMITS.MAX_REGISTROS) {
-                                mostrarToast(`Límite alcanzado`, 'error');
-                                return;
+                                return { limiteAlcanzado: true };
                             }
-                            registrosFinales = [...D.registros(), ...soloEnGist];
-                            mensajeExito = soloEnGist.length === 1 ? 'Se agregó 1 día del Gist' : `Se agregaron ${soloEnGist.length} días del Gist`;
+
+                            const registrosActualizados = D.registros().map(local => {
+                                const imp = complementarios.find(c => c.fecha === local.fecha);
+                                if (!imp) return local;
+                                const actualizado = { ...local };
+                                if (!actualizado.salida && imp.salida) actualizado.salida = imp.salida;
+                                if (!actualizado.tiempoFuera && imp.tiempoFuera) actualizado.tiempoFuera = imp.tiempoFuera;
+                                const t = D.calcularHoras(actualizado.entrada, actualizado.salida, actualizado.tiempoFuera || null, actualizado.credito || null);
+                                if (t) { actualizado.horas = t.horas; actualizado.minutos = t.minutos; actualizado.total = t.total; }
+                                return actualizado;
+                            });
+
+                            const partes = [];
+                            if (soloEnGist.length > 0) partes.push(`${soloEnGist.length} día${soloEnGist.length !== 1 ? 's' : ''} nuevo${soloEnGist.length !== 1 ? 's' : ''}`);
+                            if (complementarios.length > 0) partes.push(`${complementarios.length} registro${complementarios.length !== 1 ? 's' : ''} completado${complementarios.length !== 1 ? 's' : ''}`);
+
+                            return {
+                                registrosFinales: [...registrosActualizados, ...soloEnGist],
+                                mensajeExito: `Combinado: ${partes.join(', ')}`
+                            };
+
                         } else {
-                            registrosFinales = registrosNormalizados;
-                            mensajeExito = `${registrosNormalizados.length} registros restaurados desde Gist`;
                             if (Array.isArray(data.diasHabiles)) {
                                 const diasValidos = data.diasHabiles.filter(d => Number.isInteger(d) && d >= 0 && d <= 6);
                                 if (diasValidos.length > 0) D.setDiasHabiles(diasValidos);
@@ -9007,7 +9206,32 @@ Generado por Sistema Horarios
                                 const hd = parseFloat(data.horasDiarias);
                                 if (Number.isFinite(hd) && hd >= 0 && hd <= 24) D.setHorasDiarias(hd);
                             }
+                            return {
+                                registrosFinales: registrosNormalizados,
+                                mensajeExito: `${registrosNormalizados.length} registros restaurados desde Gist`
+                            };
                         }
+                    }
+
+                    async function gistMergeAplicar(modo, modoAutomatico = false) {
+                        if (!_gistMergeData) return;
+                        const mergeData = _gistMergeData;
+                        _gistMergeData = null;
+
+                        const resultado = _calcularRegistrosMerge(modo, mergeData);
+
+                        if (resultado.vacio) {
+                            ModalManager.cerrar('modal-gist-merge');
+                            gistSetStatus('Sin días nuevos ni datos para completar', 'ok');
+                            mostrarToast('Sin días nuevos ni datos para completar', 'info');
+                            return;
+                        }
+                        if (resultado.limiteAlcanzado) {
+                            mostrarToast('Límite alcanzado', 'error');
+                            return;
+                        }
+
+                        const { registrosFinales, mensajeExito } = resultado;
 
                         D.registros().splice(0, D.registros().length, ...registrosFinales);
                         D.registros().sort((a, b) => {
@@ -9056,6 +9280,7 @@ Generado por Sistema Horarios
                         _gistAutoSyncTemp = (actual + 1) % 3;
                         actualizarBotonGistBackup();
                         actualizarEstadoBotonesGist();
+                        _actualizarCampoLimite();
                     }
 
                     function actualizarBotonGistBackup() {
@@ -9099,6 +9324,52 @@ Generado por Sistema Horarios
                         }
                     }
 
+                    function _tipoSyncActual() {
+                        const estado = parseInt(_gistAutoSyncTemp ?? GistSync.getAutoSync());
+                        return estado === 1 ? 'bajar' : estado === 2 ? 'subir' : null;
+                    }
+
+                    function _actualizarCampoLimite() {
+                        const tipo = _tipoSyncActual();
+                        const contenedor = document.getElementById('gist-limite-sync');
+                        if (!contenedor) return;
+                        if (!tipo) {
+                            contenedor.style.maxHeight = '0';
+                            contenedor.style.opacity = '0';
+                            return;
+                        }
+                        const limite = _gistLimitesTemp ? _gistLimitesTemp[tipo] : GistSync.getSyncLimite(tipo);
+                        const input = document.getElementById('gist-limite-valor');
+                        const label = document.getElementById('gist-limite-label');
+                        const btnSiempre = document.getElementById('btn-limite-siempre');
+                        const esSiempre = limite === 0;
+                        if (input) { input.value = esSiempre ? '∞' : limite; input.disabled = esSiempre; }
+                        if (label) label.textContent = tipo === 'bajar' ? 'Límite bajadas por hora' : 'Límite subidas por hora';
+                        if (btnSiempre) _setBtnActivo('btn-limite-siempre', esSiempre);
+                        // Deshabilitar botones +/− cuando es siempre
+                        const btnsIncrement = contenedor.querySelectorAll('.btn-increment:not(#btn-limite-siempre)');
+                        btnsIncrement.forEach(b => { b.disabled = esSiempre; b.style.opacity = esSiempre ? '0.4' : ''; });
+                        contenedor.style.maxHeight = '80px';
+                        contenedor.style.opacity = '1';
+                    }
+
+                    function cambiarLimiteSync(delta) {
+                        const tipo = _tipoSyncActual();
+                        if (!tipo) return;
+                        if (!_gistLimitesTemp) _gistLimitesTemp = { bajar: GistSync.getSyncLimite('bajar'), subir: GistSync.getSyncLimite('subir') };
+                        if (_gistLimitesTemp[tipo] === 0) return;
+                        _gistLimitesTemp[tipo] = Math.max(1, Math.min(99, _gistLimitesTemp[tipo] + delta));
+                        _actualizarCampoLimite();
+                    }
+
+                    function toggleLimiteSiempre() {
+                        const tipo = _tipoSyncActual();
+                        if (!tipo) return;
+                        if (!_gistLimitesTemp) _gistLimitesTemp = { bajar: GistSync.getSyncLimite('bajar'), subir: GistSync.getSyncLimite('subir') };
+                        _gistLimitesTemp[tipo] = _gistLimitesTemp[tipo] === 0 ? (tipo === 'bajar' ? 2 : 1) : 0;
+                        _actualizarCampoLimite();
+                    }
+
                     function gistSetStatus(msg, tipo = '') {
                         const modal = document.getElementById('modal-gist');
                         const modalAbierto = modal?.classList.contains('show');
@@ -9112,18 +9383,10 @@ Generado por Sistema Horarios
                     }
 
                     async function gistSubir() {
-                        // Leer desde DOM solo si el modal está abierto, si no usar GistSync directamente
-                        const tokenInput = document.getElementById('gist-token');
-                        const gistIdInput = document.getElementById('gist-id');
-                        const modalAbierto = document.getElementById('modal-gist')?.classList.contains('show');
-                        if (modalAbierto) {
-                            GistSync.saveCredentials(tokenInput?.value.trim() || '', gistIdInput?.value.trim() || '');
-                        }
-
+                        _gistGuardarCredencialesSiModalAbierto();
                         const btn = document.getElementById('btn-gist-subir');
                         if (btn) btn.disabled = true;
                         gistSetStatus('Subiendo...');
-                        mostrarToast('Subiendo...', 'info');
 
                         try {
                             const nuevoId = await GistSync.subir(
@@ -9151,17 +9414,10 @@ Generado por Sistema Horarios
                     let _gistMergeData = null;
 
                     async function gistBajar(modoAutomatico = false) {
-                        const tokenInput = document.getElementById('gist-token');
-                        const gistIdInput = document.getElementById('gist-id');
-                        const modalAbierto = document.getElementById('modal-gist')?.classList.contains('show');
-                        if (modalAbierto) {
-                            GistSync.saveCredentials(tokenInput?.value.trim() || '', gistIdInput?.value.trim() || '');
-                        }
-
+                        _gistGuardarCredencialesSiModalAbierto();
                         const btn = document.getElementById('btn-gist-bajar');
                         if (btn) btn.disabled = true;
                         gistSetStatus('Bajando...');
-                        mostrarToast('Bajando...', 'info');
 
                         try {
                             const data = await GistSync.bajar();
@@ -9225,8 +9481,15 @@ Generado por Sistema Horarios
                             const enAmbos = registrosNormalizados.filter(r => fechasLocales.has(r.fecha));
                             const soloLocal = D.registros().filter(r => !registrosNormalizados.some(g => g.fecha === r.fecha));
 
+                            // Registros que el Gist puede complementar (tienen datos que el local no tiene)
+                            const complementarios = enAmbos.filter(imp => {
+                                const local = D.registros().find(r => r.fecha === imp.fecha);
+                                if (!local) return false;
+                                return (!local.salida && imp.salida) || (!local.tiempoFuera && imp.tiempoFuera);
+                            });
+
                             // Guardar datos para que gistMergeAplicar los use
-                            _gistMergeData = { registrosNormalizados, soloEnGist, data };
+                            _gistMergeData = { registrosNormalizados, soloEnGist, complementarios, data };
 
                             if (modoAutomatico) {
                                 // En automático: usar el toggle configurado sin preguntar
@@ -9249,14 +9512,14 @@ Generado por Sistema Horarios
                                     resumenEl.innerHTML =
                                         `<div>` +
                                         `<div><svg class="icon"><use href="#icon-cloud"/></svg> En Gist <strong style="color:var(--c-green)">${soloEnGist.length}</strong> registro${soloEnGist.length !== 1 ? 's' : ''} nuevos</div>` +
-                                        `<div><svg class="icon"><use href="#icon-combine"/></svg> En ambos <strong>${enAmbos.length}</strong> registro${enAmbos.length !== 1 ? 's' : ''} (por fecha)</div>` +
+                                        `<div><svg class="icon"><use href="#icon-combine"/></svg> En ambos <strong>${enAmbos.length}</strong> registro${enAmbos.length !== 1 ? 's' : ''} (por fecha${complementarios.length > 0 ? `, <strong style="color:var(--c-blue)">${complementarios.length}</strong> para completar` : ''})</div>` +
                                         `<div><svg class="icon"><use href="#icon-save"/></svg> Local <strong>${soloLocal.length}</strong> registro${soloLocal.length !== 1 ? 's' : ''} no subidos</div>` +
                                         `</div>` +
                                         (configCambios.length > 0
                                             ? `<svg class="icon"><use href="#icon-settings"/></svg> Reemplazar cambiará: ${configCambios.join(', ')}</div>`
                                             : `<svg class="icon"><use href="#icon-settings"/></svg> Sin cambios de configuración</div>`) +
                                         `<div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.75rem">` +
-                                        `<strong>Combinar</strong>: agrega ${soloEnGist.length} nuevo(s), mantiene los locales<br>` +
+                                        `<strong>Combinar</strong>: agrega ${soloEnGist.length} nuevo(s)${complementarios.length > 0 ? `, completa ${complementarios.length} registro(s)` : ''}, mantiene los locales<br>` +
                                         `<strong>Reemplazar</strong>: usa los ${registrosNormalizados.length} registros del Gist` +
                                         `</div>`;
                                 }
@@ -9288,7 +9551,9 @@ Generado por Sistema Horarios
                         togglePeriodoStats, cambiarAnioStats, cambiarSemanaStats, toggleFondoCard, setFondoCard, navegarCalendario, toggleGistMerge,
                         actualizarEstadoBotonesGist, togglePersistirTarjetas, actualizarEstadoBotonPersistir, toggleVistaHistorico,
                         abrirModalGist, cerrarModalGist, guardarConfigGist, toggleVerToken, abrirGistEnBrowser, gistSubir, gistBajar,
-                        gistMergeAplicar, gistMergeCancelar, actualizarBotonesHistorico, toggleGistBackup, toggleModoLote, toggleVisibilidadCard, aplicarVisibilidadCards, obtenerOrdenCards, aplicarOrdenCards, iniciarDragOrdenCards, _popupCalendario,
+                        gistMergeAplicar, gistMergeCancelar, actualizarBotonesHistorico, toggleGistBackup, toggleModoLote, toggleVisibilidadCard, aplicarVisibilidadCards,
+                        _popupCalendario, _popupCalendarioHover, _cerrarPopupCalendarioHover, toggleHoverPopupCalendario, actualizarEstadoBotonHoverPopup,
+                        cambiarLimiteSync, toggleLimiteSiempre, obtenerOrdenCards, aplicarOrdenCards, iniciarDragOrdenCards, _onclickCalendarioDia
                     };
 
                     // === LISTENERS E INTERACTIVIDAD ===
@@ -9458,7 +9723,8 @@ Generado por Sistema Horarios
                         });
                     }
 
-                    // ===================================
+                    // Swipe en stats-card (solo touch/móvil)
+                    registrarSwipe(document.getElementById('stats-card'), () => alternarVista());
 
                     // CARGAR CONFIGURACIÓN
                     const config = D.cargarConfiguracion();
@@ -9466,6 +9732,7 @@ Generado por Sistema Horarios
                     D.setVistaActual(config.vistaActual);
                     D.setIgnorarTiempoFuera(config.ignorarTiempoFuera || false);
                     UILogic.actualizarEstadoBotonIgnorarTF();
+                    UILogic.actualizarEstadoBotonHoverPopup();
                     UILogic.aplicarVisibilidadCards();
                     UILogic.aplicarOrdenCards(UILogic.obtenerOrdenCards());
                     UILogic.iniciarDragOrdenCards();
@@ -9526,7 +9793,9 @@ Generado por Sistema Horarios
                         if (persistir && localStorage.getItem('statsExpandido') === 'true') toggleStats();
 
                         // Restaurar estado de Histórico (3 estados)
-                        const estadoHistorico = persistir ? localStorage.getItem('historicoExpandido') : null;
+                        const estadoHistoricoGuardado = persistir ? localStorage.getItem('historicoExpandido') : null;
+                        // Si estaba completo (con botones), restaurar solo con registros
+                        const estadoHistorico = estadoHistoricoGuardado === 'completo' ? 'meses' : estadoHistoricoGuardado;
                         if (estadoHistorico === 'meses' || estadoHistorico === 'completo') {
                             const contenido = $('contenido-historico');
                             const icon = $('icon-indicator-historico');
@@ -9587,7 +9856,7 @@ Generado por Sistema Horarios
                     if (_tieneCredenciales) {
                         if (_autoSyncEstado === 1) {
                             // Estado 1: restaurar al inicio si está en rango — máx 2 bajas por hora
-                            if (GistSync.dentroDelRangoHorario() && !GistSync.superaLimite('bajar', 2)) {
+                            if (GistSync.dentroDelRangoHorario() && !GistSync.superaLimite('bajar')) {
                                 setTimeout(async () => {
                                     await gistBajar(true);
                                     GistSync.marcarSync('bajar');
@@ -9595,7 +9864,7 @@ Generado por Sistema Horarios
                             }
                         } else if (_autoSyncEstado === 2) {
                             // Estado 2: respaldo automático — máx 1 subida por hora
-                            if (GistSync.dentroDelRangoHorario() && !GistSync.superaLimite('subir', 1)) {
+                            if (GistSync.dentroDelRangoHorario() && !GistSync.superaLimite('subir')) {
                                 setTimeout(async () => {
                                     await gistSubir();
                                     GistSync.marcarSync('subir');
@@ -10121,24 +10390,7 @@ Generado por Sistema Horarios
                     if (!grid) return;
 
                     // Swipe para móvil (se adjunta una sola vez)
-                    if (!grid.dataset.swipeInit) {
-                        grid.dataset.swipeInit = '1';
-                        let _sx = null, _sy = null;
-                        grid.addEventListener('touchstart', e => {
-                            if (e.touches.length !== 1) return;
-                            _sx = e.touches[0].clientX;
-                            _sy = e.touches[0].clientY;
-                        }, { passive: true });
-                        grid.addEventListener('touchend', e => {
-                            if (_sx === null) return;
-                            const dx = e.changedTouches[0].clientX - _sx;
-                            const dy = e.changedTouches[0].clientY - _sy;
-                            _sx = null; _sy = null;
-                            if (Math.abs(dy) > 80) return;  // scroll vertical, ignorar
-                            if (Math.abs(dx) < 50) return;  // muy corto, ignorar
-                            navegarCalendario(dx < 0 ? 1 : -1);
-                        }, { passive: true });
-                    }
+                    registrarSwipe(grid, dir => navegarCalendario(dir));
 
                     const hoy = new Date();
                     const anio = _calendarioMes ? _calendarioMes.anio : hoy.getFullYear();
@@ -10169,7 +10421,10 @@ Generado por Sistema Horarios
                             const tipo = TiposRegistro.obtenerTipoPorCodigo(r.entrada, r.salida);
                             return `dia-especial-${tipo ? tipo.color : 'purple'}`;  // ← cambio
                         }
-                        if (r.entrada && !r.salida) return 'dia-en-curso';
+                        if (r.entrada && !r.salida) {
+                            const fechaHoy = obtenerFechaHoy();
+                            return fecha === fechaHoy ? 'dia-en-curso' : 'dia-sin-salida';
+                        }
                         if (r.total >= horasDiariasObj) return 'dia-normal';
                         return 'dia-incompleto';
                     };
@@ -10191,9 +10446,11 @@ Generado por Sistema Horarios
                         const clase = claseDelDia(fecha);
                         const esHoy = anio === hoy.getFullYear() && mes === hoy.getMonth() && dia === hoy.getDate();
                         const reg = regsPorFecha[fecha];
-                        const onclick = reg ? ` onclick="UILogic._popupCalendario(event, '${reg.id}')" style="cursor:pointer;"` : '';
+                        const onclick = reg ? ` onclick="UILogic._onclickCalendarioDia(event, '${reg.id}')"` : '';
+                        const onhover = reg ? ` onmouseenter="UILogic._popupCalendarioHover(event, '${reg.id}')" onmouseleave="UILogic._cerrarPopupCalendarioHover(event)"` : '';
+                        const cursor = reg ? ' style="cursor:pointer;"' : '';
                         const esNuevo = idResaltar && reg && reg.id === idResaltar ? ' nuevo-registro-animacion' : '';
-                        html += `<div class="calendario-dia ${clase}${esHoy ? ' hoy' : ''}${esNuevo}"${onclick}>${dia}</div>`;
+                        html += `<div class="calendario-dia ${clase}${esHoy ? ' hoy' : ''}${esNuevo}"${onclick}${onhover}${cursor}>${dia}</div>`;
                     }
 
                     if (filtroActivo) {
@@ -10243,7 +10500,6 @@ Generado por Sistema Horarios
                 function _popupCalendario(event, registroId) {
                     event.stopPropagation();
 
-                    // Cerrar popup previo si existe
                     if (_popupCalendarioEl) {
                         _popupCalendarioEl.remove();
                         _popupCalendarioEl = null;
@@ -10252,9 +10508,16 @@ Generado por Sistema Horarios
                     const reg = D.registros().find(r => r.id === registroId);
                     if (!reg) return;
 
+                    // Detectar si pertenece a un grupo reutilizando la lógica existente
+                    const claveMes = reg.fecha.substring(0, 7);
+                    const registrosDelMes = D.registros().filter(r => r.fecha.substring(0, 7) === claveMes);
+                    const grupos = agruparRegistrosConsecutivos(registrosDelMes);
+                    const grupoDelRegistro = grupos.find(g =>
+                        g.tipo === 'grupo' && g.registros.some(r => r.id === registroId)
+                    );
+
                     const esEspecial = TiposRegistro.esRegistroEspecial(reg.entrada, reg.salida);
 
-                    // Construir contenido
                     const fechaObj = new Date(reg.fecha + 'T12:00:00');
                     const opcFecha = { weekday: 'long', day: 'numeric', month: 'long' };
                     const fechaLabel = fechaObj.toLocaleDateString('es-AR', opcFecha);
@@ -10264,45 +10527,74 @@ Generado por Sistema Horarios
                         const tipoConfig = TiposRegistro.obtenerTipoPorCodigo(reg.entrada, reg.salida);
                         const emoji = tipoConfig ? tipoConfig.emoji : '';
                         const label = tipoConfig ? tipoConfig.label : reg.entrada;
-                        infoHtml = `<span class="cal-popup-badge" style="background:var(--c-${tipoConfig.color})">${emoji} ${label}</span>`;
-                    } else if (reg.entrada && !reg.salida) {
-                        infoHtml = `<div class="cal-popup-info">En curso</div>
-                                    <div style="font-size:0.82rem;color:var(--text-muted)">Entrada: ${reg.entrada}</div>`;
+                        infoHtml = `<span class="cal-popup-badge" style="background:var(--c-${tipoConfig?.color || 'purple'})">${emoji} ${label}</span>`;
+                    } else if (reg.entrada && (!reg.salida || reg.entrada === reg.salida)) {
+                        infoHtml = `<div class="cal-popup-info" style="color:var(--c-blue)">En curso</div>
+                    <div style="font-size:0.82rem;color:var(--text-muted)">Entrada: ${reg.entrada}</div>`;
                     } else {
                         const totalHoras = reg.total || 0;
                         const h = Math.floor(totalHoras);
                         const m = Math.round((totalHoras - h) * 60);
                         const totalStr = `${h}h${m > 0 ? ' ' + m + 'm' : ''}`;
-
-                        // Tiempo fuera
                         let tfStr = '';
                         if (reg.tiempoFuera && reg.tiempoFuera !== '00:00') {
                             const [tfH, tfM] = reg.tiempoFuera.split(':').map(Number);
                             tfStr = tfH > 0 ? `${tfH}h ${tfM}m fuera` : `${tfM}m fuera`;
                         }
-
                         infoHtml = `<div class="cal-popup-info">${totalStr}</div>
-                <div style="font-size:0.82rem;color:var(--text-muted)">${reg.entrada} – ${reg.salida}</div>
-                ${tfStr ? `<div style="font-size:0.82rem;color:var(--text-muted)">${tfStr}</div>` : ''}`;
+                    <div style="font-size:0.82rem;color:var(--text-muted)">${reg.entrada} – ${reg.salida}</div>
+                    ${tfStr ? `<div style="font-size:0.82rem;color:var(--text-muted)">${tfStr}</div>` : ''}`;
+                    }
+
+                    // Botón editar grupo (solo si pertenece a uno)
+                    const btnGrupoHtml = grupoDelRegistro ? `
+        <button class="cal-popup-btn-edit" onclick="DataManagement.editarGrupo(window._calPopupGrupo);document.getElementById('_cal-popup')?.remove()">
+            <svg class="icon icon-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Editar grupo
+        </button>` : '';
+
+                    // Antes de crear el popup, si hay grupo:
+                    if (grupoDelRegistro) {
+                        window._calPopupGrupo = grupoDelRegistro;
                     }
 
                     const popup = document.createElement('div');
                     popup.className = 'cal-popup';
                     popup.id = '_cal-popup';
                     popup.innerHTML = `
-                        <div class="cal-popup-fecha">${fechaLabel}</div>
-                        ${infoHtml}
-                        <button class="cal-popup-btn-edit" onclick="DataManagement.editarRegistro('${reg.id}');document.getElementById('_cal-popup')?.remove()">
-                            <svg class="icon icon-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                            </svg>
-                            Editar
-                        </button>
-                    `;
+        <div class="cal-popup-fecha">${fechaLabel}</div>
+        ${infoHtml}
+        <button class="cal-popup-btn-edit" onclick="DataManagement.editarRegistro('${reg.id}');document.getElementById('_cal-popup')?.remove()">
+            <svg class="icon icon-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Editar
+        </button>
+        ${btnGrupoHtml}
+    `;
 
+                    // DESPUÉS:
                     document.body.appendChild(popup);
                     _popupCalendarioEl = popup;
+
+                    // En desktop: si el mouse entra al popup cancelar el cierre por hover
+                    popup.addEventListener('mouseenter', () => {
+                        clearTimeout(_popupCalendarioHoverTimer);
+                    });
+                    popup.addEventListener('mouseleave', () => {
+                        if (_popupCalendarioEsHover) {
+                            _popupCalendarioHoverTimer = setTimeout(() => {
+                                if (_popupCalendarioEl) {
+                                    _popupCalendarioEl.remove();
+                                    _popupCalendarioEl = null;
+                                }
+                                _popupCalendarioEsHover = false;
+                            }, 500);
+                        }
+                    });
 
                     // Posicionar cerca del elemento tocado
                     const el = event.currentTarget || event.target;
@@ -10335,6 +10627,54 @@ Generado por Sistema Horarios
                     window.addEventListener('scroll', cerrar, { once: true, capture: true });
                 }
 
+                let _popupCalendarioEsHover = false;
+                let _popupCalendarioHoverTimer = null;
+
+                function _popupCalendarioHover(event, registroId) {
+                    // Ignorar si el evento fue precedido por un touch (browsers Android simulan mouse events)
+                    if (event.sourceCapabilities && event.sourceCapabilities.firesTouchEvents) return;
+                    if (!window.matchMedia('(hover: hover)').matches) return;
+                    const stored = localStorage.getItem('hoverPopupCalendario');
+                    const esHover = window.matchMedia('(hover: hover)').matches;
+                    if (stored === null ? !esHover : stored !== 'true') return;
+                    clearTimeout(_popupCalendarioHoverTimer);
+                    _popupCalendarioHoverTimer = setTimeout(() => {
+                        _popupCalendarioEsHover = true;
+                        _popupCalendario(event, registroId);
+                    }, 150);
+                }
+
+                function _onclickCalendarioDia(event, registroId) {
+                    const esDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+                    const stored = localStorage.getItem('hoverPopupCalendario');
+                    const hoverActivo = esDesktop && (stored === null ? true : stored === 'true');
+
+                    if (hoverActivo) {
+                        if (_popupCalendarioEl) {
+                            _popupCalendarioEl.remove();
+                            _popupCalendarioEl = null;
+                        }
+                        clearTimeout(_popupCalendarioHoverTimer);
+                        DataManagement.editarRegistro(registroId);
+                    } else {
+                        _popupCalendario(event, registroId);
+                    }
+                }
+
+                function _cerrarPopupCalendarioHover(event) {
+                    if (!_popupCalendarioEsHover) return;
+                    const related = event.relatedTarget;
+                    if (related && _popupCalendarioEl && _popupCalendarioEl.contains(related)) return;
+                    clearTimeout(_popupCalendarioHoverTimer);
+                    _popupCalendarioHoverTimer = setTimeout(() => {
+                        if (_popupCalendarioEl) {
+                            _popupCalendarioEl.remove();
+                            _popupCalendarioEl = null;
+                        }
+                        _popupCalendarioEsHover = false;
+                    }, 500);
+                }
+
                 function navegarCalendario(delta) {
                     const hoy = new Date();
                     const base = _calendarioMes || { anio: hoy.getFullYear(), mes: hoy.getMonth() };
@@ -10349,14 +10689,18 @@ Generado por Sistema Horarios
                         setTimeout(() => {
                             _renderizarCalendario();
                             grid.classList.remove('fade-out');
-                        }, 200);
+                        }, 300);
                     } else {
                         _renderizarCalendario();
                     }
                 }
 
+                // DESPUÉS:
                 function toggleStats() {
                     toggleSeccionGen('form-stats', 'icon-indicator-stats', 'statsExpandido', () => {
+                        // Swipe para alternar período (mensual/anual/semanal)
+                        registrarSwipe($('form-stats'), dir => togglePeriodoStats(dir));
+
                         // Lógica específica de stats al abrir
                         if (modoEstadisticas === 'anual') {
                             poblarSelectorAnios();
@@ -10530,7 +10874,7 @@ Generado por Sistema Horarios
                     iniciarTimerAutoCierreBotones, cancelarTimerAutoCierreBotones, toggleIgnorarTiempoFuera, actualizarEstadoBotonIgnorarTF,
                     togglePeriodoStats, cambiarAnioStats, cambiarSemanaStats, toggleFondoCard, setFondoCard, toggleVisibilidadCard, aplicarVisibilidadCards, obtenerOrdenCards, aplicarOrdenCards, iniciarDragOrdenCards,
                     togglePersistirTarjetas, actualizarEstadoBotonPersistir, toggleVistaHistorico,
-                    _popupCalendario
+                    _popupCalendario, _popupCalendarioHover, _onclickCalendarioDia, _cerrarPopupCalendarioHover, toggleHoverPopupCalendario, actualizarEstadoBotonHoverPopup
                 };
 
             })(SecurityAndUtils, DataManagement, GistSync);
@@ -10556,7 +10900,6 @@ Generado por Sistema Horarios
                     })
                     .catch(err => console.error('❌ Error SW:', err));
             });
-
         }
     </script>
 </body>
@@ -10564,12 +10907,17 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 8.16
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 8.24
     // ====================================================================
     
      - CAMBIOS:
-    1) Refactorizacion de varias funciones
+    1) Se agrega comparacion interna de los registros en el modo combinar (gist y local)
+    2) Se agrega swipe a las tarjetas de estado y estadisticas
+    3) Se agrega ocultamiento de los botones undo redo, etc al recargar la pagina 
+    4) Se agrega limite configurable para subida o bajada de gist
+    5) Se agrega apertura de modal al tocar calendario-dia con popup activado
+    6) Se agrega editar grupo en la vista calendario
 
      - BUGS MENORES CONOCIDOS:
-          
+
     -->
