@@ -29,7 +29,8 @@
             --bg-card: #f0f4f9;
             --bg-header: #ffffff;
             --text-main: #1f1f1f;
-            --text-muted: #444746 --text-inv: #ffffff;
+            --text-muted: #444746;
+            --text-disabled: #444746a2;
             --border: #dde3ea;
             --input-bg: #dde3ea;
             --input-focus: #dde3ea;
@@ -53,6 +54,7 @@
             --bg-header: #131314f6;
             --text-main: #e3e3e3;
             --text-muted: #b4b4b4;
+            --text-disabled: #b4b4b4a2;
             --border: #313333;
             --input-bg: #313333;
             --input-focus: #313333;
@@ -222,9 +224,9 @@
         input:disabled,
         select:disabled {
             background-color: var(--bg-card);
-            color: var(--text-muted);
+            color: var(--text-disabled);
             opacity: 1;
-            -webkit-text-fill-color: var(--text-muted);
+            -webkit-text-fill-color: var(--text-disabled);
             /* Corrección para Safari/iOS */
             cursor: not-allowed;
         }
@@ -291,7 +293,7 @@
             background: transparent;
             cursor: not-allowed;
             transform: none;
-            color: #6b7280;
+            color: var(--text-disabled);
         }
 
         #btn-timer-main {
@@ -324,7 +326,6 @@
             justify-content: center;
             padding: 0.875rem 1rem;
             border: 1px solid var(--border);
-            color: var(--text-main);
             transition: background 0.2s, color 0.2s, border-color 0.2s;
             flex: 1;
         }
@@ -349,6 +350,25 @@
         .filter-btn.filtro-activo {
             color: var(--c-red);
             border-color: var(--c-red);
+        }
+
+        #gist-rango-horario,
+        #gist-limite-sync {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            margin-top: 0.5rem;
+        }
+
+        #gist-rango-horario {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        #gist-limite-sync {
+            display: block;
         }
 
         .header-buttons {
@@ -835,6 +855,7 @@
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
             margin-top: 0.75rem;
+            grid-template-rows: auto repeat(6, 1fr);
         }
 
         .calendario-dia-nombre {
@@ -1593,8 +1614,7 @@
     <div class="container">
 
         <div class="left-column">
-            <div class="card stats-card animated-card" id="stats-card" onclick="UILogic.alternarVista()"
-                style="animation-delay: 0s;">
+            <div class="card stats-card animated-card" id="stats-card" onclick="UILogic.alternarVista()">
                 <div class="stats-card-bg" id="stats-card-bg" aria-hidden="true"></div>
                 <div class="stats-card-content" id="stats-card-content">
                     <h2 id="stats-titulo">Hoy</h2>
@@ -1609,7 +1629,7 @@
                     <span class="toggle-hint" id="toggle-hint">Toca para ver la Semana</span>
                 </div>
             </div>
-            <div class="card animated-card" id="card-registrar" style="animation-delay: 0.10s;">
+            <div class="card animated-card" id="card-registrar">
                 <h2 class="no-margin"
                     style="display: flex; justify-content: center; align-items: center; position: relative;">
                     <button class="filter-btn timer-btn" id="btn-timer-main" onclick="UILogic.toggleTimerBreakMain()"
@@ -1724,7 +1744,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card animated-card" id="card-estadisticas" style="animation-delay: 0.15s;">
+            <div class="card animated-card" id="card-estadisticas">
                 <h2 class="no-margin card-header-clickable" onclick="UILogic.toggleStats()">
                     <span style="display: flex; align-items: center; gap: 0.5rem;">
                         <svg class="icon">
@@ -1838,7 +1858,7 @@
                 </div>
             </div>
         </div>
-        <div class="card animated-card" id="card-historico" style="animation-delay: 0.25s;">
+        <div class="card animated-card" id="card-historico">
             <h2 class="no-margin card-header-clickable" onclick="UILogic.toggleHistorico()">
                 <span style="display: flex; align-items: center; gap: 0.5rem;">
                     <svg class="icon">
@@ -1898,6 +1918,8 @@
                 <div id="vista-calendario-historico" style="display:none; padding: 0 0.5rem 0.5rem;">
                     <div class="calendario-nav">
                         <span class="calendario-titulo" id="calendario-titulo-mes"></span>
+                        <button onclick="UILogic.irHoyCalendario()"
+                            style="width:auto; padding: 4px 10px; font-size:0.8rem; font-weight:600;">Hoy</button>
                         <button onclick="UILogic.navegarCalendario(-1)">
                             <svg class="icon" style="transform:rotate(90deg);">
                                 <use href="#icon-chevron-down" />
@@ -1924,7 +1946,7 @@
                         </svg>
                         Ajustes
                     </span>
-                    <span class="version-text">LUSHIBOSCA-8.24</span>
+                    <span class="version-text">LUSHIBOSCA-8.29</span>
                 </h3>
             </div>
             <div class="modal-config-body custom-scroll">
@@ -2163,12 +2185,11 @@
                             <span id="hint-gist-merge">Reemplazar</span>
                         </button>
                     </div>
-                    <div id="gist-limite-sync"
-                        style="max-height:0; overflow:hidden; transition:max-height 0.3s ease, opacity 0.3s ease; opacity:0; margin-top:0.5rem;">
+                    <div id="gist-limite-sync">
                         <div class="form-group" style="margin-bottom:0.5rem">
                             <label id="gist-limite-label">Límite por hora</label>
                             <div class="input-number-group">
-                                <input type="number" id="gist-limite-valor" min="0" max="99" step="1" readonly />
+                                <input type="number" id="gist-limite-valor" min="0" max="10" step="1" readonly />
                                 <button class="btn-increment" onclick="UILogic.cambiarLimiteSync(1)">+</button>
                                 <button class="btn-increment" onclick="UILogic.cambiarLimiteSync(-1)">−</button>
                                 <button class="btn-increment" id="btn-limite-siempre"
@@ -2177,14 +2198,13 @@
                             </div>
                         </div>
                     </div>
-                    <div id="gist-rango-horario"
-                        style="max-height:0; overflow:hidden; transition:max-height 0.3s ease, opacity 0.3s ease; opacity:0; margin-top:0.5rem; gap:0.5rem; align-items:center; display:flex;">
-                        <span style="font-size:0.85rem; color:var(--text-muted)">Desde</span>
-                        <input type="time" id="gist-rango-desde"
-                            style=" background:var(--bg-input); color:var(--text-main); font-size:0.9rem;" />
-                        <span style="font-size:0.85rem; color:var(--text-muted)">Hasta</span>
-                        <input type="time" id="gist-rango-hasta"
-                            style=" background:var(--bg-input); color:var(--text-main); font-size:0.9rem;" />
+                    <div id="gist-rango-horario">
+                        <span>Desde</span>
+                        <input type="text" id="gist-rango-desde" inputmode="numeric" maxlength="5"
+                            placeholder="HH:MM" />
+                        <span>Hasta</span>
+                        <input type="text" id="gist-rango-hasta" inputmode="numeric" maxlength="5"
+                            placeholder="HH:MM" />
                     </div>
                 </div>
                 <div class="config-hint-text" id="gist-ultima-sync">Sin sincronizar</div>
@@ -2602,6 +2622,8 @@
                     </button>
                 </div>
             </div>
+            <div id="edit-grupo-hint" class="config-hint-text"
+                style="text-align: center; margin-top: 0; min-height: 1.2em;"></div>
             <div class="btn-group">
                 <button class="btn-edit" onclick="DataManagement.guardarEdicionGrupo()">
                     <svg class="icon">
@@ -2938,7 +2960,6 @@
                     const btnEliminar = document.getElementById('btn-eliminar-perfil-modal');
                     if (btnEliminar) {
                         btnEliminar.disabled = (perfilActual === 'default');
-                        btnEliminar.style.opacity = (perfilActual === 'default') ? '0.5' : '1';
                     }
                 }
 
@@ -3452,16 +3473,18 @@
                     grupoEnEdicion = {
                         registros: grupo.registros,
                         subtipo: grupo.subtipo,
-                        fechaDesde: grupo.registros[grupo.registros.length - 1].fecha, // El más antiguo
-                        fechaHasta: grupo.registros[0].fecha // El más reciente
+                        fechaDesde: grupo.registros[grupo.registros.length - 1].fecha,
+                        fechaHasta: grupo.registros[0].fecha
                     };
 
                     $('edit-grupo-tipo').value = grupo.subtipo;
                     $('edit-grupo-desde').value = grupoEnEdicion.fechaDesde;
                     $('edit-grupo-hasta').value = grupoEnEdicion.fechaHasta;
 
-                    ModalManager.abrir('modal-editar-grupo');
+                    // Hint con cantidad de registros y tipo
+                    UILogic.actualizarHintGrupo();
 
+                    ModalManager.abrir('modal-editar-grupo');
                     UILogic.setBloqueoEdicionGrupo(true);
                 }
 
@@ -6148,8 +6171,6 @@
                     const btnReporte = document.getElementById('btn-reporte');
                     if (btnReporte) {
                         btnReporte.disabled = !mostrarBtnReporte;
-                        btnReporte.style.opacity = mostrarBtnReporte ? '' : '0.4';
-                        btnReporte.style.cursor = mostrarBtnReporte ? '' : 'not-allowed';
                     }
                 }
 
@@ -6896,6 +6917,7 @@
                         // --- Avisar que se borró para bloquear el botón ---
                         if (id === 'edit-entrada' || id === 'edit-salida') {
                             verificarBloqueoCredito();
+                            c.dispatchEvent(new Event('input'));
                         }
                         return;
                     }
@@ -6909,6 +6931,7 @@
                     // --- Avisar que se pegó para habilitar el botón ---
                     if (id === 'edit-entrada' || id === 'edit-salida') {
                         verificarBloqueoCredito();
+                        c.dispatchEvent(new Event('input'));
                     }
                 }
 
@@ -7082,12 +7105,13 @@
                     const container = leftColumn ? leftColumn.parentElement : null;
                     if (!leftColumn || !container) return;
 
+                    const delays = [0.10, 0.15, 0.25];
                     orden.forEach((cual, idx) => {
                         const card = document.getElementById('card-' + cual);
                         if (!card) return;
+                        card.style.animationDelay = `${delays[idx] || 0.25}s`;
                         const esUltima = idx === orden.length - 1;
                         if (esUltima) {
-                            // La última va fuera de left-column (columna derecha en desktop)
                             container.appendChild(card);
                         } else {
                             leftColumn.appendChild(card);
@@ -7252,11 +7276,9 @@
 
                         if (btnCombinar) {
                             btnCombinar.disabled = true;
-                            btnCombinar.style.opacity = '0.5';
                         }
                         if (btnReemplazar) {
                             btnReemplazar.disabled = true;
-                            btnReemplazar.style.opacity = '0.5';
                         }
 
                         const btnVolverI = $('btn-volver-importar');
@@ -8298,7 +8320,6 @@ Generado por Sistema Horarios
                     const btnEliminar = document.getElementById('btn-eliminar-perfil-editor');
                     if (btnEliminar) {
                         btnEliminar.disabled = (perfilId === 'default');
-                        btnEliminar.style.opacity = (perfilId === 'default') ? '0.5' : '1';
                     }
 
                     // Cerrar selector y abrir editor
@@ -9091,8 +9112,6 @@ Generado por Sistema Horarios
                         const btn = document.getElementById(id);
                         if (!btn) return;
                         btn.disabled = disabled;
-                        btn.style.opacity = disabled ? '0.4' : '1';
-                        btn.style.cursor = disabled ? 'not-allowed' : '';
                     }
 
                     function actualizarBotonesHistorico() {
@@ -9124,8 +9143,20 @@ Generado por Sistema Horarios
                     function guardarConfigGist() {
                         const token = document.getElementById('gist-token')?.value.trim() || '';
                         const gistId = document.getElementById('gist-id')?.value.trim() || '';
-                        const desde = document.getElementById('gist-rango-desde')?.value || '21:00';
-                        const hasta = document.getElementById('gist-rango-hasta')?.value || '00:00';
+                        const desdeRaw = document.getElementById('gist-rango-desde')?.value || '';
+                        const hastaRaw = document.getElementById('gist-rango-hasta')?.value || '';
+
+                        if (desdeRaw && !S.validarHoraSegura(desdeRaw)) {
+                            mostrarToast('Hora inicial inválida.', 'error');
+                            return;
+                        }
+                        if (hastaRaw && !S.validarHoraSegura(hastaRaw)) {
+                            mostrarToast('Hora final inválida.', 'error');
+                            return;
+                        }
+
+                        const desde = desdeRaw || '21:00';
+                        const hasta = hastaRaw || '00:00';
 
                         const rango = GistSync.getRangoHorario();
                         const limitesCambiaron = _gistLimitesOrig !== null && (
@@ -9553,7 +9584,8 @@ Generado por Sistema Horarios
                         abrirModalGist, cerrarModalGist, guardarConfigGist, toggleVerToken, abrirGistEnBrowser, gistSubir, gistBajar,
                         gistMergeAplicar, gistMergeCancelar, actualizarBotonesHistorico, toggleGistBackup, toggleModoLote, toggleVisibilidadCard, aplicarVisibilidadCards,
                         _popupCalendario, _popupCalendarioHover, _cerrarPopupCalendarioHover, toggleHoverPopupCalendario, actualizarEstadoBotonHoverPopup,
-                        cambiarLimiteSync, toggleLimiteSiempre, obtenerOrdenCards, aplicarOrdenCards, iniciarDragOrdenCards, _onclickCalendarioDia
+                        cambiarLimiteSync, toggleLimiteSiempre, obtenerOrdenCards, aplicarOrdenCards, iniciarDragOrdenCards, _onclickCalendarioDia,
+                        actualizarHintGrupo, irHoyCalendario
                     };
 
                     // === LISTENERS E INTERACTIVIDAD ===
@@ -9584,6 +9616,12 @@ Generado por Sistema Horarios
                     // C) Otros inputs
                     const tf = document.getElementById('edit-tiempo-fuera');
                     if (tf) tf.addEventListener('input', formatearInput);
+
+                    // D) modal gist
+                    ['gist-rango-desde', 'gist-rango-hasta'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.addEventListener('input', formatearInput);
+                    });
 
                     // D) Hint resumen en tiempo real
                     function actualizarHintEdicion() {
@@ -9830,14 +9868,15 @@ Generado por Sistema Horarios
                             }
                         }
 
-                        // Restaurar vista calendario dentro del histórico (solo si histórico está abierto)
-                        if (localStorage.getItem('vistaHistoricoCalendario') === 'true') {
+                        // Default: calendario si no hay nada guardado (primera vez)
+                        const vistaGuardada = localStorage.getItem('vistaHistoricoCalendario');
+                        const usarCalendario = vistaGuardada === null ? true : vistaGuardada === 'true';
+                        if (usarCalendario) {
                             const contenidoAbierto = $('contenido-historico')?.classList.contains('expanded');
                             if (contenidoAbierto) {
-                                _vistaHistoricoCalendario = false; // resetear para que el toggle funcione
+                                _vistaHistoricoCalendario = false;
                                 toggleVistaHistorico();
                             } else {
-                                // Histórico cerrado: solo pre-setear el estado, se aplicará cuando se abra
                                 _vistaHistoricoCalendario = true;
                             }
                         }
@@ -10163,16 +10202,39 @@ Generado por Sistema Horarios
                                 }
                                 if (btnCombinar) {
                                     btnCombinar.disabled = true;
-                                    btnCombinar.style.opacity = '0.5';
                                 }
                                 if (btnReemplazar) {
                                     btnReemplazar.disabled = true;
-                                    btnReemplazar.style.opacity = '0.5';
                                 }
                             }
                         });
                     }
                 }
+
+                // E) Hint resumen en tiempo real para editar grupo
+                function actualizarHintGrupo() {
+                    const hint = document.getElementById('edit-grupo-hint');
+                    if (!hint) return;
+                    const desde = document.getElementById('edit-grupo-desde')?.value;
+                    const hasta = document.getElementById('edit-grupo-hasta')?.value;
+                    if (!desde && !hasta) { hint.textContent = ''; return; }
+                    if (desde && !hasta) {
+                        hint.textContent = `1 día`;
+                        return;
+                    }
+                    if (!S.validarFechaSegura(desde) || !S.validarFechaSegura(hasta) || desde > hasta) {
+                        hint.textContent = 'Rango inválido';
+                        return;
+                    }
+                    const fechaInicio = S.parsearFechaLocal(desde);
+                    const fechaFin = S.parsearFechaLocal(hasta);
+                    const diasTotales = Math.ceil(Math.abs(fechaFin - fechaInicio) / (1000 * 60 * 60 * 24)) + 1;
+                    hint.textContent = `${diasTotales} día${diasTotales !== 1 ? 's' : ''}`;
+                }
+                ['edit-grupo-desde', 'edit-grupo-hasta'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.addEventListener('change', actualizarHintGrupo);
+                });
 
                 function mostrarFiltros() {
                     // Si hay filtro activo, limpiarlo directamente
@@ -10563,6 +10625,7 @@ Generado por Sistema Horarios
                     const popup = document.createElement('div');
                     popup.className = 'cal-popup';
                     popup.id = '_cal-popup';
+                    popup.dataset.registroId = reg.id;
                     popup.innerHTML = `
         <div class="cal-popup-fecha">${fechaLabel}</div>
         ${infoHtml}
@@ -10616,15 +10679,28 @@ Generado por Sistema Horarios
                     popup.style.left = left + 'px';
 
                     // Cerrar al tocar fuera
-                    const cerrar = (e) => {
-                        if (!popup.contains(e.target)) {
-                            popup.remove();
-                            _popupCalendarioEl = null;
-                            document.removeEventListener('click', cerrar, true);
-                        }
+                    const cerrarPopup = () => {
+                        popup.remove();
+                        _popupCalendarioEl = null;
+                        document.removeEventListener('click', cerrar, true);
+                        document.removeEventListener('scroll', cerrarPopup, true);
                     };
-                    setTimeout(() => document.addEventListener('click', cerrar, true), 10);
-                    window.addEventListener('scroll', cerrar, { once: true, capture: true });
+                    const cerrar = (e) => {
+                        const diaClickeado = e.target.closest('.calendario-dia');
+                        if (diaClickeado && diaClickeado.getAttribute('onclick')?.includes(popup.dataset.registroId)) return;
+                        if (!popup.contains(e.target)) cerrarPopup();
+                    };
+                    setTimeout(() => {
+                        document.addEventListener('click', cerrar, true);
+                        document.addEventListener('scroll', cerrarPopup, true);
+                    }, 10);
+                    const cerrarPorScroll = () => {
+                        popup.remove();
+                        _popupCalendarioEl = null;
+                        document.removeEventListener('click', cerrar, true);
+                        document.removeEventListener('scroll', cerrarPorScroll, true);
+                    };
+                    setTimeout(() => document.addEventListener('scroll', cerrarPorScroll, true), 10);
                 }
 
                 let _popupCalendarioEsHover = false;
@@ -10657,6 +10733,8 @@ Generado por Sistema Horarios
                         clearTimeout(_popupCalendarioHoverTimer);
                         DataManagement.editarRegistro(registroId);
                     } else {
+                        // Si el popup ya está abierto para este mismo registro, no hacer nada
+                        if (_popupCalendarioEl && _popupCalendarioEl.dataset.registroId === registroId) return;
                         _popupCalendario(event, registroId);
                     }
                 }
@@ -10676,6 +10754,12 @@ Generado por Sistema Horarios
                 }
 
                 function navegarCalendario(delta) {
+                    // Cerrar popup si está abierto
+                    if (_popupCalendarioEl) {
+                        _popupCalendarioEl.remove();
+                        _popupCalendarioEl = null;
+                    }
+
                     const hoy = new Date();
                     const base = _calendarioMes || { anio: hoy.getFullYear(), mes: hoy.getMonth() };
                     let nuevoMes = base.mes + delta;
@@ -10695,7 +10779,25 @@ Generado por Sistema Horarios
                     }
                 }
 
-                // DESPUÉS:
+                function irHoyCalendario() {
+                    const hoy = new Date();
+                    if (_calendarioMes === null ||
+                        (_calendarioMes.anio === hoy.getFullYear() && _calendarioMes.mes === hoy.getMonth())) {
+                        return; // Ya estamos en el mes actual
+                    }
+                    _calendarioMes = null;
+                    const grid = document.getElementById('calendario-grid');
+                    if (grid) {
+                        grid.classList.add('fade-out');
+                        setTimeout(() => {
+                            _renderizarCalendario();
+                            grid.classList.remove('fade-out');
+                        }, 300);
+                    } else {
+                        _renderizarCalendario();
+                    }
+                }
+
                 function toggleStats() {
                     toggleSeccionGen('form-stats', 'icon-indicator-stats', 'statsExpandido', () => {
                         // Swipe para alternar período (mensual/anual/semanal)
@@ -10732,6 +10834,10 @@ Generado por Sistema Horarios
 
                     // Actualizar el estado del botón principal
                     actualizarBotonLote();
+                    // Actualizar hint si es campo del grupo
+                    if (id === 'edit-grupo-desde' || id === 'edit-grupo-hasta') {
+                        c.dispatchEvent(new Event('change'));
+                    }
                 }
 
                 function verificarBloqueoCredito() {
@@ -10861,9 +10967,9 @@ Generado por Sistema Horarios
                 return {
                     init, obtenerFechaHoy, pegarHoraActual, alternarTema, alternarVista, cerrarConfig,
                     cerrarEdicion, mostrarImportar, cerrarImportar, actualizarUI, mostrarToast, mostrarError,
-                    limpiarError, resetearBoton, restaurarBotonGuardarEdicion, toggleFormulario,
-                    limpiarCampo, mostrarFiltros, cerrarFiltros, registrarLoteDesdeCard,
-                    cambiarMesStats, generarReporte, toggleHistorico, toggleStats, sumarMinutosAHora,
+                    limpiarError, resetearBoton, restaurarBotonGuardarEdicion, toggleFormulario, aplicarOrdenCards, iniciarDragOrdenCards,
+                    limpiarCampo, mostrarFiltros, cerrarFiltros, registrarLoteDesdeCard, irHoyCalendario, obtenerOrdenCards,
+                    cambiarMesStats, generarReporte, toggleHistorico, toggleStats, sumarMinutosAHora, actualizarEstadoBotonHoverPopup,
                     toggleTimerBreakMain, actualizarEstadoBotonTimerMain, toggleBloqueoEdicion, setBloqueoEdicion,
                     actualizarFeedbackConfig, poblarSelectorMeses, abrirSelectorPerfiles, actualizarBotonLote,
                     cerrarSelectorPerfiles, abrirEditorPerfil, cerrarEditorPerfil, guardarEdicionPerfil, toggleModoLote,
@@ -10872,9 +10978,9 @@ Generado por Sistema Horarios
                     toggleCredito, setBloqueoEdicionGrupo, toggleBloqueoEdicionGrupo, cerrarEdicionGrupo,
                     mostrarExportar, cerrarExportar, ejecutarExportacion, toggleCamposRangoExport, aplicarFeedbackRegistro,
                     iniciarTimerAutoCierreBotones, cancelarTimerAutoCierreBotones, toggleIgnorarTiempoFuera, actualizarEstadoBotonIgnorarTF,
-                    togglePeriodoStats, cambiarAnioStats, cambiarSemanaStats, toggleFondoCard, setFondoCard, toggleVisibilidadCard, aplicarVisibilidadCards, obtenerOrdenCards, aplicarOrdenCards, iniciarDragOrdenCards,
-                    togglePersistirTarjetas, actualizarEstadoBotonPersistir, toggleVistaHistorico,
-                    _popupCalendario, _popupCalendarioHover, _onclickCalendarioDia, _cerrarPopupCalendarioHover, toggleHoverPopupCalendario, actualizarEstadoBotonHoverPopup
+                    togglePeriodoStats, cambiarAnioStats, cambiarSemanaStats, toggleFondoCard, setFondoCard, toggleVisibilidadCard, aplicarVisibilidadCards,
+                    togglePersistirTarjetas, actualizarEstadoBotonPersistir, toggleVistaHistorico, actualizarHintGrupo,
+                    _popupCalendario, _popupCalendarioHover, _onclickCalendarioDia, _cerrarPopupCalendarioHover, toggleHoverPopupCalendario
                 };
 
             })(SecurityAndUtils, DataManagement, GistSync);
@@ -10907,17 +11013,15 @@ Generado por Sistema Horarios
 </html>
 
 <!--// ====================================================================
-    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 8.24
+    //                 NOTAS SISTEMA LUSHIBOSCA VERSION 8.29
     // ====================================================================
     
      - CAMBIOS:
-    1) Se agrega comparacion interna de los registros en el modo combinar (gist y local)
-    2) Se agrega swipe a las tarjetas de estado y estadisticas
-    3) Se agrega ocultamiento de los botones undo redo, etc al recargar la pagina 
-    4) Se agrega limite configurable para subida o bajada de gist
-    5) Se agrega apertura de modal al tocar calendario-dia con popup activado
-    6) Se agrega editar grupo en la vista calendario
-
-     - BUGS MENORES CONOCIDOS:
+    1) el boton "hoy" del calendario solo funciona si no estamos en el mes actual
+    2) Se reemplaza el delay hardcodeado de las tarjetas por delay dinamico en funcion aplicarOrdenCards 
+    
+     - BUGS CONOCIDOS:
+    1) el popup parpadea constantemente al aparecer por encima del ares del dia, (cuando no tiene
+    espacio para mostrarse por debajo), y el cursor estar cerca del popup
 
     -->
