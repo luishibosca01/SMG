@@ -45,7 +45,6 @@
       --header-h-1: 30px;
       --header-h-2: 24px;
       --header-h-3: 30px;
-
     }
 
     body.dark-mode {
@@ -80,7 +79,7 @@
 
     ::-webkit-scrollbar-thumb {
       background: var(--border);
-      border-radius: 5px;
+      border-radius: var(--radius);
       border: 2px solid var(--bg-body);
     }
 
@@ -108,7 +107,7 @@
     /* HEADER */
     .header {
       background: var(--bg-header);
-      padding: 0.8rem 1rem;
+      padding: 1rem;
       box-shadow: var(--shadow);
       z-index: 100;
       display: flex;
@@ -264,7 +263,6 @@
     /* Headers Visuales 3 FILAS */
     .month-header {
       height: var(--header-h-1);
-      background: var(--c-blue) !important;
       color: white;
       padding: 6px;
       font-size: 0.9rem;
@@ -347,7 +345,7 @@
     }
 
     .bar-segment.bar-single {
-      border-radius: 6px;
+      border-radius: var(--radius);
       margin: 0 4px;
       width: calc(100% - 8px);
     }
@@ -374,7 +372,7 @@
       color: var(--text-main);
       font-size: 0.7rem;
       padding: 4px;
-      border-radius: 4px;
+      border-radius: var(--radius);
       outline: none;
       min-width: 0;
     }
@@ -403,8 +401,8 @@
       background: var(--input-bg);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 0.65rem 1rem;
-      border-radius: 8px;
+      padding: 0.5rem;
+      border-radius: var(--radius);
       font-weight: bold;
       cursor: pointer;
       outline: none;
@@ -417,7 +415,7 @@
     /* Badges */
     .badge {
       padding: 3px 6px;
-      border-radius: 12px;
+      border-radius: var(--radius);
       font-size: 0.65rem;
       font-weight: 600;
       display: inline-block;
@@ -473,7 +471,7 @@
 
     .modal-content {
       background: var(--bg-card);
-      padding: 1.5rem;
+      padding: 1rem;
       border-radius: var(--radius);
       width: 100%;
       max-width: 460px;
@@ -490,7 +488,7 @@
 
     /* Inputs & Buttons */
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       text-align: left;
     }
 
@@ -498,16 +496,15 @@
       display: block;
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin-bottom: 0.4rem;
     }
 
     input[type="text"],
     input[type="number"],
     input[type="password"] {
       width: 100%;
-      padding: 0.7rem;
-      border: 2px solid var(--border);
-      border-radius: 8px;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       background: var(--input-bg);
       color: var(--text-main);
     }
@@ -517,24 +514,18 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
     }
 
     button {
       cursor: pointer;
       border: none;
-      border-radius: 8px;
+      border-radius: var(--radius);
       font-weight: 600;
       transition: 0.1s;
     }
 
-    button:active {
-      transform: scale(0.98);
-    }
-
     .btn-primary {
-      background: var(--c-blue);
+      background: var(--c-gray-btn);
       color: white;
       padding: 0.75rem 1.5rem;
       width: 100%;
@@ -552,7 +543,7 @@
     }
 
     .btn-danger {
-      background: var(--c-red);
+      background: var(--c-gray-btn);
       color: white;
       padding: 0.75rem;
       width: 100%;
@@ -582,7 +573,7 @@
     .btn-group {
       display: flex;
       gap: 10px;
-      margin-top: 1.5rem;
+      margin-top: 0.5rem;
     }
 
     .toast {
@@ -593,7 +584,7 @@
       background: #1f2937;
       color: white;
       padding: 0.8rem 1.5rem;
-      border-radius: 30px;
+      border-radius: var(--radius);
       opacity: 0;
       transition: 0.3s;
       pointer-events: none;
@@ -646,7 +637,7 @@
       padding: 1.25rem 1.5rem 1rem;
       border-bottom: 1px solid var(--border);
       background: var(--bg-card);
-      border-radius: var(--radius) var(--radius) 0 0;
+      border-radius: var(--radius);
     }
 
     .modal-config-header h3 {
@@ -664,7 +655,7 @@
       padding: 1rem 1.5rem;
       border-top: 1px solid var(--border);
       background: var(--bg-card);
-      border-radius: 0 0 var(--radius) var(--radius);
+      border-radius: var(--radius);
     }
 
     /* Mantener la manito para hacer clic en el nombre de la persona */
@@ -707,7 +698,7 @@
       align-items: center;
       background: var(--input-bg);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius);
       padding: 0.4rem 0.75rem;
       font-size: 0.82rem;
       color: var(--text-main);
@@ -734,7 +725,7 @@
       cursor: pointer;
       font-size: 14px;
       padding: 0 2px;
-      border-radius: 4px;
+      border-radius: var(--radius);
       line-height: 1;
       flex-shrink: 0;
       transition: color 0.15s;
@@ -756,7 +747,7 @@
       background: var(--c-blue);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: var(--radius);
       width: 22px;
       height: 22px;
       font-size: 16px;
@@ -776,10 +767,6 @@
     /* Formulario de agregar rango */
     .add-range-form {
       display: none;
-      background: var(--bg-body);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.75rem;
       margin-bottom: 0.5rem;
       gap: 0.5rem;
       flex-direction: column;
@@ -809,7 +796,7 @@
       width: 100%;
       padding: 0.5rem 0.6rem;
       border: 2px solid var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius);
       background: var(--input-bg);
       color: var(--text-main);
       font-size: 0.82rem;
@@ -830,7 +817,7 @@
       background: var(--c-blue);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: var(--radius);
       padding: 0.45rem 0.5rem;
       font-size: 0.8rem;
       font-weight: 600;
@@ -845,7 +832,7 @@
       background: var(--c-gray-btn);
       color: var(--text-main);
       border: none;
-      border-radius: 6px;
+      border-radius: var(--radius);
       padding: 0.45rem 0.75rem;
       font-size: 0.8rem;
       font-weight: 600;
@@ -855,38 +842,60 @@
     .btn-range-cancel:hover {
       opacity: 0.85;
     }
+
+    .date-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .date-input-wrapper input[type="date"] {
+      flex: 1;
+      padding-right: 2.4rem;
+    }
+
+    .btn-date-quick {
+      position: absolute;
+      right: 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
   </style>
 </head>
 
 <body>
-  <svg style="display: none;">
+  <svg style="display: none;" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+    stroke-linejoin="round">
     <symbol id="icon-user-plus" viewBox="0 0 24 24">
       <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
       <circle cx="8.5" cy="7" r="4" />
       <line x1="20" y1="8" x2="20" y2="14" />
       <line x1="23" y1="11" x2="17" y2="11" />
     </symbol>
-    <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
+    <symbol id="icon-settings" viewBox="0 0 24 24">
       <path
-        d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-      </path>
+        d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
     </symbol>
     <symbol id="icon-moon" viewBox="0 0 24 24">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </symbol>
     <symbol id="icon-sun" viewBox="0 0 24 24">
-      <g class="icon-line" stroke-width="2" stroke="currentColor">
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </g>
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
     </symbol>
     <symbol id="icon-calendar" viewBox="0 0 24 24">
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -900,55 +909,44 @@
       <polyline points="7 3 7 8 15 8" />
     </symbol>
     <symbol id="icon-download" viewBox="0 0 24 24">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" class="icon-line" stroke="currentColor"></path>
-      <polyline points="7 10 12 15 17 10" class="icon-line" stroke="currentColor"></polyline>
-      <line x1="12" y1="15" x2="12" y2="3" class="icon-line" stroke="currentColor"></line>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
     </symbol>
     <symbol id="icon-upload" viewBox="0 0 24 24">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" class="icon-line" stroke="currentColor"></path>
-      <polyline points="17 8 12 3 7 8" class="icon-line" stroke="currentColor"></polyline>
-      <line x1="12" y1="3" x2="12" y2="15" class="icon-line" stroke="currentColor"></line>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
     </symbol>
     <symbol id="icon-edit" viewBox="0 0 24 24">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" class="icon-line" stroke="currentColor">
-      </path>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" class="icon-line" stroke="currentColor">
-      </path>
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
     </symbol>
-    <symbol id="icon-cancelar" viewBox="0 0 24 24">
-      <line x1="18" y1="6" x2="6" y2="18" class="icon-line" stroke="currentColor"></line>
-      <line x1="6" y1="6" x2="18" y2="18" class="icon-line" stroke="currentColor"></line>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </symbol>
     <symbol id="icon-undo" viewBox="0 0 24 24">
-      <path d="M3 7v6h6" class="icon-line" stroke="currentColor"></path>
-      <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" class="icon-line" stroke="currentColor"></path>
+      <path d="M3 7v6h6" />
+      <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" />
     </symbol>
     <symbol id="icon-redo" viewBox="0 0 24 24">
-      <path d="M21 7v6h-6" class="icon-line" stroke="currentColor"></path>
-      <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13" class="icon-line" stroke="currentColor"></path>
+      <path d="M21 7v6h-6" />
+      <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3L21 13" />
     </symbol>
-    <symbol id="icon-combine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 6h4l4 6h8" class="icon-line"></path>
-      <path d="M4 18h4l4-6" class="icon-line"></path>
+    <symbol id="icon-combine" viewBox="0 0 24 24">
+      <path d="M4 6h4l4 6h8" />
+      <path d="M4 18h4l4-6" />
     </symbol>
-    <symbol id="icon-replace-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="17 4 21 8 17 12"></polyline>
-      <line x1="3" y1="8" x2="21" y2="8"></line>
-      <polyline points="7 20 3 16 7 12"></polyline>
-      <line x1="21" y1="16" x2="3" y2="16"></line>
+    <symbol id="icon-replace-swap" viewBox="0 0 24 24">
+      <polyline points="17 4 21 8 17 12" />
+      <line x1="3" y1="8" x2="21" y2="8" />
+      <polyline points="7 20 3 16 7 12" />
+      <line x1="21" y1="16" x2="3" y2="16" />
     </symbol>
     <symbol id="icon-trash" viewBox="0 0 24 24">
-      <polyline points="3 6 5 6 21 6" class="icon-line" stroke="currentColor"></polyline>
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" class="icon-line"
-        stroke="currentColor"></path>
-    </symbol>
-    <symbol id="icon-save" viewBox="0 0 24 24">
-      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" class="icon-line" stroke="currentColor">
-      </path>
-      <polyline points="17 21 17 13 7 13 7 21" class="icon-line" stroke="currentColor"></polyline>
-      <polyline points="7 3 7 8 15 8" class="icon-line" stroke="currentColor"></polyline>
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
     </symbol>
   </svg>
 
@@ -987,23 +985,39 @@
   </div>
   <div id="toast" class="toast">Notificación</div>
 
-  <div class="modal" id="modal-person">
+  <!-- MODAL: NUEVA PERSONA -->
+  <div class="modal" id="modal-new-person">
     <div class="modal-content">
-      <h3 id="modal-title">Gestión de Personal</h3>
+      <h3>Nueva Persona</h3>
       <div class="form-group"><label>Nombre</label><input type="text" id="p-name" placeholder="Nombre completo"></div>
       <div class="checkbox-group form-group"><input type="checkbox" id="p-unlimited"
-          onchange="UI.toggleLimits(this.checked)"><label for="p-unlimited" style="margin:0; cursor:pointer;">Sin límite
-          de días (Libre)</label></div>
+          onchange="UI.toggleLimits(this.checked)"><label for="p-unlimited" cursor:pointer;">Licencia Libre</label>
+      </div>
       <div id="limits-container">
         <div class="days-row">
-          <div class="form-group">
-            <label>Verano</label>
-            <input type="number" id="p-summer" min="0">
-          </div>
-          <div class="form-group">
-            <label>Invierno</label>
-            <input type="number" id="p-winter" min="0">
-          </div>
+          <div class="form-group"><label>Verano</label><input type="number" id="p-summer" min="0"></div>
+          <div class="form-group"><label>Invierno</label><input type="number" id="p-winter" min="0"></div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn-primary" onclick="Data.savePerson()">Guardar</button>
+        <button class="btn-cancel" onclick="UI.closeModals()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR PERSONA -->
+  <div class="modal" id="modal-edit-person">
+    <div class="modal-content">
+      <h3>Editar Persona</h3>
+      <div class="form-group"><label>Nombre</label><input type="text" id="ep-name" placeholder="Nombre completo"></div>
+      <div class="checkbox-group form-group"><input type="checkbox" id="ep-unlimited"
+          onchange="UI.toggleEditLimits(this.checked)"><label for="ep-unlimited" style="margin:0; cursor:pointer;">Sin
+          límite de días (Libre)</label></div>
+      <div id="edit-limits-container">
+        <div class="days-row">
+          <div class="form-group"><label>Verano</label><input type="number" id="ep-summer" min="0"></div>
+          <div class="form-group"><label>Invierno</label><input type="number" id="ep-winter" min="0"></div>
         </div>
       </div>
       <div id="person-vac-section">
@@ -1016,23 +1030,41 @@
           <div class="add-range-row">
             <div class="form-group">
               <label>Desde</label>
-              <input type="date" id="range-start">
+              <div class="date-input-wrapper">
+                <input type="date" id="range-start">
+                <button class="btn-date-quick" onclick="UI.toggleDateQuick('range-start')">
+                  <svg class="icon" style="width:1em;height:1em;">
+                    <use href="#icon-calendar" />
+                  </svg>
+                </button>
+              </div>
             </div>
             <div class="form-group">
               <label>Hasta</label>
-              <input type="date" id="range-end">
+              <div class="date-input-wrapper">
+                <input type="date" id="range-end">
+                <button class="btn-date-quick" onclick="UI.toggleDateQuick('range-end')">
+                  <svg class="icon" style="width:1em;height:1em;">
+                    <use href="#icon-calendar" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
           <div class="add-range-actions">
             <button class="btn-range-confirm" onclick="UI.confirmAddRange()">✓ Agregar</button>
-            <button class="btn-range-cancel" onclick="UI.toggleAddRangeForm(false)">Cancelar</button>
+            <button class="btn-range-cancel" onclick="UI.toggleAddRangeForm(false)">Cerrar</button>
           </div>
         </div>
         <div id="person-vac-items" class="vac-list"></div>
       </div>
-      <div class="btn-group"><button class="btn-primary" onclick="Data.savePerson()">Aceptar</button><button
-          class="btn-danger" id="btn-delete" onclick="Data.deletePerson()" style="display:none">Eliminar</button></div>
-      <div class="btn-group"><button class="btn-cancel" onclick="UI.closeModals()">Cancelar</button></div>
+      <div class="btn-group" style="margin-top: 1rem;">
+        <button class="btn-primary" onclick="Data.savePerson()">Guardar</button>
+        <button class="btn-danger" onclick="Data.deletePerson()">Eliminar</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn-cancel" onclick="UI.closeModals()">Cerrar</button>
+      </div>
     </div>
   </div>
 
@@ -1042,14 +1074,13 @@
         <h3>Configuración</h3>
       </div>
       <div class="modal-config-body">
-        <div
-          style="background: var(--bg-body); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border);">
-          <label style="font-weight:bold; margin-bottom:10px; display:block;">📅 Rango Temporada Verano</label>
+        <div>
+          <label style="font-weight:bold; margin-bottom:1rem; display:block;">📅 Rango Temporada Verano</label>
           <div style="display:flex; gap:10px; align-items:center;">
             <div style="flex:1">
               <label style="font-size:0.75rem">Desde (Inicio)</label>
               <select id="conf-s-start"
-                style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main);">
+                style="width:100%; padding:0.5rem; border-radius:var(--radius); border:1px solid var(--border); background:var(--input-bg); color:var(--text-main);">
                 <option value="0">Enero</option>
                 <option value="1">Febrero</option>
                 <option value="2">Marzo</option>
@@ -1064,11 +1095,11 @@
                 <option value="11">Diciembre</option>
               </select>
             </div>
-            <span style="font-weight:bold; padding-top:15px">➔</span>
+            <span style="font-weight:bold; padding-top:1rem">➔</span>
             <div style="flex:1">
               <label style="font-size:0.75rem">Hasta (Fin)</label>
               <select id="conf-s-end"
-                style="width:100%; padding:0.5rem; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main);">
+                style="width:100%; padding:0.5rem; border-radius:var(--radius); border:1px solid var(--border); background:var(--input-bg); color:var(--text-main);">
                 <option value="0">Enero</option>
                 <option value="1">Febrero</option>
                 <option value="2">Marzo</option>
@@ -1084,18 +1115,30 @@
               </select>
             </div>
           </div>
-          <p style="font-size:0.7rem; color:var(--text-muted); margin-top:5px;">* El resto del año será Invierno.</p>
         </div>
         <div class="days-row">
           <div class="form-group"><label>Verano</label><input type="number" id="conf-summer"></div>
           <div class="form-group"><label>Invierno</label><input type="number" id="conf-winter"></div>
         </div>
+        <div class="form-group" style="margin-top:1rem;">
+          <label style="font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
+            <span>🖱️ Velocidad de scroll</span>
+            <span id="conf-scroll-speed-label"
+              style="font-size:1rem; font-weight:700; color:var(--c-blue); min-width:1.5rem; text-align:right;">3</span>
+          </label>
+          <input type="range" id="conf-scroll-speed" min="1" max="10" step="1" value="3"
+            oninput="document.getElementById('conf-scroll-speed-label').textContent = this.value"
+            style="width:100%; margin-top:0.4rem; accent-color:var(--c-blue);">
+          <div
+            style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-top:0.15rem;">
+            <span>1 col</span><span>10 col</span>
+          </div>
+        </div>
         <div
           style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top:1rem; display:flex; flex-direction:column; gap:0.5rem;">
-          <button class="btn-cancel" onclick="Data.exportData()">📥 Exportar Backup</button>
+          <button class="btn-cancel" onclick="Data.exportData()">Respaldar</button>
           <input type="file" id="import-file" hidden onchange="Data.importData(this)">
-          <button class="btn-cancel" onclick="document.getElementById('import-file').click()">📤 Restaurar
-            Backup</button>
+          <button class="btn-cancel" onclick="document.getElementById('import-file').click()">Restaurar</button>
           <button class="btn-cancel" onclick="UI.toggleTheme()">
             <svg class="icon" id="theme-icon" style="width:1em;height:1em;margin-right:6px;vertical-align:text-bottom;">
               <use href="#icon-moon" />
@@ -1207,7 +1250,7 @@
 
     // --- DATA MODULE ---
     const Data = (function () {
-      let people = [], vacations = {}, config = { defSummer: 30, defWinter: 15, sStart: 11, sEnd: 2 };
+      let people = [], vacations = {}, config = { defSummer: 30, defWinter: 15, sStart: 11, sEnd: 2, scrollSpeed: 3 };
 
       const LS_KEY = 'licencias_data_v1';
 
@@ -1220,7 +1263,7 @@
       function loadFromObj(db) {
         people = db.people || [];
         vacations = db.vacations || {};
-        config = { ...{ defSummer: 30, defWinter: 15, sStart: 11, sEnd: 2 }, ...db.config };
+        config = { ...{ defSummer: 30, defWinter: 15, sStart: 11, sEnd: 2, scrollSpeed: 3 }, ...db.config };
         persistir();
         Gantt.render();
       }
@@ -1239,21 +1282,34 @@
       function notifyChange() { FileIO.markDirty(true); persistir(); }
 
       function savePerson() {
-        const id = document.getElementById('modal-person').dataset.id;
-        const name = document.getElementById('p-name').value.trim();
-        const unlimited = document.getElementById('p-unlimited').checked;
-        const summer = parseInt(document.getElementById('p-summer').value) || 0;
-        const winter = parseInt(document.getElementById('p-winter').value) || 0;
-        if (!name) return UI.toast("Nombre requerido");
-        if (id) { const p = people.find(x => x.id == id); if (p) { p.name = name; p.summer = summer; p.winter = winter; p.unlimited = unlimited; } }
-        else { people.push({ id: Date.now(), name, summer, winter, unlimited }); }
+        // ¿Nuevo o edición?
+        const editId = document.getElementById('modal-edit-person')?.dataset.id;
+        const isEdit = !!editId;
+
+        if (isEdit) {
+          const name = document.getElementById('ep-name').value.trim();
+          const unlimited = document.getElementById('ep-unlimited').checked;
+          const summer = parseInt(document.getElementById('ep-summer').value) || 0;
+          const winter = parseInt(document.getElementById('ep-winter').value) || 0;
+          if (!name) return UI.toast("Nombre requerido", "info");
+          const p = people.find(x => x.id == editId);
+          if (p) { p.name = name; p.summer = summer; p.winter = winter; p.unlimited = unlimited; }
+        } else {
+          const name = document.getElementById('p-name').value.trim();
+          const unlimited = document.getElementById('p-unlimited').checked;
+          const summer = parseInt(document.getElementById('p-summer').value) || 0;
+          const winter = parseInt(document.getElementById('p-winter').value) || 0;
+          if (!name) return UI.toast("Nombre requerido", "info");
+          people.push({ id: Date.now(), name, summer, winter, unlimited });
+        }
         notifyChange(); UI.closeModals(); Gantt.render();
       }
 
       function deletePerson() {
-        const id = document.getElementById('modal-person').dataset.id;
+        const id = document.getElementById('modal-edit-person').dataset.id;
         if (!confirm("¿Eliminar?")) return;
-        people = people.filter(p => p.id != id); notifyChange(); UI.closeModals(); Gantt.render();
+        people = people.filter(p => p.id != id);
+        notifyChange(); UI.closeModals(); Gantt.render();
       }
 
       function setVacation(pid, date, val) {
@@ -1307,6 +1363,8 @@
         config.defWinter = parseInt(document.getElementById('conf-winter').value);
         config.sStart = parseInt(document.getElementById('conf-s-start').value);
         config.sEnd = parseInt(document.getElementById('conf-s-end').value);
+        const spd = parseInt(document.getElementById('conf-scroll-speed').value);
+        config.scrollSpeed = (Number.isFinite(spd) && spd >= 1 && spd <= 10) ? spd : 3;
         notifyChange(); UI.closeModals(); Gantt.render();
       }
 
@@ -1331,10 +1389,10 @@
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
-          UI.toast("✅ Backup exportado");
+          UI.toast(" Backup exportado", "success");
         } catch (e) {
           console.error(e);
-          UI.toast("❌ Error al exportar");
+          UI.toast(" Error al exportar", "error");
         }
       }
 
@@ -1343,23 +1401,23 @@
         if (!file) return;
 
         if (file.size > S.SECURITY_LIMITS.MAX_JSON_SIZE) {
-          UI.toast("❌ Archivo demasiado grande"); return;
+          UI.toast(" Archivo demasiado grande", "error"); return;
         }
         if (file.type && file.type !== 'application/json') {
-          UI.toast("❌ Solo se permiten archivos JSON"); return;
+          UI.toast(" Solo se permiten archivos JSON", "error"); return;
         }
 
         const reader = new FileReader();
         reader.onload = async (e) => {
           try {
             const contenido = e.target.result;
-            if (!contenido || contenido.trim().length === 0) { UI.toast("❌ Archivo vacío"); return; }
-            if (contenido.length > S.SECURITY_LIMITS.MAX_JSON_SIZE) { UI.toast("❌ Contenido demasiado grande"); return; }
+            if (!contenido || contenido.trim().length === 0) { UI.toast(" Archivo vacío", "error"); return; }
+            if (contenido.length > S.SECURITY_LIMITS.MAX_JSON_SIZE) { UI.toast(" Contenido demasiado grande", "error"); return; }
 
             // Parse seguro con protección contra Prototype Pollution
             const data = JSON.parse(contenido, (key, value) => {
               if (['__proto__', 'constructor', 'prototype'].includes(key)) {
-                console.warn('⚠️ Prototype pollution bloqueado');
+                console.warn('Prototype pollution bloqueado');
                 return undefined;
               }
               return value;
@@ -1368,17 +1426,17 @@
             // Whitelist de claves raíz permitidas
             const clavesPermitidas = ['people', 'vacations', 'config', 'fecha', 'version', 'hash', 'timestamp'];
             if (Object.keys(data).some(k => !clavesPermitidas.includes(k))) {
-              UI.toast("❌ Estructura de archivo sospechosa"); return;
+              UI.toast(" Estructura de archivo sospechosa", "error"); return;
             }
 
             if (!data || typeof data !== 'object' || Array.isArray(data)) {
-              UI.toast("❌ Archivo inválido"); return;
+              UI.toast("Archivo inválido", "error"); return;
             }
             if (!Array.isArray(data.people)) {
-              UI.toast("❌ Archivo corrupto o inválido"); return;
+              UI.toast(" Archivo corrupto o inválido", "error"); return;
             }
             if (data.version && data.version > S.SECURITY_LIMITS.SCHEMA_VERSION) {
-              UI.toast(`⚠️ Versión de archivo más nueva (v${data.version})`);
+              UI.toast(`Versión de archivo más nueva (v${data.version})`, "info");
             }
 
             // Verificar integridad del hash
@@ -1386,7 +1444,7 @@
               const payload = { people: data.people, vacations: data.vacations, config: data.config };
               const hashCalculado = await S.calcularHashSHA256(payload);
               if (hashCalculado !== data.hash) {
-                UI.toast("⚠️ Hash no coincide — archivo puede estar modificado");
+                UI.toast(" Hash no coincide — archivo puede estar modificado", "error");
                 if (!confirm("El hash de integridad no coincide. El archivo puede haber sido modificado o corrompido.\n¿Restaurar de todas formas?")) return;
               }
             } else {
@@ -1395,7 +1453,7 @@
 
             // Validar límite de personas
             if (data.people.length > S.SECURITY_LIMITS.MAX_PERSONAS) {
-              UI.toast(`❌ Máximo ${S.SECURITY_LIMITS.MAX_PERSONAS} personas permitidas`); return;
+              UI.toast(` Máximo ${S.SECURITY_LIMITS.MAX_PERSONAS} personas permitidas`, "error"); return;
             }
 
             // Filtrar y normalizar personas
@@ -1410,7 +1468,7 @@
               }));
 
             if (peopleImportadas.length === 0 && data.people.length > 0) {
-              UI.toast("⚠️ No se encontraron personas válidas"); return;
+              UI.toast(" No se encontraron personas válidas", "error"); return;
             }
 
             // Filtrar y normalizar vacaciones
@@ -1440,11 +1498,11 @@
             loadFromObj({ people: peopleImportadas, vacations: vacationsImportadas, config: configImportada });
             FileIO.markDirty(true);
             UI.refreshYearSelector && UI.refreshYearSelector();
-            UI.toast(`✅ Restaurado: ${peopleImportadas.length} persona(s)`);
+            UI.toast(` Restaurado: ${peopleImportadas.length} persona(s)`, "success");
             UI.closeModals();
           } catch (err) {
             console.error(err);
-            UI.toast("❌ Error al leer el archivo");
+            UI.toast(" Error al leer el archivo", "error");
           }
         };
         reader.readAsText(file);
@@ -1628,8 +1686,8 @@
           const season = Data.getSeason(dateStr);
           const stats = Data.getRealTimeStats(person, currentViewYear);
           const now = Date.now();
-          if (season === 'summer' && stats.s <= 0) { if (now - toastDebounce > 1000) { UI.toast("🚫 Sin días de Verano disponibles"); toastDebounce = now; } return; }
-          if (season === 'winter' && stats.w <= 0) { if (now - toastDebounce > 1000) { UI.toast("🚫 Sin días de Invierno disponibles"); toastDebounce = now; } return; }
+          if (season === 'summer' && stats.s <= 0) { if (now - toastDebounce > 1000) { UI.toast("Sin días de Verano disponibles", "error"); toastDebounce = now; } return; }
+          if (season === 'winter' && stats.w <= 0) { if (now - toastDebounce > 1000) { UI.toast("Sin días de Invierno disponibles", "error"); toastDebounce = now; } return; }
         }
         Data.setVacation(pid, dateStr, dragStartValue);
         refreshRowVisuals(tr, person);
@@ -1710,12 +1768,11 @@
           // Verificamos que sea movimiento vertical de rueda para convertirlo a horizontal
           if (evt.deltaY !== 0) {
             evt.preventDefault();
-
-            // CAMBIO IMPORTANTE: 'behavior: auto'
-            // Esto evita el conflicto con el CSS. La suavidad la da tu mano al girar la rueda.
-            // Multiplicamos por 1 (o 1.5) para que sea preciso, no acelerado.
+            const dayWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--day-width')) || 38;
+            const speed = Data.config().scrollSpeed ?? 3;
+            const direction = evt.deltaY > 0 ? 1 : -1;
             container.scrollBy({
-              left: evt.deltaY,
+              left: direction * speed * dayWidth,
               behavior: 'auto'
             });
           }
@@ -1726,7 +1783,7 @@
       return { render, scrollToToday, scrollToDate, filterRows, clearFilter, changeYear, refreshRow: refreshRowVisuals };
     })();
 
-    // --- UI UTILS ---
+    // --- UI UTILS MODULE ---
     const UI = (function () {
       function toggleTheme() {
         document.body.classList.toggle('dark-mode');
@@ -1737,35 +1794,36 @@
         if (icon) icon.innerHTML = `<use href="#icon-${isD ? 'sun' : 'moon'}"/>`;
         if (label) label.textContent = isD ? 'Modo claro' : 'Modo oscuro';
       }
-      function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+      
+      function toast(msg, type = '') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show' + (type ? ' ' + type : '');
+        setTimeout(() => t.className = 'toast', 3000);
+      }
+
       function $(id) { return document.getElementById(id); }
+
       function openPersonModal() {
-        $('modal-title').textContent = "Nueva";
         $('p-name').value = "";
         $('p-unlimited').checked = false;
         $('p-summer').value = Data.config().defSummer;
         $('p-winter').value = Data.config().defWinter;
-        $('modal-person').dataset.id = "";
-        $('btn-delete').style.display = 'none';
-        $('person-vac-items').innerHTML = '';
-        $('add-range-form').classList.remove('open');
         toggleLimits(false);
-        $('modal-person').classList.add('show');
+        $('modal-new-person').classList.add('show');
       }
 
       function editPerson(id) {
         const p = Data.people().find(x => x.id == id);
-        $('modal-title').textContent = "Editar";
-        $('p-name').value = p.name;
-        $('p-unlimited').checked = p.unlimited;
-        $('p-summer').value = p.summer;
-        $('p-winter').value = p.winter;
-        $('modal-person').dataset.id = id;
-        $('btn-delete').style.display = 'block';
+        $('ep-name').value = p.name;
+        $('ep-unlimited').checked = p.unlimited;
+        $('ep-summer').value = p.summer;
+        $('ep-winter').value = p.winter;
+        $('modal-edit-person').dataset.id = id;
         $('add-range-form').classList.remove('open');
-        toggleLimits(p.unlimited);
+        toggleEditLimits(p.unlimited);
         refreshVacList(id);
-        $('modal-person').classList.add('show');
+        $('modal-edit-person').classList.add('show');
       }
 
       function refreshVacList(pid) {
@@ -1843,11 +1901,22 @@
         return rangos.sort((a, b) => b.inicio.localeCompare(a.inicio));
       }
 
+      function toggleDateQuick(inputId) {
+        const input = $(inputId);
+        input.value = input.value ? '' : new Date().toISOString().split('T')[0];
+      }
+
       function formatearFecha(dateStr) {
         const [y, m, d] = dateStr.split('-');
         return `${d}/${m}/${y}`;
       }
       function toggleLimits(unl) { $('limits-container').style.opacity = unl ? '0.3' : '1'; $('p-summer').disabled = unl; $('p-winter').disabled = unl; }
+
+      function toggleEditLimits(unl) {
+        $('edit-limits-container').style.opacity = unl ? '0.3' : '1';
+        $('ep-summer').disabled = unl;
+        $('ep-winter').disabled = unl;
+      }
 
       function openConfig() {
         const c = Data.config();
@@ -1855,6 +1924,9 @@
         $('conf-winter').value = c.defWinter;
         $('conf-s-start').value = c.sStart;
         $('conf-s-end').value = c.sEnd;
+        const spd = c.scrollSpeed ?? 3;
+        $('conf-scroll-speed').value = spd;
+        $('conf-scroll-speed-label').textContent = spd;
         $('modal-config').classList.add('show');
       }
 
@@ -1918,11 +1990,11 @@
 
       function confirmAddRange() {
         const pid = $('modal-person').dataset.id;
-        if (!pid) return UI.toast("Guarda la persona primero");
+        if (!pid) return UI.toast("Guarda la persona primero", "info");
         const start = $('range-start').value;
         const end = $('range-end').value;
-        if (!start || !end) return UI.toast("Ingresá las fechas");
-        if (start > end) return UI.toast("La fecha de inicio debe ser ≤ fin");
+        if (!start || !end) return UI.toast("Ingresá las fechas", "info");
+        if (start > end) return UI.toast("La fecha de inicio debe ser ≤ fin", "info");
 
         const person = Data.people().find(x => x.id == pid);
         if (!person) return;
@@ -1955,13 +2027,15 @@
         $('add-range-form').classList.remove('open');
         $('range-start').value = '';
         $('range-end').value = '';
+        UI.updateDateBtn('range-start', 'btn-quick-start');
+        UI.updateDateBtn('range-end', 'btn-quick-end');
 
         // Refrescar lista de rangos en modal
         refreshVacList(pid);
-        UI.toast(added > 0 ? `✅ ${added} día${added !== 1 ? 's' : ''} agregado${added !== 1 ? 's' : ''}` : "⚠️ Sin días disponibles en ese rango");
+        UI.toast(added > 0 ? ` ${added} día${added !== 1 ? 's' : ''} agregado${added !== 1 ? 's' : ''}` : " Sin días disponibles en ese rango", added > 0 ? "success" : "info");
       }
 
-      return { toggleTheme, toast, openPersonModal, editPerson, closeModals, openConfig, toggleLimits, initYearSelector, refreshYearSelector, toggleAddRangeForm, confirmAddRange, refreshVacList };
+      return { toggleTheme, toast, openPersonModal, editPerson, closeModals, openConfig, toggleLimits, initYearSelector, refreshYearSelector, toggleAddRangeForm, confirmAddRange, refreshVacList, toggleDateQuick };
     })();
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -2030,7 +2104,7 @@
 </html>
 
 <!--// ====================================================================
-    //             CAMBIOS REALIZADOS EN ESTA VERSION 122
+    //             CAMBIOS REALIZADOS EN ESTA VERSION 124
     // ====================================================================
     1) 
 
