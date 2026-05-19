@@ -1,27 +1,19 @@
 {
-  "name": "SMG - Sistema de Gestión",
-  "short_name": "SMG",
-  "description": "Sistema de gestión de servicios y horarios",
-  "start_url": "./",
+  "name": "Portal SGG",
+  "short_name": "Portal SGG",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#0ea5e9",
-  "orientation": "portrait-primary",
+  "background_color": "#f5f6fa",
+  "theme_color": "#3b64d2",
+  "orientation": "portrait",
+  "scope": "./",
+  "id": "/Portal-SGI-App",
   "icons": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "./materiales/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
-  ],
-  "categories": ["business", "productivity"],
-  "lang": "es-AR",
-  "dir": "ltr"
+  ]
 }

@@ -4,558 +4,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0ea5e9">
-    <meta name="description" content="Sistema de gestión de servicios y horarios">
-    <title>SMG</title>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta name="referrer" content="no-referrer">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <script src="./flash.js"></script>
+    <link rel="stylesheet" href="./styles.css">
     <link rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/png" href="./icon-192.png">
-    <style>
-        :root {
-            --bg-body: #000000;
-            --bg-card: #0f141b;
-            --text-main: #f9fafb;
-            --text-muted: #d1d5db;
-            --border: #1f2836;
-            --c-blue: #5382e6;
-            --c-purple: #8b5cf6;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            --radius: 10px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-        }
-
-        h1 {
-            color: var(--text-main);
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            font-weight: 600;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            width: 100%;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            border-color: rgba(83, 130, 230, 0.3);
-        }
-
-        .card:active {
-            transform: translateY(-2px);
-        }
-
-        .icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-            background: none;
-            border: none;
-        }
-
-        .card:hover .icon {
-            transform: scale(1.05);
-        }
-
-        .icon svg {
-            width: 80px;
-            height: 80px;
-            border-radius: 15px;
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-        }
-
-        .card-description {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* Botón de instalación PWA */
-        #install-button {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            width: 64px;
-            height: 64px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            animation: slideInAndPulse 0.5s ease-out;
-        }
-
-        @keyframes slideInAndPulse {
-            0% {
-                transform: translateY(100px) scale(0);
-                opacity: 0;
-            }
-
-            60% {
-                transform: translateY(0) scale(1.1);
-            }
-
-            100% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        #install-button::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
-            border-radius: 18px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 0;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.3;
-                transform: scale(1.1);
-            }
-        }
-
-        #install-button:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 12px 32px rgba(14, 165, 233, 0.6), 0 6px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        #install-button:active {
-            transform: translateY(-2px) scale(1);
-        }
-
-        #install-button.show {
-            display: flex;
-        }
-
-        #install-button svg {
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-        }
-
-        /* Modal de instalación */
-        .install-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .install-modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2rem;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .modal-content p {
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .modal-btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .modal-btn-primary {
-            background: linear-gradient(135deg, var(--c-blue), var(--c-purple));
-            color: white;
-        }
-
-        .modal-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(83, 130, 230, 0.4);
-        }
-
-        .modal-btn-secondary {
-            background: var(--bg-body);
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-        }
-
-        .modal-btn-secondary:hover {
-            background: var(--border);
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 2rem;
-            }
-
-            .grid {
-                gap: 1rem;
-            }
-
-            .card {
-                padding: 2rem 1.5rem;
-            }
-
-            .icon {
-                width: 70px;
-                height: 70px;
-            }
-
-            .icon svg {
-                width: 70px;
-                height: 70px;
-            }
-
-            #install-button {
-                width: 60px;
-                height: 60px;
-                bottom: 20px;
-                right: 20px;
-            }
-
-            #install-button svg {
-                width: 32px;
-                height: 32px;
-            }
-        }
-    </style>
+    <script src="./launcher.js" defer></script>
+    <title>Panel de operaciones | Inicio</title>
 </head>
 
 <body>
-    <div class="container">
-        <h1>SMG</h1>
+    <svg xmlns="http://www.w3.org/2000/svg" class="svg-sprites" width="0" height="0">
+        <defs>
+            <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </symbol>
+            <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </symbol>
+            <symbol id="icon-install" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+                <polyline points="9 10 12 13 15 10"></polyline>
+                <line x1="12" y1="6" x2="12" y2="13"></line>
+            </symbol>
+            <symbol id="icon-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14" />
+                <polyline points="3.29 7 12 12 20.71 7" />
+                <line x1="12" y1="22" x2="12" y2="12" />
+            </symbol>
+            <symbol id="icon-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                <circle cx="12" cy="13" r="3" />
+            </symbol>
+            <symbol id="icon-id" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="3" ry="3" />
+                <circle cx="9" cy="10" r="2" />
+                <line x1="15" y1="8" x2="17" y2="8" />
+                <line x1="15" y1="12" x2="17" y2="12" />
+                <line x1="7" y1="16" x2="17" y2="16" />
+            </symbol>
+        </defs>
+    </svg>
 
-        <div class="grid">
-            <!-- Tarjeta de Cuentas -->
-            <a href="./Servicios.html" class="card card-cuentas">
-                <div class="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <defs>
-                            <linearGradient id="gradS" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="512" height="512" rx="100" fill="url(#gradS)" />
-                        <path d="M256 80 L460 430 L52 430 Z" fill="white" fill-opacity="0.1" />
-                        <path
-                            d="M330 160 C 330 130, 290 130, 256 130 C 180 130, 160 180, 160 210 C 160 290, 350 280, 350 350 C 350 410, 300 410, 256 410 C 180 410, 150 360, 150 340"
-                            stroke="white" stroke-width="50" stroke-linecap="round" fill="none" />
+    <header class="header">
+        <div class="header-logo">
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+        </div>
+        <h1 class="header-main-title">PO</h1>
+        <div class="header-actions">
+            <button class="icon-btn" id="btn-install-app" title="Instalar Aplicación">
+                <svg class="svg-icon">
+                    <use href="#icon-install" />
+                </svg>
+            </button>
+            <button class="icon-btn" id="btn-dark-mode" title="Alternar modo oscuro" aria-label="Modo oscuro">
+                <svg class="svg-icon">
+                    <use id="icon-theme-use" href="#icon-moon" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="welcome-section">
+            <h2>Bienvenido al Portal</h2>
+            <p>Seleccioná el módulo al que deseás acceder.</p>
+        </div>
+
+        <div class="app-grid">
+            <a href="./SGI/index.html" class="app-card" rel="noopener noreferrer">
+                <div class="app-icon-wrapper color-blue">
+                    <svg class="app-icon">
+                        <use href="#icon-box" />
                     </svg>
                 </div>
-                <div class="card-title">Servicios</div>
-                <div class="card-description">Gestión de servicios y facturas</div>
+                <div class="app-info">
+                    <h3>Materiales</h3>
+                    <p>Gestión de inventario, control de stock y seguimiento de herramientas.</p>
+                </div>
             </a>
 
-            <!-- Tarjeta de Horarios -->
-            <a href="./Horarios.html" class="card card-horarios">
-                <div class="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <defs>
-                            <linearGradient id="gradH" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="512" height="512" rx="100" fill="url(#gradH)" />
-                        <path d="M256 80 L460 430 L52 430 Z" fill="white" fill-opacity="0.1" />
-                        <path d="M 180 150 L 180 362 M 332 150 L 332 362 M 180 256 L 332 256" stroke="white"
-                            stroke-width="50" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <a href="./SGC/index.html" class="app-card" rel="noopener noreferrer">
+                <div class="app-icon-wrapper color-green">
+                    <svg class="app-icon">
+                        <use href="#icon-camera" />
                     </svg>
                 </div>
-                <div class="card-title">Horarios</div>
-                <div class="card-description">Gestión de horarios laborales</div>
+                <div class="app-info">
+                    <h3>CCTV</h3>
+                    <p>Monitoreo, estado de cámaras, NVRs y bitácora de mantenimiento.</p>
+                </div>
             </a>
 
-            <!-- Tarjeta de Notas -->
-            <a href="./Notas.html" class="card card-notas">
-                <div class="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <defs>
-                            <linearGradient id="gradN" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="512" height="512" rx="100" fill="url(#gradN)" />
-                        <path d="M256 80 L460 430 L52 430 Z" fill="white" fill-opacity="0.1" />
-                        <path d="M 160 150 L 160 362 M 160 150 L 352 362 M 352 150 L 352 362" stroke="white"
-                            stroke-width="50" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <a href="./SGL/index.html" class="app-card" rel="noopener noreferrer">
+                <div class="app-icon-wrapper color-purple">
+                    <svg class="app-icon">
+                        <use href="#icon-id" />
                     </svg>
                 </div>
-                <div class="card-title">Notas</div>
-                <div class="card-description">Gestión de notas y apuntes</div>
+                <div class="app-info">
+                    <h3>Licencias</h3>
+                    <p>Administración de credenciales, accesos y permisos del personal.</p>
+                </div>
             </a>
         </div>
-    </div>
-
-    <!-- Botón flotante de instalación -->
-    <button id="install-button" aria-label="Instalar aplicación">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-        </svg>
-    </button>
-
-    <!-- Modal de instalación -->
-    <div class="install-modal" id="install-modal">
-        <div class="modal-content">
-            <h2>Instalar SMG</h2>
-            <p>Instala esta aplicación en tu dispositivo para acceder más rápido y trabajar sin conexión.</p>
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-secondary" id="modal-cancel">Ahora no</button>
-                <button class="modal-btn modal-btn-primary" id="modal-install">Instalar</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Registro del Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker registrado correctamente:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('❌ Error al registrar Service Worker:', error);
-                    });
-            });
-        } else {
-            console.warn('⚠️ Service Workers no soportados en este navegador');
-        }
-
-        // Variables para la instalación
-        let deferredPrompt;
-        const installButton = document.getElementById('install-button');
-        const installModal = document.getElementById('install-modal');
-        const modalInstall = document.getElementById('modal-install');
-        const modalCancel = document.getElementById('modal-cancel');
-
-        // Función para verificar si la PWA está instalada
-        function isPWAInstalled() {
-            // Verifica si está en modo standalone (instalada)
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                console.log('✅ PWA detectada como instalada (display-mode: standalone)');
-                return true;
-            }
-
-            // Verifica si está en modo standalone de iOS
-            if (window.navigator.standalone === true) {
-                console.log('✅ PWA detectada como instalada (iOS standalone)');
-                return true;
-            }
-
-            // Verifica localStorage para apps previamente instaladas
-            if (localStorage.getItem('pwa-installed') === 'true') {
-                console.log('✅ PWA detectada como instalada (localStorage)');
-                return true;
-            }
-
-            console.log('ℹ️ PWA no instalada');
-            return false;
-        }
-
-        // Detectar el evento beforeinstallprompt
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevenir que Chrome muestre su prompt automáticamente
-            e.preventDefault();
-
-            // Guardar el evento para usarlo después
-            deferredPrompt = e;
-
-            console.log('✅ beforeinstallprompt detectado');
-
-            // Verificar si ya está instalada
-            if (!isPWAInstalled()) {
-                // Mostrar el botón de instalación
-                installButton.classList.add('show');
-                console.log('✅ Botón de instalación mostrado');
-            } else {
-                console.log('ℹ️ PWA ya instalada, botón oculto');
-            }
-        });
-
-        // FUNCIÓN DE PRUEBA - Descomenta para testing
-        // Muestra el botón de instalación manualmente para pruebas
-        // O accede con ?test=true en la URL
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('test') === 'true') {
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    console.log('🧪 MODO PRUEBA: Mostrando botón de instalación');
-                    installButton.classList.add('show');
-                    // Simular que hay un prompt disponible
-                    if (!deferredPrompt) {
-                        console.log('⚠️ No hay beforeinstallprompt real, esto es solo visual');
-                    }
-                }, 1000);
-            });
-        }
-
-        // Manejar click en el botón flotante
-        installButton.addEventListener('click', () => {
-            installModal.classList.add('show');
-        });
-
-        // Manejar click en "Instalar" del modal
-        modalInstall.addEventListener('click', async () => {
-            if (!deferredPrompt) {
-                return;
-            }
-
-            // Mostrar el prompt de instalación
-            deferredPrompt.prompt();
-
-            // Esperar la respuesta del usuario
-            const { outcome } = await deferredPrompt.userChoice;
-
-            if (outcome === 'accepted') {
-                console.log('Usuario aceptó la instalación');
-                // Marcar como instalada
-                localStorage.setItem('pwa-installed', 'true');
-                // Ocultar botón y modal
-                installButton.classList.remove('show');
-                installModal.classList.remove('show');
-            } else {
-                console.log('Usuario rechazó la instalación');
-            }
-
-            // Limpiar el prompt
-            deferredPrompt = null;
-            installModal.classList.remove('show');
-        });
-
-        // Manejar click en "Ahora no"
-        modalCancel.addEventListener('click', () => {
-            installModal.classList.remove('show');
-        });
-
-        // Cerrar modal al hacer click fuera
-        installModal.addEventListener('click', (e) => {
-            if (e.target === installModal) {
-                installModal.classList.remove('show');
-            }
-        });
-
-        // Detectar cuando la app se instala
-        window.addEventListener('appinstalled', () => {
-            console.log('🎉 PWA instalada exitosamente');
-            localStorage.setItem('pwa-installed', 'true');
-            installButton.classList.remove('show');
-            installModal.classList.remove('show');
-            deferredPrompt = null;
-        });
-
-        // Verificar al cargar la página si ya está instalada
-        window.addEventListener('load', () => {
-            const isInstalled = isPWAInstalled();
-            console.log('📱 Estado de instalación:', isInstalled ? 'Instalada' : 'No instalada');
-
-            if (isInstalled) {
-                installButton.classList.remove('show');
-            }
-        });
-    </script>
+    </main>
 </body>
 
 </html>
