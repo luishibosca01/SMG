@@ -1,11 +1,11 @@
-const CACHE_NAME = 'REI-250520.0050';
+const CACHE_NAME = 'REI-250520.1048';
 const urlsToCache = [
   './',
   './index.html',
+  './flash.js',
   './manifest.json',
   './styles.css',
-  './app.js',
-  './rei.js'
+  './app.js'
 ];
 
 self.addEventListener('install', event => {
