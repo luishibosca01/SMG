@@ -1,11 +1,11 @@
-const CACHE_NAME = 'PORTAL-SGG-V1';
+const CACHE_NAME = 'REI-250520.0050';
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
   './styles.css',
-  './launcher.js',
-  './flash.js'
+  './app.js',
+  './rei.js'
 ];
 
 self.addEventListener('install', event => {
